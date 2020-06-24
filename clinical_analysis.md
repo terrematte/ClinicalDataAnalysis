@@ -10,7 +10,7 @@ knit: (function(inputFile, encoding) {
   rmarkdown::render(inputFile, encoding = encoding, output_format = "all") })    
 ---
 
-Prepearing clinical data to analysis following Hadley Wickham’s Tidyverse manifesto.
+Preparing clinical data to analysis following Hadley Wickham’s Tidyverse manifesto.
 
 
 
@@ -407,9 +407,9 @@ Patient Smoking History Category                                                
 Select variables based on NA count (> 50% complete is a good choice!).
 
 
-# @TODO PATRICK: simplify code NA_sum?
-# kirc_clean <- kirc_clin_raw %>%
-#     summarise_all(~ sum(is.na(.))) 
+<!-- # @TODO PATRICK: simplify code NA_sum? -->
+<!-- # kirc_clean <- kirc_clin_raw %>% -->
+<!-- #     summarise_all(~ sum(is.na(.)))  -->
 
 
 ```r
@@ -523,9 +523,9 @@ Sample type id                                                                  
 Shortest Dimension                                                               35            0.93      0.38     0.21      0.10      0.20      0.30      0.50      1.00  ▆▇▂▁▁ 
 Specimen Second Longest Dimension                                                35            0.93      0.94     0.31      0.30      0.70      0.90      1.10      2.00  ▃▇▆▂▁ 
 
-# @TODO PATRICK: function to select variables with unique observations?
-# kirc_cleanX <- kirc_clean1 %>%
-#     summarise_if(is.numeric, ~ n=unique(.))
+<!-- # @TODO PATRICK: function to select variables with unique observations? -->
+<!-- # kirc_cleanX <- kirc_clean1 %>% -->
+<!-- #     summarise_if(is.numeric, ~ n=unique(.)) -->
 
 
 ```r
@@ -799,7 +799,7 @@ kirc_clean4  %>%
      missing_plot()
 ```
 
-![](README_figs/README-unnamed-chunk-13-1.png)<!-- -->
+![](figs/render-unnamed-chunk-13-1.png)<!-- -->
 
 ```r
 missing_glimpse(kirc_clean4)
@@ -847,18 +847,18 @@ Check data distribution, plausible ranges, outliers;
 
 Thinking about deleting outliers from dataset? Need to evaluate carefully each one!
 
-# @TODO PATRICK: codigo para analizar todas as variaveis numericas?
-# kirc_clean6 <-  kirc_clean4 %>%
-#      select_if(is.numeric) %>%
-#      ggplot(aes(funs(.)) +
-#      ge# 
-# @TODO PATRICK: codigo para analizar todas as variaveis numericas?
-# kirc_clean6 <-  kirc_clean4 %>%
-#      select_if(is.numeric) %>%
-#      ggplot(aes(funs(.)) +
-#      geom_boxplot(width = .5) +
-#      geom_jitter(width = 0.05, alpha = 0.2, color = "orange")om_boxplot(width = .5) +
-#      geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
+<!-- # @TODO PATRICK: codigo para analizar todas as variaveis numericas? -->
+<!-- # kirc_clean6 <-  kirc_clean4 %>% -->
+<!-- #      select_if(is.numeric) %>% -->
+<!-- #      ggplot(aes(funs(.)) + -->
+<!-- #      ge#  -->
+<!-- # @TODO PATRICK: codigo para analizar todas as variaveis numericas? -->
+<!-- # kirc_clean6 <-  kirc_clean4 %>% -->
+<!-- #      select_if(is.numeric) %>% -->
+<!-- #      ggplot(aes(funs(.)) + -->
+<!-- #      geom_boxplot(width = .5) + -->
+<!-- #      geom_jitter(width = 0.05, alpha = 0.2, color = "orange")om_boxplot(width = .5) + -->
+<!-- #      geom_jitter(width = 0.05, alpha = 0.2, color = "orange") -->
 
 
 ```r
@@ -900,7 +900,7 @@ ggplot(kirc_clean4, aes(age)) +
      geom_histogram(bins = 20, alpha = 0.8, color = "red")
 ```
 
-![](README_figs/README-unnamed-chunk-15-1.png)<!-- -->
+![](figs/render-unnamed-chunk-15-1.png)<!-- -->
 
 
 ```r
@@ -908,7 +908,7 @@ ggplot(kirc_clean4, aes(year_diagnose)) +
      geom_histogram(bins = 20, alpha = 0.8, color = "red")
 ```
 
-![](README_figs/README-unnamed-chunk-16-1.png)<!-- -->
+![](figs/render-unnamed-chunk-16-1.png)<!-- -->
 
 
 ```r
@@ -925,7 +925,7 @@ ggplot(kirc_clean4, aes(x ='', y=disease_free_mth)) +
 ## Warning: Removed 99 rows containing missing values (geom_point).
 ```
 
-![](README_figs/README-unnamed-chunk-17-1.png)<!-- -->
+![](figs/render-unnamed-chunk-17-1.png)<!-- -->
 
 ```r
 boxplot.stats(kirc_clean4$disease_free_mth)
@@ -964,7 +964,7 @@ ggplot(kirc_clean4, aes(x ='', y=frac_genome_alter)) +
 ## Warning: Removed 9 rows containing missing values (geom_point).
 ```
 
-![](README_figs/README-unnamed-chunk-18-1.png)<!-- -->
+![](figs/render-unnamed-chunk-18-1.png)<!-- -->
 
 ```r
 boxplot.stats(kirc_clean4$frac_genome_alter)
@@ -1003,7 +1003,7 @@ ggplot(kirc_clean4, aes(x ='', y=long_dim)) +
 ## Warning: Removed 35 rows containing missing values (geom_point).
 ```
 
-![](README_figs/README-unnamed-chunk-19-1.png)<!-- -->
+![](figs/render-unnamed-chunk-19-1.png)<!-- -->
 
 ```r
 boxplot.stats(kirc_clean4$long_dim)
@@ -1038,7 +1038,7 @@ ggplot(kirc_clean4, aes(x ='', y=mutation_cnt)) +
 ## Warning: Removed 86 rows containing missing values (geom_point).
 ```
 
-![](README_figs/README-unnamed-chunk-20-1.png)<!-- -->
+![](figs/render-unnamed-chunk-20-1.png)<!-- -->
 
 ```r
 boxplot.stats(kirc_clean4$mutation_cnt)
@@ -1066,7 +1066,7 @@ ggplot(kirc_clean4, aes(x ='', y=over_surv_mth)) +
      geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
 ```
 
-![](README_figs/README-unnamed-chunk-21-1.png)<!-- -->
+![](figs/render-unnamed-chunk-21-1.png)<!-- -->
 
 ```r
 boxplot.stats(kirc_clean4$over_surv_mth)
@@ -1101,7 +1101,7 @@ ggplot(kirc_clean4, aes(x ='', y=short_dim)) +
 ## Warning: Removed 35 rows containing missing values (geom_point).
 ```
 
-![](README_figs/README-unnamed-chunk-22-1.png)<!-- -->
+![](figs/render-unnamed-chunk-22-1.png)<!-- -->
 
 ```r
 boxplot.stats(kirc_clean4$short_dim)
@@ -1136,7 +1136,7 @@ ggplot(kirc_clean4, aes(x ='', y=second_long_dim)) +
 ## Warning: Removed 35 rows containing missing values (geom_point).
 ```
 
-![](README_figs/README-unnamed-chunk-23-1.png)<!-- -->
+![](figs/render-unnamed-chunk-23-1.png)<!-- -->
 
 ```r
 boxplot.stats(kirc_clean4$second_long_dim)
@@ -1301,3 +1301,53 @@ rm(kirc_clean4, kirc_clean3, kirc_clean2, kirc_clean1, kirc_clean0, kirc_clean)
 # table(kirc_clean4$person_neoplasm_stt, exclude = NULL)
 # table(kirc_clean4$wbc, exclude = NULL)
 ```
+
+
+```r
+sessionInfo()
+```
+
+```
+## R version 3.6.3 (2020-02-29)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 18.04.4 LTS
+## 
+## Matrix products: default
+## BLAS:   /usr/lib/x86_64-linux-gnu/openblas/libblas.so.3
+## LAPACK: /usr/lib/x86_64-linux-gnu/libopenblasp-r0.2.20.so
+## 
+## locale:
+##  [1] LC_CTYPE=pt_BR.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=pt_BR.UTF-8        LC_COLLATE=en_US.UTF-8    
+##  [5] LC_MONETARY=pt_BR.UTF-8    LC_MESSAGES=en_US.UTF-8   
+##  [7] LC_PAPER=pt_BR.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=pt_BR.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] finalfit_1.0.1  skimr_2.1.1     forcats_0.5.0   stringr_1.4.0  
+##  [5] dplyr_0.8.5     purrr_0.3.4     readr_1.3.1     tidyr_1.0.3    
+##  [9] tibble_3.0.1    ggplot2_3.3.0   tidyverse_1.3.0
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.4.6     lubridate_1.7.8  lattice_0.20-41  assertthat_0.2.1
+##  [5] digest_0.6.25    utf8_1.1.4       R6_2.4.1         cellranger_1.1.0
+##  [9] repr_1.1.0       backports_1.1.6  reprex_0.3.0     evaluate_0.14   
+## [13] httr_1.4.1       highr_0.8        pillar_1.4.4     rlang_0.4.6     
+## [17] readxl_1.3.1     rstudioapi_0.11  Matrix_1.2-18    rmarkdown_2.1   
+## [21] labeling_0.3     splines_3.6.3    munsell_0.5.0    broom_0.5.6     
+## [25] compiler_3.6.3   modelr_0.1.7     xfun_0.13        pkgconfig_2.0.3 
+## [29] base64enc_0.1-3  htmltools_0.4.0  tidyselect_1.1.0 fansi_0.4.1     
+## [33] crayon_1.3.4     dbplyr_1.4.3     withr_2.2.0      grid_3.6.3      
+## [37] nlme_3.1-147     jsonlite_1.6.1   gtable_0.3.0     lifecycle_0.2.0 
+## [41] DBI_1.1.0        magrittr_1.5     scales_1.1.1     cli_2.0.2       
+## [45] stringi_1.4.6    farver_2.0.3     fs_1.4.1         mice_3.8.0      
+## [49] xml2_1.3.2       ellipsis_0.3.0   generics_0.0.2   vctrs_0.3.0     
+## [53] boot_1.3-25      tools_3.6.3      glue_1.4.0       hms_0.5.3       
+## [57] survival_3.1-12  yaml_2.2.1       colorspace_1.4-1 rvest_0.3.5     
+## [61] knitr_1.28       haven_2.2.0
+```
+
