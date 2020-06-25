@@ -1,0 +1,64 @@
+---
+title: "A correlation analysis of clinical variables of TCGA-KIRC patients"
+output: 
+  github_document: 
+    df_print: paged
+  html_document:
+    keep_md: yes
+  pdf_document:
+           latex_engine: xelatex
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_format = "all") })    
+---
+
+This project contains a pipeline of clinical analysis of the Cancer Genome Atlas Kidney Renal Clear Cell Carcinoma (TCGA-KIRC) data of patients from [Genomic Data Commons Data Portal](https://portal.gdc.cancer.gov/exploration?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.project_id%22%2C%22value%22%3A%5B%22TCGA-KIRC%22%5D%7D%7D%5D%7D) and [cBioPortal](https://www.cbioportal.org/study/summary?id=kirp_tcga).
+
+Previously, we presented [an exploratory preprocessing analysis](analysis/1.preprocessing.md). In this section, we present a correlation analysis with t-test and ANOVA test to investigate significative distinctions between clinical variables according to their vital status. 
+
+
+```{r, echo = FALSE}
+# Code to browse the markdown file with renderized images.
+knitr::opts_chunk$set(
+  fig.path = "figs/render-"
+)
+```
+
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE}
+# Set the packages of interest
+packages = c("tidyverse","skimr","finalfit")
+
+# if a package is installed, it will be loaded
+# otherwise, the missing package(s) will be installed and loaded
+package.check <- lapply(packages, FUN = function(x) {
+  if (!require(x, character.only = TRUE)) {
+    install.packages(x, dependencies = TRUE)
+    library(x, character.only = TRUE)
+  }
+})
+
+suppressMessages(library("tidyverse"))
+setwd(".")
+```
+
+
+## 1. Importing data
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE}
+kirc_clin_raw <- read_delim("data/kirc_clinical_clean.csv", "\t", 
+                            escape_double = FALSE, 
+                            trim_ws = TRUE)
+
+```
+
+## TO DO
+
+## Further analysis
+
+- [A logistic regression analysis](3.logistic_regression.md) of each clinical variable weight.
+
+
+```{r}
+sessionInfo()
+```
+
