@@ -2,11 +2,14 @@
 title: "A logistic regression analysis of TCGA-KIRC"
 output: 
   github_document: 
-    df_print: paged
-  html_document:
-    keep_md: yes
-  pdf_document:
-           latex_engine: xelatex
+    df_print: kable
+    toc: true
+   #  toc_depth: 2
+   #  pandoc_args: --webtex
+   # html_document:
+   #   keep_md: yes
+   # pdf_document:
+   #          latex_engine: xelatex
 knit: (function(inputFile, encoding) {
   rmarkdown::render(inputFile, encoding = encoding, output_format = "all") })    
 ---
