@@ -1,8 +1,8 @@
 ---
-title: "TCGA Clinical Data Analysis"
+title: "A Preprocessing analysis of clinical data of TCGA-KIRC patients"
 output: 
   github_document: 
-    df_print: paged
+    df_print: kable
   html_document:
     keep_md: yes
   pdf_document:
@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 ```
 
 
-```{r message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE}
+```{r message=FALSE, warning=FALSE, echo = FALSE}
 # Set the packages of interest
 packages = c("tidyverse","skimr","finalfit")
 
@@ -43,7 +43,7 @@ setwd(".")
 
 ## 1. Importing data
 
-```{r}
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
 kirc_clin_raw <- read_delim("data/kirc_tcga_clinical_data.tsv", "\t", 
                             escape_double = FALSE, 
                             trim_ws = TRUE)
@@ -88,7 +88,7 @@ kirc_clean0 <- kirc_clean %>%
 
 Remove nuneric variables with unique observations:  
 
-```{r}
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
 skim(kirc_clean0)
 ```
 
@@ -96,31 +96,31 @@ skim(kirc_clean0)
 <!-- # kirc_cleanX <- kirc_clean1 %>% -->
 <!-- #     summarise_if(is.numeric, ~ n=unique(.)) -->
 
-```{r}
+```{r  message=FALSE, warning=FALSE, paged.print=TRUE}
 kirc_clean1 <-  kirc_clean0  %>%
      select(!c('Last Alive Less Initial Pathologic Diagnosis Date Calculated Day Value', 
                'Number of Samples Per Patient', 
                'Sample type id'))
+
+skim(kirc_clean1) 
 ```
 
 Remove character variables with unique observations:
 
-```{r}
-skim(kirc_clean1) 
-
+```{r  message=FALSE, warning=FALSE, paged.print=TRUE}
 
 kirc_clean2 <- kirc_clean1  %>%
      select(!c('Study ID', 'Cancer Type', 'Cancer Type Detailed', 
                'Neoplasm Histologic Type Name', 'ICD-10 Classification', 
                'International Classification of Diseases for Oncology, Third Edition ICD-O-3 Site Code', 
                'Informed consent verified', 'Is FFPE', 'Oncotree Code', 'Sample Type', 'Tumor Tissue Site'))
+
+skim(kirc_clean2)
 ```
 
 Remove character variables with similar information - check each one!
 
 ```{r}
-skim(kirc_clean2)
-
 table(kirc_clean2$`Overall Survival Status`, exclude = NULL)
 table(kirc_clean2$`Patient's Vital Status`, exclude = NULL)
 ```
