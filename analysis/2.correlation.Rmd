@@ -45,13 +45,29 @@ setwd(".")
 ## 1. Importing data
 
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE}
-kirc_clin_raw <- read_delim("data/kirc_clinical_clean.csv", "\t", 
+kirc_clin <- read_delim("data/kirc_clinical_clean.csv", "\t", 
                             escape_double = FALSE, 
                             trim_ws = TRUE)
 
 ```
 
-## TO DO
+
+
+```{r}
+# Update the variables
+ # explanatory = c("Age","Metastasis_Stage","Neoplasm_Lymph_Stage","Neoplasm_Stage","Tumor_Stage","Disease_Free_Months",      
+ #                 "Disease_Free_Status","Fraction_Genome_Altered","Histologic_Grade","Neoadjuvant_Therapy",
+ #                 "Primary_Lymph_Ind3","Overall_Surv_Status","Platelet_count","Sex","Shortest_Dim",            
+ #                 "Person_Neoplasm_Status","Patient_Vital_Status")
+ # 
+ # dependent = "Peak"
+ # 
+ # dados %>%
+ #   summary_factorlist(dependent, explanatory, p = TRUE, na_include = TRUE,
+ #                      column = FALSE) -> t
+```
+
+
 
 ## Further analysis
 
