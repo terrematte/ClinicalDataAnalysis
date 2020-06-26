@@ -11,9 +11,9 @@ This project contains a pipeline of clinical analysis of the Cancer Genome Atlas
 
  :bust_in_silhouette: [Beatriz Stransky](https://github.com/bia-stransky) [(Associate Professor, Phd, UFRN)](http://lattes.cnpq.br/3142264445097872)
  
- :bust_in_silhouette: [Patrick Terrematte](https://github.com/terrematte) [(Assistant Professor, UFERSA; PhD Student, UFRN)](http://lattes.cnpq.br/6470296449367089)
+ :bust_in_silhouette: [Patrick Terrematte](https://github.com/terrematte) [(Assistant Professor, UFERSA; PhD Student, UFRN)](http://lattes.cnpq.br/4283045850342312)
  
- :bust_in_silhouette: [Josivan Justino](https://github.com/Josivan-br) [(Assistant Professor, UNIR; PhD Student, UFRN)](http://lattes.cnpq.br/4497357102512154)
+ :bust_in_silhouette: [Josivan Justino](https://github.com/Josivan-br) [(Assistant Professor, UNIR; PhD Student, UFRN)](http://lattes.cnpq.br/6470296449367089)
 
 
 
