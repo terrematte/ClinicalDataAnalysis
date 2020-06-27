@@ -160,7 +160,7 @@ t.test(kirc_clinic$second_long_dim ~ kirc_clinic$over_surv_stt)
 
 ## 4. Categorical variables vs. over_surv_stt ----------
 # tabulation and chi-square test
-
+# isso pode sair uma vez que ja tem a mesma analise com tablefit
 kirc_clinic %>%
   select_if(is.factor) %>%
   summary() 
