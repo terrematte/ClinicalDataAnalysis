@@ -61,7 +61,6 @@ skim(kirc_clin_raw)
 
 Select variables based on NA count (> 50% complete is a good choice!).
 
-
 <!-- # TO DO @PATRICK: simplify code NA_sum? -->
 <!-- # kirc_clean <- kirc_clin_raw %>% -->
 <!-- #     summarise_all(~ sum(is.na(.)))  -->
@@ -127,8 +126,7 @@ table(kirc_clean2$`Patient's Vital Status`, exclude = NULL)
 
 ```{r}
 kirc_clean3 <- kirc_clean2  %>%
-     select(!c('Sample ID', 'Overall Survival Status', 'Other Patient ID', 'Other Sample ID', 
-               'Pathology Report File Name', 'Pathology report uuid'))
+     select(!c('Sample ID', 'Other Patient ID', 'Other Sample ID', 'Pathology Report File Name', 'Pathology report uuid', "Patient's Vital Status"))
           
 # removing other variables not directly related to patient - check each one!
 kirc_clean4 <- kirc_clean3  %>%
@@ -161,6 +159,7 @@ kirc_clean4 <- kirc_clean4 %>%
             primer_ln_ind3 = 'Primary Lymph Node Presentation Assessment Ind-3',
             mutation_cnt = 'Mutation Count',
             over_surv_mth = 'Overall Survival (Months)',
+            over_surv_stt = 'Overall Survival Status',
             platelet = 'Platelet count',
             tissue_prospect = 'Tissue Prospective Collection Indicator',
             race = 'Race Category',
@@ -171,7 +170,6 @@ kirc_clean4 <- kirc_clean4 %>%
             second_long_dim = 'Specimen Second Longest Dimension',
             tissue_site = 'Tissue Source Site',
             person_neoplasm_stt = 'Person Neoplasm Status',
-            vital_stt = "Patient's Vital Status",
             wbc = 'WBC')
 ```
 
@@ -199,14 +197,8 @@ missing_glimpse(kirc_clean4)
 ## 6. Checking numeric variables
 
 Check data distribution, plausible ranges, outliers;
-
 Thinking about deleting outliers from dataset? Need to evaluate carefully each one!
 
-<!-- # TO DO @PATRICK: codigo para analizar todas as variaveis numericas? -->
-<!-- # kirc_clean6 <-  kirc_clean4 %>% -->
-<!-- #      select_if(is.numeric) %>% -->
-<!-- #      ggplot(aes(funs(.)) + -->
-<!-- #      ge#  -->
 <!-- # TO DO @PATRICK: codigo para analizar todas as variaveis numericas? -->
 <!-- # kirc_clean6 <-  kirc_clean4 %>% -->
 <!-- #      select_if(is.numeric) %>% -->
@@ -296,6 +288,7 @@ kirc_clean5 <- kirc_clean4 %>%
                              T1 = c('T1', 'T1a', 'T1b'),
                              T2 = c('T2', 'T2a', 'T2b'),
                              T3 = c('T3', 'T3a', 'T3b', 'T3c')))
+
 kirc_clean5 <- kirc_clean4 %>%
      mutate(prior_cancer = fct_collapse(prior_cancer, 
                Yes = c('Yes', 'Yes, History of Prior Malignancy', 'Yes, History of Synchronous/Bilateral Malignancy')))
@@ -314,15 +307,16 @@ kirc_clean5 <- kirc_clean4 %>%
 # droping levels
 kirc_clean5 <- kirc_clean4 %>%
      mutate(race = fct_recode(race, NULL = 'ASIAN'))
+
+kirc_clean5 <- kirc_clean4 %>%
+  mutate(tissue_site = fct_recode(tissue_site, NULL = '3Z', NULL='6D', NULL='DV', NULL='EU', NULL='G', NULL='M', NULL='T7'))
+
             
 # kirc_clean5 <- kirc_clean4 %>%
 #     mutate(race = fct_drop(race, only = 'ASIAN'))
 
 # recoding levels
 # OBS: It can be donne latter, for regression analysis
-# kirc_clean4 %>%
-#      select_if(is.factor) %>%
-#      summary() 
 # 
 # kirc_clean5 <- kirc_clean4 %>%
 #      mutate(sex = fct_recode(sex, '1'='Male', '2'='Female'))
@@ -332,36 +326,36 @@ kirc_clean5 <- kirc_clean4 %>%
 
 ```
 
+```{r}
+# table(kirc_clean5$metastasis_stg, exclude = NULL)
+# table(kirc_clean5$neoplasm_ln_stg, exclude = NULL)
+# table(kirc_clean5$neoplasm_stg, exclude = NULL)
+# table(kirc_clean5$tumor_stg, exclude = NULL)
+# table(kirc_clean45disease_free_stt, exclude = NULL)
+# table(kirc_clean5$ethnicity, exclude = NULL)
+# table(kirc_clean5$histology_grd, exclude = NULL)
+# table(kirc_clean5$hemoglobin, exclude = NULL)
+# table(kirc_clean5$neoadj_therapy, exclude = NULL)
+# table(kirc_clean5$prior_cancer, exclude = NULL)
+# table(kirc_clean5$tumor_lateral, exclude = NULL)
+# table(kirc_clean5$primer_ln_ind3, exclude = NULL)
+# table(kirc_clean5platelet, exclude = NULL)
+# table(kirc_clean5$tissue_prospect, exclude = NULL)
+# table(kirc_clean5$race, exclude = NULL)
+# table(kirc_clean5$tissue_retrospect, exclude = NULL)
+# table(kirc_clean5$serum_ca, exclude = NULL)
+# table(kirc_clean5$sex, exclude = NULL)
+# table(kirc_clean5$tissue_site, exclude = NULL)
+# table(kirc_clean5$person_neoplasm_stt, exclude = NULL)
+# table(kirc_clean5$wbc, exclude = NULL)
+```
+
 ## 8. Saving dataset
 
 ```{r}
-write_csv(kirc_clean5, path = "data/kirc_clinical_clean.csv")
+write_csv(kirc_clean5, path = "data/kirc_clinic.csv")
 
 rm(kirc_clean4, kirc_clean3, kirc_clean2, kirc_clean1, kirc_clean0, kirc_clean)
-```
-
-```{r}
-# table(kirc_clean4$metastasis_stg, exclude = NULL)
-# table(kirc_clean4$neoplasm_ln_stg, exclude = NULL)
-# table(kirc_clean4$neoplasm_stg, exclude = NULL)
-# table(kirc_clean4$tumor_stg, exclude = NULL)
-# table(kirc_clean4$disease_free_stt, exclude = NULL)
-# table(kirc_clean4$ethnicity, exclude = NULL)
-# table(kirc_clean4$histology_grd, exclude = NULL)
-# table(kirc_clean4$hemoglobin, exclude = NULL)
-# table(kirc_clean4$neoadj_therapy, exclude = NULL)
-# table(kirc_clean4$prior_cancer, exclude = NULL)
-# table(kirc_clean4$tumor_lateral, exclude = NULL)
-# table(kirc_clean4$primer_ln_ind3, exclude = NULL)
-# table(kirc_clean4$platelet, exclude = NULL)
-# table(kirc_clean4$tissue_prospect, exclude = NULL)
-# table(kirc_clean4$race, exclude = NULL)
-# table(kirc_clean4$tissue_retrospect, exclude = NULL)
-# table(kirc_clean4$serum_ca, exclude = NULL)
-# table(kirc_clean4$sex, exclude = NULL)
-# table(kirc_clean4$tissue_site, exclude = NULL)
-# table(kirc_clean4$person_neoplasm_stt, exclude = NULL)
-# table(kirc_clean4$wbc, exclude = NULL)
 ```
 
 ## Further analysis
