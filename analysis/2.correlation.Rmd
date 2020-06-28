@@ -49,25 +49,23 @@ setwd(".")
 #                            escape_double = FALSE, 
 #                            trim_ws = TRUE)
 
-```
-
-
-
-```{r}
-
-## 1. Importing data -----
 kirc_clinic <- read_csv("kirc_clinic.csv")
 
+```
 
-## 2. Taming data -------
-# use lubridate for dates
+## 2. Taming data 
+
+```{r}
 kirc_clinic <- kirc_clinic %>%
   mutate_if(is.character, as.factor) %>%
   mutate(patient_id = as.character(patient_id))
+```
 
+## 3. Checking categorical variables
 
-## 3. Checking categorical variables ------------
-# check frequency, lables and levels 
+check frequency, lables and levels 
+
+```{r}
 kirc_clinic %>%
   select_if(is.factor) %>%
   summary() 
@@ -100,15 +98,20 @@ kirc_clinic <- kirc_clinic %>%
 
 kirc_clinic <- kirc_clinic %>%
   mutate(tissue_site = fct_recode(tissue_site, NULL = '3Z', NULL='6D', NULL='DV', NULL='EU', NULL='G', NULL='M', NULL='T7'))
+```
 
+## 4. Checking variables
+
+```{r}
 glimpse(kirc_clinic)
 skim(kirc_clinic) 
 View(kirc_clinic)
+```
 
+## 5. Numeric variables vs. over_surv_stt
+graphic visualization and t-test
 
-## 3. Numeric variables vs. over_surv_stt ----------
-# graphic visualization and t-test
-
+```{r}
 # PATRICK: codigo para analizar todas as variaveis numericas?
 kirc_clinic %>%
   select_if(is.numeric) %>%
@@ -157,10 +160,15 @@ ggplot(kirc_clinic, aes(x=over_surv_stt, y=second_long_dim)) +
   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
 t.test(kirc_clinic$second_long_dim ~ kirc_clinic$over_surv_stt)
 
+# fazer uma table com as variaveis dependentes, indpendente e p-valores
+```
 
-## 4. Categorical variables vs. over_surv_stt ----------
-# tabulation and chi-square test
-# isso pode sair uma vez que ja tem a mesma analise com tablefit
+## 4. Categorical variables vs. over_surv_stt
+
+Tabulation and chi-square test
+
+```{r}
+# talvez isso possa sair uma vez que ja tem a mesma analise com tablefit
 kirc_clinic %>%
   select_if(is.factor) %>%
   summary() 
@@ -244,11 +252,13 @@ t_wbc <- table(kirc_clinic$wbc, kirc_clinic$over_surv_stt, exclude = NULL)
 t_wbc <- addmargins(round(100*prop.table(t_wbc)))
 t_wbc
 chisq.test(x = kirc_clinic$wbc, y = kirc_clinic$over_surv_stt) 
+```
 
+## 7. FinalFit
 
-## FinalFit -----------
+summarise variables/factors by a categorical variable
 
-# summarise variables/factors by a categorical variable
+```{r}
 explanatory <- names(kirc_clinic %>%
               select(-over_surv_stt) %>%
               select_if(is.factor))
@@ -262,12 +272,9 @@ warnings()
 #knitr::kable(table_fit, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
 ```
 
-
-
 ## Further analysis
 
 - [A logistic regression analysis](3.logistic_regression.md) of each clinical variable weight.
-
 
 ```{r}
 sessionInfo()
