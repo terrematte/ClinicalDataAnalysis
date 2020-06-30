@@ -45,11 +45,8 @@ setwd(".")
 ## 1. Importing data
 
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE}
-# kirc_clin <- read_delim("data/kirc_clinical_clean.csv", "\t", 
-#                            escape_double = FALSE, 
-#                            trim_ws = TRUE)
 
-kirc_clinic <- read_csv("kirc_clinic.csv")
+kirc_clinic <- read_csv("data/kirc_clinic.csv")
 
 ```
 
@@ -105,7 +102,7 @@ kirc_clinic <- kirc_clinic %>%
 ```{r}
 glimpse(kirc_clinic)
 skim(kirc_clinic) 
-View(kirc_clinic)
+#View(kirc_clinic)
 ```
 
 ## 5. Numeric variables vs. over_surv_stt
@@ -201,7 +198,7 @@ chisq.test(x = kirc_clinic$disease_free_stt, y = kirc_clinic$over_surv_stt)
 t_prior <- table(kirc_clinic$prior_cancer, kirc_clinic$over_surv_stt, exclude = NULL)
 t_prior <- addmargins(round(100*prop.table(t_prior)))
 t_prior
-chisq.test(x = kirc_clinic$t_prior, y = kirc_clinic$over_surv_stt) 
+chisq.test(x = kirc_clinic$prior_cancer, y = kirc_clinic$over_surv_stt) 
 
 t_neo <- table(kirc_clinic$neoadj_therapy, kirc_clinic$over_surv_stt, exclude = NULL)
 t_neo <- addmargins(round(100*prop.table(t_neo)))
