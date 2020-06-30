@@ -1,36 +1,25 @@
----
-title: "A correlation analysis of clinical variables of TCGA-KIRC patients"
-output: 
-  html_document: 
-    default
-  github_document: 
-    df_print: paged
-  pdf_document:
-    latex_engine: xelatex
-knit: (function(inputFile, encoding) {
-  rmarkdown::render(inputFile, encoding = encoding, output_format = "all") })     
----
+#' ---
+#' title: "A correlation analysis of clinical variables of TCGA-KIRC patients"
+#' output: 
+#'   html_document: 
+#'     default
+#'   github_document: 
+#'     df_print: paged
+#'   pdf_document:
+#'     latex_engine: xelatex
+#' knit: (function(inputFile, encoding) {
+#'   rmarkdown::render(inputFile, encoding = encoding, output_format = "all") })     
+#' ---
+#' 
+#' This project contains a pipeline of clinical analysis of the Cancer Genome Atlas Kidney Renal Clear Cell Carcinoma (TCGA-KIRC) data of patients from [Genomic Data Commons Data Portal](https://portal.gdc.cancer.gov/exploration?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.project_id%22%2C%22value%22%3A%5B%22TCGA-KIRC%22%5D%7D%7D%5D%7D) and [cBioPortal](https://www.cbioportal.org/study/summary?id=kirp_tcga).
+#' 
+#' Previously, we presented [an exploratory preprocessing analysis](1.preprocessing.md). In this section, we present a correlation analysis with t-test and ANOVA test to investigate significative distinctions between clinical variables according to their vital status. 
+#' 
+#' 
 
-This project contains a pipeline of clinical analysis of the Cancer Genome Atlas Kidney Renal Clear Cell Carcinoma (TCGA-KIRC) data of patients from [Genomic Data Commons Data Portal](https://portal.gdc.cancer.gov/exploration?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.project_id%22%2C%22value%22%3A%5B%22TCGA-KIRC%22%5D%7D%7D%5D%7D) and [cBioPortal](https://www.cbioportal.org/study/summary?id=kirp_tcga).
-
-Previously, we presented [an exploratory preprocessing analysis](1.preprocessing.md). In this section, we present a correlation analysis with t-test and ANOVA test to investigate significative distinctions between clinical variables according to their vital status. 
-
-
-```{r, echo=FALSE, message=FALSE, results='hide', purl=FALSE}
-## This chunk automatically generates a text .R version of this script when running within knitr.
-input  = knitr::current_input()  # filename of input document
-output = paste(tools::file_path_sans_ext(input), 'R', sep = '.')
-knitr::purl(input,output,documentation=2,quiet=T)
-# Avoid duplicate label error of knitr::purl
-options(knitr.duplicate.label = 'allow')
-# Code to browse the markdown file with renderized images.
-knitr::opts_chunk$set(
-  fig.path = "figs/render-"
-)
-```
-
-
-```{r message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE}
+#' 
+#' 
+## ----message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE------------
 # Set the packages of interest
 packages = c("tidyverse","skimr","finalfit")
 
@@ -45,30 +34,30 @@ package.check <- lapply(packages, FUN = function(x) {
 
 suppressMessages(library("tidyverse"))
 setwd(".")
-```
 
-
-## 1. Importing data
-
-```{r message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE}
+#' 
+#' 
+#' ## 1. Importing data
+#' 
+## ----message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE------------
 
 kirc_clinic <- read_csv("data/kirc_clinic.csv")
 
-```
 
-## 2. Taming data 
-
-```{r}
+#' 
+#' ## 2. Taming data 
+#' 
+## -----------------------------------------------------------------------------
 kirc_clinic <- kirc_clinic %>%
   mutate_if(is.character, as.factor) %>%
   mutate(patient_id = as.character(patient_id))
-```
 
-## 3. Checking categorical variables
-
-check frequency, lables and levels 
-
-```{r}
+#' 
+#' ## 3. Checking categorical variables
+#' 
+#' check frequency, lables and levels 
+#' 
+## -----------------------------------------------------------------------------
 kirc_clinic %>%
   select_if(is.factor) %>%
   summary() 
@@ -101,20 +90,20 @@ kirc_clinic <- kirc_clinic %>%
 
 kirc_clinic <- kirc_clinic %>%
   mutate(tissue_site = fct_recode(tissue_site, NULL = '3Z', NULL='6D', NULL='DV', NULL='EU', NULL='G', NULL='M', NULL='T7'))
-```
 
-## 4. Checking variables
-
-```{r}
+#' 
+#' ## 4. Checking variables
+#' 
+## -----------------------------------------------------------------------------
 glimpse(kirc_clinic)
 skim(kirc_clinic) 
 #View(kirc_clinic)
-```
 
-## 5. Numeric variables vs. over_surv_stt
-graphic visualization and t-test
-
-```{r}
+#' 
+#' ## 5. Numeric variables vs. over_surv_stt
+#' graphic visualization and t-test
+#' 
+## -----------------------------------------------------------------------------
 # PATRICK: codigo para analizar todas as variaveis numericas?
 kirc_clinic %>%
   select_if(is.numeric) %>%
@@ -164,13 +153,13 @@ ggplot(kirc_clinic, aes(x=over_surv_stt, y=second_long_dim)) +
 t.test(kirc_clinic$second_long_dim ~ kirc_clinic$over_surv_stt)
 
 # fazer uma table com as variaveis dependentes, indpendente e p-valores
-```
 
-## 4. Categorical variables vs. over_surv_stt
-
-Tabulation and chi-square test
-
-```{r}
+#' 
+#' ## 4. Categorical variables vs. over_surv_stt
+#' 
+#' Tabulation and chi-square test
+#' 
+## -----------------------------------------------------------------------------
 # talvez isso possa sair uma vez que ja tem a mesma analise com tablefit
 kirc_clinic %>%
   select_if(is.factor) %>%
@@ -255,13 +244,13 @@ t_wbc <- table(kirc_clinic$wbc, kirc_clinic$over_surv_stt, exclude = NULL)
 t_wbc <- addmargins(round(100*prop.table(t_wbc)))
 t_wbc
 chisq.test(x = kirc_clinic$wbc, y = kirc_clinic$over_surv_stt) 
-```
 
-## 7. FinalFit
-
-summarise variables/factors by a categorical variable
-
-```{r}
+#' 
+#' ## 7. FinalFit
+#' 
+#' summarise variables/factors by a categorical variable
+#' 
+## -----------------------------------------------------------------------------
 explanatory <- names(kirc_clinic %>%
               select(-over_surv_stt) %>%
               select_if(is.factor))
@@ -273,13 +262,13 @@ table_fit
 warnings()
 
 #knitr::kable(table_fit, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
-```
 
-## Further analysis
-
-- [A logistic regression analysis](3.logistic_regression.md) of each clinical variable weight.
-
-```{r}
+#' 
+#' ## Further analysis
+#' 
+#' - [A logistic regression analysis](3.logistic_regression.md) of each clinical variable weight.
+#' 
+## -----------------------------------------------------------------------------
 sessionInfo()
-```
 
+#' 
