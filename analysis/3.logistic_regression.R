@@ -5,6 +5,8 @@
 #'     default
 #'   github_document: 
 #'     df_print: paged
+#'     html_preview: FALSE
+#'     keep_html: TRUE
 #'   pdf_document:
 #'     latex_engine: xelatex
 #' knit: (function(inputFile, encoding) {
@@ -20,7 +22,7 @@
 
 #' 
 #' 
-## ----message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE------------
+## ----message=FALSE, warning=FALSE, paged.print=FALSE--------------------------
 # Set the packages of interest
 packages = c("tidyverse","skimr","finalfit")
 
@@ -50,8 +52,5 @@ kirc_clinic <- read_csv("data/kirc_clinic.csv")
 #' 
 ## -----------------------------------------------------------------------------
 sessionInfo()
-
-#' 
-#' 
 
 #' 

@@ -5,6 +5,8 @@ output:
     default
   github_document: 
     df_print: paged
+    html_preview: FALSE
+    keep_html: TRUE
   pdf_document:
     latex_engine: xelatex
 knit: (function(inputFile, encoding) {
@@ -17,7 +19,7 @@ Previously, we presented a [An exploratory preprocessing analysis](1.preprocessi
 
 In this final section, we present a logistic regression analysis of each clinical variable weight for TCGA-KIRC.
 
-```{r, echo=FALSE, message=FALSE, results='hide', purl=FALSE}
+```{r error=TRUE, message=FALSE, warning=FALSE, include=FALSE, purl=FALSE, results='hide'}
 ## This chunk automatically generates a text .R version of this script when running within knitr.
 input  = knitr::current_input()  # filename of input document
 output = paste(tools::file_path_sans_ext(input), 'R', sep = '.')
@@ -31,7 +33,7 @@ knitr::opts_chunk$set(
 ```
 
 
-```{r message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE}
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 # Set the packages of interest
 packages = c("tidyverse","skimr","finalfit")
 
@@ -61,13 +63,5 @@ kirc_clinic <- read_csv("data/kirc_clinic.csv")
 
 ```{r}
 sessionInfo()
-```
-
-
-```{r, echo=FALSE, message=FALSE, results='hide', purl=FALSE}
-## This chunk automatically generates a text .R version of this script when running within knitr.
-input  = knitr::current_input()  # filename of input document
-output = paste(tools::file_path_sans_ext(input), 'R', sep = '.')
-knitr::purl(input,output,documentation=2,quiet=T)
 ```
 

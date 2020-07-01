@@ -5,6 +5,8 @@
 #'     default
 #'   github_document: 
 #'     df_print: paged
+#'     html_preview: FALSE
+#'     keep_html: TRUE
 #'   pdf_document:
 #'     latex_engine: xelatex
 #' knit: (function(inputFile, encoding) {
@@ -44,6 +46,9 @@ kirc_clin_raw <- read_delim("data/kirc_tcga_clinical_data.tsv", "\t",
                             escape_double = FALSE, 
                             trim_ws = TRUE)
 
+#' 
+#' 
+## ----echo=FALSE, message=FALSE, results='hide', paged.print=TRUE--------------
 class(kirc_clin_raw) 
 dim(kirc_clin_raw) 
 names(kirc_clin_raw) 
@@ -161,7 +166,7 @@ kirc_clean4 <- kirc_clean4 %>%
             race = 'Race Category',
             tissue_retrospect = 'Tissue Retrospective Collection Indicator',
             serum_ca = 'Serum calcium level',
-            sex = 'Sex',
+            gender = 'Sex',
             short_dim = 'Shortest Dimension',
             second_long_dim = 'Specimen Second Longest Dimension',
             tissue_site = 'Tissue Source Site',
@@ -279,79 +284,75 @@ kirc_clean4 %>%
      summary() 
 
 # agregating levels
-kirc_clean5 <- kirc_clean4 %>%
+kirc_clinic <- kirc_clean4 %>%
      mutate(tumor_stg = fct_collapse(tumor_stg,
                              T1 = c('T1', 'T1a', 'T1b'),
                              T2 = c('T2', 'T2a', 'T2b'),
                              T3 = c('T3', 'T3a', 'T3b', 'T3c')))
 
-kirc_clean5 <- kirc_clean4 %>%
+kirc_clinic <- kirc_clinic %>%
      mutate(prior_cancer = fct_collapse(prior_cancer, 
                Yes = c('Yes', 'Yes, History of Prior Malignancy', 'Yes, History of Synchronous/Bilateral Malignancy')))
 
-kirc_clean5 <- kirc_clean4 %>%
-     mutate(sex = fct_collapse(sex, Male = c('MALE', 'Male')))
+kirc_clinic <- kirc_clinic %>%
+     mutate(gender = fct_collapse(gender, Male = c('MALE', 'Male')))
                                         
-kirc_clean5 <- kirc_clean4 %>%
+kirc_clinic <- kirc_clinic %>%
      mutate(tissue_site = fct_collapse(tissue_site,
                          A = c('A3', 'AK', 'AS'),
                          B = c('B0', 'B2', 'B4', 'B8', 'BP'),
                          C = c('CJ', 'CW', 'CZ'),
-                         G = c('G6', 'GK'),
-                         M = c('MM', 'MW')))
+                         OTHERS = c('G6', 'GK', 'MM', 'MW',
+                                    '3Z', '6D', 'DV', 'EU', 'T7')))
 
 # droping levels
-kirc_clean5 <- kirc_clean4 %>%
+kirc_clinic <- kirc_clinic %>%
      mutate(race = fct_recode(race, NULL = 'ASIAN'))
 
-kirc_clean5 <- kirc_clean4 %>%
-  mutate(tissue_site = fct_recode(tissue_site, NULL = '3Z', NULL='6D', NULL='DV', NULL='EU', NULL='G', NULL='M', NULL='T7'))
-
-            
-# kirc_clean5 <- kirc_clean4 %>%
+# kirc_clinic <- kirc_clinic %>%
 #     mutate(race = fct_drop(race, only = 'ASIAN'))
 
 # recoding levels
 # OBS: It can be donne latter, for regression analysis
 # 
-# kirc_clean5 <- kirc_clean4 %>%
-#      mutate(sex = fct_recode(sex, '1'='Male', '2'='Female'))
+# kirc_clinic <- kirc_clinic %>%
+#      mutate(gender = fct_recode(gender, '1'='Male', '2'='Female'))
 # 
-# kirc_clean5 <- kirc_clean4 %>%
-#      mutate(sex = if_else(sex %in% c('Male', 'Female'), 1, 0))
+# kirc_clinic <- kirc_clinic %>%
+#      mutate(gender = if_else(gender %in% c('Male', 'Female'), 1, 0))
 
 
 #' 
 ## -----------------------------------------------------------------------------
-# table(kirc_clean5$metastasis_stg, exclude = NULL)
-# table(kirc_clean5$neoplasm_ln_stg, exclude = NULL)
-# table(kirc_clean5$neoplasm_stg, exclude = NULL)
-# table(kirc_clean5$tumor_stg, exclude = NULL)
-# table(kirc_clean45disease_free_stt, exclude = NULL)
-# table(kirc_clean5$ethnicity, exclude = NULL)
-# table(kirc_clean5$histology_grd, exclude = NULL)
-# table(kirc_clean5$hemoglobin, exclude = NULL)
-# table(kirc_clean5$neoadj_therapy, exclude = NULL)
-# table(kirc_clean5$prior_cancer, exclude = NULL)
-# table(kirc_clean5$tumor_lateral, exclude = NULL)
-# table(kirc_clean5$primer_ln_ind3, exclude = NULL)
-# table(kirc_clean5platelet, exclude = NULL)
-# table(kirc_clean5$tissue_prospect, exclude = NULL)
-# table(kirc_clean5$race, exclude = NULL)
-# table(kirc_clean5$tissue_retrospect, exclude = NULL)
-# table(kirc_clean5$serum_ca, exclude = NULL)
-# table(kirc_clean5$sex, exclude = NULL)
-# table(kirc_clean5$tissue_site, exclude = NULL)
-# table(kirc_clean5$person_neoplasm_stt, exclude = NULL)
-# table(kirc_clean5$wbc, exclude = NULL)
+# table(kirc_clinic$metastasis_stg, exclude = NULL)
+# table(kirc_clinic$neoplasm_ln_stg, exclude = NULL)
+# table(kirc_clinic$neoplasm_stg, exclude = NULL)
+# table(kirc_clinic$tumor_stg, exclude = NULL)
+# table(kirc_clinic$disease_free_stt, exclude = NULL)
+# table(kirc_clinic$ethnicity, exclude = NULL)
+# table(kirc_clinic$histology_grd, exclude = NULL)
+# table(kirc_clinic$hemoglobin, exclude = NULL)
+# table(kirc_clinic$neoadj_therapy, exclude = NULL)
+# table(kirc_clinic$prior_cancer, exclude = NULL)
+# table(kirc_clinic$tumor_lateral, exclude = NULL)
+# table(kirc_clinic$primer_ln_ind3, exclude = NULL)
+# table(kirc_clinic$platelet, exclude = NULL)
+# table(kirc_clinic$tissue_prospect, exclude = NULL)
+# table(kirc_clinic$race, exclude = NULL)
+# table(kirc_clinic$tissue_retrospect, exclude = NULL)
+# table(kirc_clinic$serum_ca, exclude = NULL)
+# table(kirc_clinic$gender, exclude = NULL)
+# table(kirc_clinic$tissue_site, exclude = NULL)
+# table(kirc_clinic$person_neoplasm_stt, exclude = NULL)
+# table(kirc_clinic$wbc, exclude = NULL)
 
 #' 
 #' ## 8. Saving dataset
 #' 
 ## -----------------------------------------------------------------------------
-write_csv(kirc_clean5, path = "data/kirc_clinic.csv")
+write_csv(kirc_clinic, path = "data/kirc_clinic.csv")
 
-rm(kirc_clean4, kirc_clean3, kirc_clean2, kirc_clean1, kirc_clean0, kirc_clean)
+rm(kirc_clean4, kirc_clean3, kirc_clean2, kirc_clean1, kirc_clean0, kirc_clean, NA_sum, NA_fifty)
 
 #' 
 #' ## Further analysis

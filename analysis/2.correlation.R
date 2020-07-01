@@ -5,6 +5,8 @@
 #'     default
 #'   github_document: 
 #'     df_print: paged
+#'     html_preview: FALSE
+#'     keep_html: TRUE
 #'   pdf_document:
 #'     latex_engine: xelatex
 #' knit: (function(inputFile, encoding) {
@@ -19,9 +21,9 @@
 
 #' 
 #' 
-## ----message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE------------
+## ----message=FALSE, warning=FALSE, paged.print=FALSE--------------------------
 # Set the packages of interest
-packages = c("tidyverse","skimr","finalfit")
+packages = c("tidyverse","skimr","finalfit","rstatix","ggpubr","GGally")
 
 # if a package is installed, it will be loaded
 # otherwise, the missing package(s) will be installed and loaded
@@ -39,7 +41,7 @@ setwd(".")
 #' 
 #' ## 1. Importing data
 #' 
-## ----message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE------------
+## ----message=FALSE, warning=FALSE, paged.print=FALSE--------------------------
 
 kirc_clinic <- read_csv("data/kirc_clinic.csv")
 
@@ -57,39 +59,11 @@ kirc_clinic <- kirc_clinic %>%
 #' 
 #' check frequency, lables and levels 
 #' 
-## -----------------------------------------------------------------------------
+## ----echo=FALSE---------------------------------------------------------------
+
 kirc_clinic %>%
   select_if(is.factor) %>%
   summary() 
-
-# agregating levels
-kirc_clinic <- kirc_clinic %>%
-  mutate(tumor_stg = fct_collapse(tumor_stg,
-                                  T1 = c('T1', 'T1a', 'T1b'),
-                                  T2 = c('T2', 'T2a', 'T2b'),
-                                  T3 = c('T3', 'T3a', 'T3b', 'T3c')))
-
-kirc_clinic <- kirc_clinic %>%
-  mutate(prior_cancer = fct_collapse(prior_cancer, 
-                                     Yes = c('Yes', 'Yes, History of Prior Malignancy', 'Yes, History of Synchronous/Bilateral Malignancy')))
-
-kirc_clinic <- kirc_clinic %>%
-  mutate(sex = fct_collapse(sex, Male = c('MALE', 'Male')))
-
-kirc_clinic <- kirc_clinic %>%
-  mutate(tissue_site = fct_collapse(tissue_site,
-                                    A = c('A3', 'AK', 'AS'),
-                                    B = c('B0', 'B2', 'B4', 'B8', 'BP'),
-                                    C = c('CJ', 'CW', 'CZ'),
-                                    G = c('G6', 'GK'),
-                                    M = c('MM', 'MW')))
-
-# droping levels
-kirc_clinic <- kirc_clinic %>%
-  mutate(race = fct_recode(race, NULL = 'ASIAN'))
-
-kirc_clinic <- kirc_clinic %>%
-  mutate(tissue_site = fct_recode(tissue_site, NULL = '3Z', NULL='6D', NULL='DV', NULL='EU', NULL='G', NULL='M', NULL='T7'))
 
 #' 
 #' ## 4. Checking variables
@@ -103,15 +77,119 @@ skim(kirc_clinic)
 #' ## 5. Numeric variables vs. over_surv_stt
 #' graphic visualization and t-test
 #' 
+#' 
+## ----message=FALSE, warning=FALSE---------------------------------------------
+
+cols_numeric <- kirc_clinic %>% select_if(is.numeric) %>% names
+
+kirc_clinic_numeric <- kirc_clinic %>%
+                      select(one_of(c(cols_numeric, "over_surv_stt")))  
+
+levels(kirc_clinic_numeric$over_surv_stt) <- c("D","L")
+
+ggpairs(kirc_clinic_numeric, columns = cols_numeric, 
+        title="Correlation matrix",               
+        mapping= aes(colour = over_surv_stt), 
+        upper = list(combo = wrap("box_no_facet", alpha=0.1), 
+                     continuous = wrap("cor", size = 2, alignPercent = 0.8)),
+        lower = list(continuous = wrap("smooth", alpha = 0.3, size=0.2) )) +
+        theme(panel.background = element_rect(color = "black", size=0.5, fill="white"),
+          panel.grid.major = element_blank()) 
+        
+
+#' 
+#' ### 5.1 Run multiple T-tests on over_surv_stt
+#' 
+#' Transform the data into long format
+#' 
 ## -----------------------------------------------------------------------------
-# PATRICK: codigo para analizar todas as variaveis numericas?
-kirc_clinic %>%
-  select_if(is.numeric) %>%
-  summary()
+# Put all variables in the same column except `over_surv_stt`, the grouping variable
+
+levels(kirc_clinic_numeric$over_surv_stt) <- c("DECEASED","LIVING")
+
+kirc_clinic_numeric.long <- kirc_clinic_numeric %>%
+  pivot_longer(-over_surv_stt, names_to = "variables", values_to = "value")
+
+kirc_clinic_numeric.long <- kirc_clinic_numeric.long[!is.na(kirc_clinic_numeric.long$value), ]
+
+kirc_clinic_numeric.long$value.log <- log2(kirc_clinic_numeric.long$value+1)
+
+kirc_clinic_numeric.long %>% sample_n(6)
+
+#' 
+#' Group the data by variables and compare over_surv_stt groups
+#' 
+#' Adjust the p-values and add significance levels
+#' 
+## -----------------------------------------------------------------------------
+stat.test <- kirc_clinic_numeric.long %>%
+  group_by(variables) %>%
+  t_test(value ~ over_surv_stt) %>%
+  adjust_pvalue(method = "BH") %>%
+  add_significance()
+stat.test
+
+#' 
+#' 
+#' 
+## -----------------------------------------------------------------------------
+# Create the plot on logscale
+myplot <- ggboxplot(
+  kirc_clinic_numeric.long, x = "over_surv_stt", y = "value.log",
+  fill = "over_surv_stt", palette = "npg", legend = "none", 
+  ggtheme = theme_pubr(border = TRUE)
+  ) +
+  facet_wrap(~variables)
+# Add statistical test p-values
+stat.test <- stat.test %>% add_xy_position(x = "over_surv_stt")
+myplot + stat_pvalue_manual(stat.test, label = "p.adj.signif")
+
+#' 
+#' 
+## -----------------------------------------------------------------------------
+# Group the data by variables and do a graph for each variable
+graphs <- kirc_clinic_numeric.long %>%
+  group_by(variables) %>%
+  doo(
+    ~ggboxplot(
+      data =., x = "over_surv_stt", y = "value",
+      fill = "over_surv_stt", palette = "npg", legend = "none",
+      ggtheme = theme_pubr()
+      )  +
+      geom_jitter(width = 0.05, alpha = 0.2, color = "orange"), 
+    result = "plots"
+  )
+graphs
+
+
+
+#' 
+#' 
+## -----------------------------------------------------------------------------
+
+# Add statitistical tests to each corresponding plot
+variables <- graphs$variables
+for(i in 1:length(variables)){
+  graph.i <- graphs$plots[[i]] + 
+    labs(title = variables[i]) +
+    stat_pvalue_manual(stat.test[i, ], label = "p.adj.signif")
+  print(graph.i)
+}
+
+
+
+
+#' 
+#' 
+## -----------------------------------------------------------------------------
 
 ggplot(kirc_clinic, aes(age, fill= over_surv_stt)) +
   geom_histogram(bins = 15, position = "dodge")
 t.test(kirc_clinic$age ~ kirc_clinic$over_surv_stt) 
+
+ggplot(kirc_clinic, aes(year_diagnose, fill= over_surv_stt)) +
+  geom_histogram(bins = 15, position = "dodge")
+t.test(kirc_clinic$year_diagnose ~ kirc_clinic$over_surv_stt) 
 
 ggplot(kirc_clinic, aes(x=over_surv_stt, y=disease_free_mth)) +
   geom_boxplot(width = .5) +
@@ -122,10 +200,6 @@ ggplot(kirc_clinic, aes(x=over_surv_stt, y=frac_genome_alter)) +
   geom_boxplot(width = .5) +
   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
 t.test(kirc_clinic$frac_genome_alter ~ kirc_clinic$over_surv_stt)
-
-ggplot(kirc_clinic, aes(year_diagnose, fill= over_surv_stt)) +
-  geom_histogram(bins = 15, position = "dodge")
-t.test(kirc_clinic$year_diagnose ~ kirc_clinic$over_surv_stt) 
 
 ggplot(kirc_clinic, aes(x=over_surv_stt, y=long_dim)) +
   geom_boxplot(width = .5) +
@@ -159,7 +233,7 @@ t.test(kirc_clinic$second_long_dim ~ kirc_clinic$over_surv_stt)
 #' 
 #' Tabulation and chi-square test
 #' 
-## -----------------------------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 # talvez isso possa sair uma vez que ja tem a mesma analise com tablefit
 kirc_clinic %>%
   select_if(is.factor) %>%
@@ -225,10 +299,10 @@ t_ca <- addmargins(round(100*prop.table(t_ca)))
 t_ca
 chisq.test(x = kirc_clinic$serum_ca, y = kirc_clinic$over_surv_stt) 
 
-t_sex <- table(kirc_clinic$sex, kirc_clinic$over_surv_stt, exclude = NULL)
-t_sex <- addmargins(round(100*prop.table(t_sex)))
-t_sex
-chisq.test(x = kirc_clinic$sex, y = kirc_clinic$over_surv_stt) 
+t_gender <- table(kirc_clinic$gender, kirc_clinic$over_surv_stt, exclude = NULL)
+t_gender <- addmargins(round(100*prop.table(t_gender)))
+t_gender
+chisq.test(x = kirc_clinic$gender, y = kirc_clinic$over_surv_stt) 
 
 t_site <- table(kirc_clinic$tissue_site, kirc_clinic$over_surv_stt, exclude = NULL)
 t_site <- addmargins(round(100*prop.table(t_site)))
@@ -250,7 +324,7 @@ chisq.test(x = kirc_clinic$wbc, y = kirc_clinic$over_surv_stt)
 #' 
 #' summarise variables/factors by a categorical variable
 #' 
-## -----------------------------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 explanatory <- names(kirc_clinic %>%
               select(-over_surv_stt) %>%
               select_if(is.factor))
