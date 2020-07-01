@@ -13,9 +13,9 @@ knit: (function(inputFile, encoding) {
   rmarkdown::render(inputFile, encoding = encoding, output_format = "all") })     
 ---
 
-This project contains a pipeline of clinical analysis of the Cancer Genome Atlas Kidney Renal Clear Cell Carcinoma (TCGA-KIRC) data of patients from [Genomic Data Commons Data Portal](https://portal.gdc.cancer.gov/exploration?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.project_id%22%2C%22value%22%3A%5B%22TCGA-KIRC%22%5D%7D%7D%5D%7D) and [cBioPortal](https://www.cbioportal.org/study/summary?id=kirp_tcga).
+This project contains a pipeline of clinical analysis of the Cancer Genome Atlas Kidney Renal Clear Cell Carcinoma (TCGA-KIRC) data of patients, from [Genomic Data Commons Data Portal](https://portal.gdc.cancer.gov/exploration?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.project_id%22%2C%22value%22%3A%5B%22TCGA-KIRC%22%5D%7D%7D%5D%7D) and [cBioPortal](https://www.cbioportal.org/study/summary?id=kirp_tcga).
 
-Previously, we presented [an exploratory preprocessing analysis](1.preprocessing.md). In this section, we present a correlation analysis with t-test and ANOVA test to investigate significative distinctions between clinical variables according to their vital status. 
+Previously, we presented [an exploratory preprocessing analysis](1.preprocessing.md). In this section, Chi-squared test is applied to compare two or more proportions of categorical variables and T-student test to compare the means of numeric ones regardind the levels of 'Overall_Survival_Status'. The Hypoteis test is performed and p-value indicates the strength of evidence in supportting the null hypothesis.
 
 
 ```{r error=TRUE, message=FALSE, warning=FALSE, include=FALSE, purl=FALSE, results='hide'}
@@ -171,8 +171,6 @@ graphs <- kirc_clinic_numeric.long %>%
     result = "plots"
   )
 graphs
-
-
 ```
 
 
@@ -186,9 +184,6 @@ for(i in 1:length(variables)){
     stat_pvalue_manual(stat.test[i, ], label = "p.adj.signif")
   print(graph.i)
 }
-
-
-
 ```
 
 
