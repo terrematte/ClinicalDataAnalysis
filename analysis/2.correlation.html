@@ -907,20 +907,21 @@ levels(kirc_clinic_numeric$over_surv_stt) &lt;- c(&quot;DECEASED&quot;,&quot;LIV
 kirc_clinic_numeric.long &lt;- kirc_clinic_numeric %&gt;%
   pivot_longer(-over_surv_stt, names_to = &quot;variables&quot;, values_to = &quot;value&quot;)
 
+# Convert to Tidyverse
 kirc_clinic_numeric.long &lt;- kirc_clinic_numeric.long[!is.na(kirc_clinic_numeric.long$value), ]
 
 kirc_clinic_numeric.long$value.log &lt;- log2(kirc_clinic_numeric.long$value+1)</code></pre>
 <pre><code>## Warning: NaNs produced</code></pre>
 <pre class="r"><code>kirc_clinic_numeric.long %&gt;% sample_n(6)</code></pre>
 <pre><code>## # A tibble: 6 x 4
-##   over_surv_stt variables          value value.log
-##   &lt;fct&gt;         &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;
-## 1 LIVING        year_diagnose    2007       11.0  
-## 2 DECEASED      disease_free_mth    2        1.58 
-## 3 LIVING        over_surv_mth       4.93     2.57 
-## 4 LIVING        year_diagnose    2010       11.0  
-## 5 LIVING        short_dim           0.3      0.379
-## 6 LIVING        over_surv_mth      45.3      5.53</code></pre>
+##   over_surv_stt variables            value value.log
+##   &lt;fct&gt;         &lt;chr&gt;                &lt;dbl&gt;     &lt;dbl&gt;
+## 1 DECEASED      short_dim            1         1    
+## 2 LIVING        long_dim             0.9       0.926
+## 3 LIVING        frac_genome_alter    0.104     0.143
+## 4 DECEASED      disease_free_mth    25.7       4.74 
+## 5 DECEASED      short_dim            0.6       0.678
+## 6 DECEASED      year_diagnose     2005        11.0</code></pre>
 <p>Group the data by variables and compare over_surv_stt groups</p>
 <p>Adjust the p-values and add significance levels</p>
 <pre class="r"><code>stat.test &lt;- kirc_clinic_numeric.long %&gt;%
@@ -1444,135 +1445,629 @@ t_wbc</code></pre>
 <div id="finalfit" class="section level2">
 <h2>7. FinalFit</h2>
 <p>summarise variables/factors by a categorical variable</p>
-<pre class="r"><code>explanatory &lt;- names(kirc_clinic %&gt;%
+<pre class="r"><code>#  warning=FALSE
+explanatory &lt;- names(kirc_clinic %&gt;%
               select(-over_surv_stt) %&gt;%
               select_if(is.factor))
 dependent &lt;-  'over_surv_stt'
 
 table_fit &lt;- kirc_clinic %&gt;%
-  summary_factorlist(dependent, explanatory, p=TRUE, add_dependent_label=TRUE)
-table_fit</code></pre>
-<pre><code>##  Dependent: over_surv_stt                             DECEASED     LIVING
-##            metastasis_stg                        M0 110 (62.1) 316 (88.3)
-##                                                  M1  64 (36.2)   15 (4.2)
-##                                                  MX    3 (1.7)   27 (7.5)
-##           neoplasm_ln_stg                        N0  85 (48.0) 155 (43.1)
-##                                                  N1   12 (6.8)    5 (1.4)
-##                                                  NX  80 (45.2) 200 (55.6)
-##              neoplasm_stg                   Stage I  45 (25.6) 224 (62.6)
-##                                            Stage II   13 (7.4)  44 (12.3)
-##                                           Stage III  51 (29.0)  74 (20.7)
-##                                            Stage IV  67 (38.1)   16 (4.5)
-##                 tumor_stg                        T1  50 (28.2) 225 (62.5)
-##                                                  T2  21 (11.9)  48 (13.3)
-##                                                  T3  96 (54.2)  86 (23.9)
-##                                                  T4   10 (5.6)    1 (0.3)
-##          disease_free_stt       Recurred/Progressed 78 (100.0)  49 (13.6)
-##                                         DiseaseFree            311 (86.4)
-##                 ethnicity        HISPANIC OR LATINO    3 (2.2)   23 (9.2)
-##                              NOT HISPANIC OR LATINO 132 (97.8) 227 (90.8)
-##             histology_grd                        G2  45 (25.4) 185 (51.8)
-##                                                  G3  74 (41.8) 133 (37.3)
-##                                                  G4  57 (32.2)   21 (5.9)
-##                                                  GX    1 (0.6)    4 (1.1)
-##                                                  G1              14 (3.9)
-##                hemoglobin                  Elevated    3 (1.8)    2 (0.7)
-##                                                 Low 118 (72.0) 145 (50.0)
-##                                              Normal  43 (26.2) 143 (49.3)
-##            neoadj_therapy                        No 167 (94.4) 352 (97.8)
-##                                                 Yes   10 (5.6)    8 (2.2)
-##              prior_cancer                        No 153 (86.4) 306 (85.0)
-##                                                 Yes  24 (13.6)  54 (15.0)
-##             tumor_lateral                      Left  98 (55.4) 155 (43.1)
-##                                               Right  79 (44.6) 204 (56.7)
-##                                           Bilateral               1 (0.3)
-##            primer_ln_ind3                        NO 120 (68.2) 275 (77.7)
-##                                                 YES  56 (31.8)  79 (22.3)
-##                  platelet                  Elevated  30 (19.0)    8 (2.8)
-##                                                 Low  20 (12.7)   26 (9.1)
-##                                              Normal 108 (68.4) 252 (88.1)
-##           tissue_prospect                        NO 169 (98.8) 296 (85.5)
-##                                                 YES    2 (1.2)  50 (14.5)
-##                      race BLACK OR AFRICAN AMERICAN   11 (6.3)  45 (12.9)
-##                                               WHITE 163 (93.7) 303 (87.1)
-##         tissue_retrospect                        NO    2 (1.2)  51 (14.7)
-##                                                 YES 169 (98.8) 297 (85.3)
-##                  serum_ca                  Elevated    9 (6.6)    1 (0.4)
-##                                                 Low  66 (48.2) 138 (60.5)
-##                                              Normal  62 (45.3)  89 (39.0)
-##                    gender                    Female  65 (36.7) 126 (35.0)
-##                                                Male 112 (63.3) 234 (65.0)
-##               tissue_site                         A   11 (6.2)  68 (18.9)
-##                                                   B 112 (63.3) 191 (53.1)
-##                                                   C  49 (27.7)  78 (21.7)
-##                                              OTHERS    5 (2.8)   23 (6.4)
-##       person_neoplasm_stt                TUMOR FREE  57 (35.2) 304 (89.4)
-##                                          WITH TUMOR 105 (64.8)  36 (10.6)
-##                       wbc                  Elevated  46 (29.5) 118 (41.4)
-##                                                 Low    6 (3.8)    3 (1.1)
-##                                              Normal 104 (66.7) 164 (57.5)
-##       p
-##  &lt;0.001
-##        
-##        
-##   0.001
-##        
-##        
-##  &lt;0.001
-##        
-##        
-##        
-##  &lt;0.001
-##        
-##        
-##        
-##  &lt;0.001
-##        
-##   0.017
-##        
-##  &lt;0.001
-##        
-##        
-##        
-##        
-##  &lt;0.001
-##        
-##        
-##   0.069
-##        
-##   0.753
-##        
-##   0.023
-##        
-##        
-##   0.024
-##        
-##  &lt;0.001
-##        
-##        
-##  &lt;0.001
-##        
-##   0.032
-##        
-##  &lt;0.001
-##        
-##   0.001
-##        
-##        
-##   0.767
-##        
-##  &lt;0.001
-##        
-##        
-##        
-##  &lt;0.001
-##        
-##   0.011
-##        
-## </code></pre>
-<pre class="r"><code>warnings()
+  summary_factorlist(dependent, explanatory, p=TRUE, add_dependent_label=TRUE,  na_include = TRUE)</code></pre>
+<pre><code>## Warning in chisq.test(tumor_stg, over_surv_stt): Chi-squared approximation may
+## be incorrect</code></pre>
+<pre><code>## Warning in chisq.test(histology_grd, over_surv_stt): Chi-squared approximation
+## may be incorrect</code></pre>
+<pre><code>## Warning in chisq.test(hemoglobin, over_surv_stt): Chi-squared approximation may
+## be incorrect</code></pre>
+<pre><code>## Warning in chisq.test(tumor_lateral, over_surv_stt): Chi-squared approximation
+## may be incorrect</code></pre>
+<pre><code>## Warning in chisq.test(serum_ca, over_surv_stt): Chi-squared approximation may be
+## incorrect</code></pre>
+<pre><code>## Warning in chisq.test(wbc, over_surv_stt): Chi-squared approximation may be
+## incorrect</code></pre>
+<pre class="r"><code>knitr::kable(table_fit, row.names=FALSE, align=c(&quot;l&quot;, &quot;l&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Dependent: over_surv_stt</th>
+<th></th>
+<th align="right">DECEASED</th>
+<th align="right">LIVING</th>
+<th align="right">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">metastasis_stg</td>
+<td>M0</td>
+<td align="right">110 (62.1)</td>
+<td align="right">316 (87.8)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>M1</td>
+<td align="right">64 (36.2)</td>
+<td align="right">15 (4.2)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>MX</td>
+<td align="right">3 (1.7)</td>
+<td align="right">27 (7.5)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right"></td>
+<td align="right">2 (0.6)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">neoplasm_ln_stg</td>
+<td>N0</td>
+<td align="right">85 (48.0)</td>
+<td align="right">155 (43.1)</td>
+<td align="right">0.001</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>N1</td>
+<td align="right">12 (6.8)</td>
+<td align="right">5 (1.4)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>NX</td>
+<td align="right">80 (45.2)</td>
+<td align="right">200 (55.6)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">neoplasm_stg</td>
+<td>Stage I</td>
+<td align="right">45 (25.4)</td>
+<td align="right">224 (62.2)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>Stage II</td>
+<td align="right">13 (7.3)</td>
+<td align="right">44 (12.2)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>Stage III</td>
+<td align="right">51 (28.8)</td>
+<td align="right">74 (20.6)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>Stage IV</td>
+<td align="right">67 (37.9)</td>
+<td align="right">16 (4.4)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right">1 (0.6)</td>
+<td align="right">2 (0.6)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">tumor_stg</td>
+<td>T1</td>
+<td align="right">50 (28.2)</td>
+<td align="right">225 (62.5)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>T2</td>
+<td align="right">21 (11.9)</td>
+<td align="right">48 (13.3)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>T3</td>
+<td align="right">96 (54.2)</td>
+<td align="right">86 (23.9)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>T4</td>
+<td align="right">10 (5.6)</td>
+<td align="right">1 (0.3)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">disease_free_stt</td>
+<td>Recurred/Progressed</td>
+<td align="right">78 (44.1)</td>
+<td align="right">49 (13.6)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right">99 (55.9)</td>
+<td align="right"></td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>DiseaseFree</td>
+<td align="right"></td>
+<td align="right">311 (86.4)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">ethnicity</td>
+<td>HISPANIC OR LATINO</td>
+<td align="right">3 (1.7)</td>
+<td align="right">23 (6.4)</td>
+<td align="right">0.017</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>NOT HISPANIC OR LATINO</td>
+<td align="right">132 (74.6)</td>
+<td align="right">227 (63.1)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right">42 (23.7)</td>
+<td align="right">110 (30.6)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">histology_grd</td>
+<td>G2</td>
+<td align="right">45 (25.4)</td>
+<td align="right">185 (51.4)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>G3</td>
+<td align="right">74 (41.8)</td>
+<td align="right">133 (36.9)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>G4</td>
+<td align="right">57 (32.2)</td>
+<td align="right">21 (5.8)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>GX</td>
+<td align="right">1 (0.6)</td>
+<td align="right">4 (1.1)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>G1</td>
+<td align="right"></td>
+<td align="right">14 (3.9)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right"></td>
+<td align="right">3 (0.8)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">hemoglobin</td>
+<td>Elevated</td>
+<td align="right">3 (1.7)</td>
+<td align="right">2 (0.6)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>Low</td>
+<td align="right">118 (66.7)</td>
+<td align="right">145 (40.3)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>Normal</td>
+<td align="right">43 (24.3)</td>
+<td align="right">143 (39.7)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right">13 (7.3)</td>
+<td align="right">70 (19.4)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">neoadj_therapy</td>
+<td>No</td>
+<td align="right">167 (94.4)</td>
+<td align="right">352 (97.8)</td>
+<td align="right">0.069</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>Yes</td>
+<td align="right">10 (5.6)</td>
+<td align="right">8 (2.2)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">prior_cancer</td>
+<td>No</td>
+<td align="right">153 (86.4)</td>
+<td align="right">306 (85.0)</td>
+<td align="right">0.753</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>Yes</td>
+<td align="right">24 (13.6)</td>
+<td align="right">54 (15.0)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">tumor_lateral</td>
+<td>Left</td>
+<td align="right">98 (55.4)</td>
+<td align="right">155 (43.1)</td>
+<td align="right">0.023</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>Right</td>
+<td align="right">79 (44.6)</td>
+<td align="right">204 (56.7)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>Bilateral</td>
+<td align="right"></td>
+<td align="right">1 (0.3)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">primer_ln_ind3</td>
+<td>NO</td>
+<td align="right">120 (67.8)</td>
+<td align="right">275 (76.4)</td>
+<td align="right">0.024</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>YES</td>
+<td align="right">56 (31.6)</td>
+<td align="right">79 (21.9)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right">1 (0.6)</td>
+<td align="right">6 (1.7)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">platelet</td>
+<td>Elevated</td>
+<td align="right">30 (16.9)</td>
+<td align="right">8 (2.2)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>Low</td>
+<td align="right">20 (11.3)</td>
+<td align="right">26 (7.2)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>Normal</td>
+<td align="right">108 (61.0)</td>
+<td align="right">252 (70.0)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right">19 (10.7)</td>
+<td align="right">74 (20.6)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">tissue_prospect</td>
+<td>NO</td>
+<td align="right">169 (95.5)</td>
+<td align="right">296 (82.2)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>YES</td>
+<td align="right">2 (1.1)</td>
+<td align="right">50 (13.9)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right">6 (3.4)</td>
+<td align="right">14 (3.9)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">race</td>
+<td>BLACK OR AFRICAN AMERICAN</td>
+<td align="right">11 (6.2)</td>
+<td align="right">45 (12.5)</td>
+<td align="right">0.032</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>WHITE</td>
+<td align="right">163 (92.1)</td>
+<td align="right">303 (84.2)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right">3 (1.7)</td>
+<td align="right">12 (3.3)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">tissue_retrospect</td>
+<td>NO</td>
+<td align="right">2 (1.1)</td>
+<td align="right">51 (14.2)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>YES</td>
+<td align="right">169 (95.5)</td>
+<td align="right">297 (82.5)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right">6 (3.4)</td>
+<td align="right">12 (3.3)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">serum_ca</td>
+<td>Elevated</td>
+<td align="right">9 (5.1)</td>
+<td align="right">1 (0.3)</td>
+<td align="right">0.001</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>Low</td>
+<td align="right">66 (37.3)</td>
+<td align="right">138 (38.3)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>Normal</td>
+<td align="right">62 (35.0)</td>
+<td align="right">89 (24.7)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right">40 (22.6)</td>
+<td align="right">132 (36.7)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">gender</td>
+<td>Female</td>
+<td align="right">65 (36.7)</td>
+<td align="right">126 (35.0)</td>
+<td align="right">0.767</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>Male</td>
+<td align="right">112 (63.3)</td>
+<td align="right">234 (65.0)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">tissue_site</td>
+<td>A</td>
+<td align="right">11 (6.2)</td>
+<td align="right">68 (18.9)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>B</td>
+<td align="right">112 (63.3)</td>
+<td align="right">191 (53.1)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>C</td>
+<td align="right">49 (27.7)</td>
+<td align="right">78 (21.7)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>OTHERS</td>
+<td align="right">5 (2.8)</td>
+<td align="right">23 (6.4)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left">person_neoplasm_stt</td>
+<td>TUMOR FREE</td>
+<td align="right">57 (32.2)</td>
+<td align="right">304 (84.4)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>WITH TUMOR</td>
+<td align="right">105 (59.3)</td>
+<td align="right">36 (10.0)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right">15 (8.5)</td>
+<td align="right">20 (5.6)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left">wbc</td>
+<td>Elevated</td>
+<td align="right">46 (26.0)</td>
+<td align="right">118 (32.8)</td>
+<td align="right">0.011</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>Low</td>
+<td align="right">6 (3.4)</td>
+<td align="right">3 (0.8)</td>
+<td align="right"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td>Normal</td>
+<td align="right">104 (58.8)</td>
+<td align="right">164 (45.6)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td>(Missing)</td>
+<td align="right">21 (11.9)</td>
+<td align="right">75 (20.8)</td>
+<td align="right"></td>
+</tr>
+</tbody>
+</table>
+<p>Summarise numerical variables by a categorical variable</p>
+<pre class="r"><code>explanatory &lt;- cols_numeric
 
-#knitr::kable(table_fit, row.names=FALSE, align=c(&quot;l&quot;, &quot;l&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;))</code></pre>
+dependent &lt;-  'over_surv_stt'
+
+table_fit &lt;- kirc_clinic %&gt;%
+  summary_factorlist(dependent, explanatory, p=TRUE, add_dependent_label=TRUE,  na_include = TRUE, na_include_dependent = TRUE)
+
+knitr::kable(table_fit, row.names=FALSE, align=c(&quot;l&quot;, &quot;l&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Dependent: over_surv_stt</th>
+<th></th>
+<th align="right">DECEASED</th>
+<th align="right">LIVING</th>
+<th align="right">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">age</td>
+<td>Mean (SD)</td>
+<td align="right">64.2 (12.0)</td>
+<td align="right">58.8 (11.9)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td align="left">disease_free_mth</td>
+<td>Mean (SD)</td>
+<td align="right">16.1 (18.5)</td>
+<td align="right">45.5 (31.5)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td align="left">frac_genome_alter</td>
+<td>Mean (SD)</td>
+<td align="right">0.2 (0.2)</td>
+<td align="right">0.2 (0.2)</td>
+<td align="right">0.230</td>
+</tr>
+<tr class="even">
+<td align="left">year_diagnose</td>
+<td>Mean (SD)</td>
+<td align="right">2004.6 (2.4)</td>
+<td align="right">2006.7 (2.7)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td align="left">long_dim</td>
+<td>Mean (SD)</td>
+<td align="right">1.8 (0.6)</td>
+<td align="right">1.6 (0.7)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td align="left">mutation_cnt</td>
+<td>Mean (SD)</td>
+<td align="right">60.5 (90.9)</td>
+<td align="right">80.7 (142.7)</td>
+<td align="right">0.111</td>
+</tr>
+<tr class="odd">
+<td align="left">over_surv_mth</td>
+<td>Mean (SD)</td>
+<td align="right">31.6 (25.1)</td>
+<td align="right">50.5 (33.6)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td align="left">short_dim</td>
+<td>Mean (SD)</td>
+<td align="right">0.4 (0.2)</td>
+<td align="right">0.4 (0.2)</td>
+<td align="right">0.631</td>
+</tr>
+<tr class="odd">
+<td align="left">second_long_dim</td>
+<td>Mean (SD)</td>
+<td align="right">1.0 (0.3)</td>
+<td align="right">0.9 (0.3)</td>
+<td align="right">&lt;0.001</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="further-analysis" class="section level2">
 <h2>Further analysis</h2>
