@@ -121,6 +121,7 @@ levels(kirc_clinic_numeric$over_surv_stt) <- c("DECEASED","LIVING")
 kirc_clinic_numeric.long <- kirc_clinic_numeric %>%
   pivot_longer(-over_surv_stt, names_to = "variables", values_to = "value")
 
+# Convert to Tidyverse
 kirc_clinic_numeric.long <- kirc_clinic_numeric.long[!is.na(kirc_clinic_numeric.long$value), ]
 
 kirc_clinic_numeric.long$value.log <- log2(kirc_clinic_numeric.long$value+1)
@@ -335,18 +336,34 @@ chisq.test(x = kirc_clinic$wbc, y = kirc_clinic$over_surv_stt)
 
 summarise variables/factors by a categorical variable
 
-```{r warning=FALSE}
+```{r}
+#  warning=FALSE
 explanatory <- names(kirc_clinic %>%
               select(-over_surv_stt) %>%
               select_if(is.factor))
 dependent <-  'over_surv_stt'
 
 table_fit <- kirc_clinic %>%
-  summary_factorlist(dependent, explanatory, p=TRUE, add_dependent_label=TRUE)
-table_fit
-warnings()
+  summary_factorlist(dependent, explanatory, p=TRUE, add_dependent_label=TRUE,  na_include = TRUE)
 
-#knitr::kable(table_fit, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
+
+knitr::kable(table_fit, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
+```
+
+Summarise numerical variables by a categorical variable
+
+
+```{r}
+
+explanatory <- cols_numeric
+
+dependent <-  'over_surv_stt'
+
+table_fit <- kirc_clinic %>%
+  summary_factorlist(dependent, explanatory, p=TRUE, add_dependent_label=TRUE,  na_include = TRUE, na_include_dependent = TRUE)
+
+knitr::kable(table_fit, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
+
 ```
 
 ## Further analysis
