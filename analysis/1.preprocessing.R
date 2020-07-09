@@ -13,9 +13,9 @@
 #'   rmarkdown::render(inputFile, encoding = encoding, output_format = "all") })    
 #' ---
 #' 
-#' This project contains a pipeline of clinical analysis of the Cancer Genome Atlas Kidney Renal Clear Cell Carcinoma (TCGA-KIRC) data of patients from [Genomic Data Commons Data Portal](https://portal.gdc.cancer.gov/exploration?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.project_id%22%2C%22value%22%3A%5B%22TCGA-KIRC%22%5D%7D%7D%5D%7D) and [cBioPortal](https://www.cbioportal.org/study/summary?id=kirp_tcga).
+#' This project contains a pipeline for analysis of The Cancer Genome Atlas Kidney - Renal Clear Cell Carcinoma (TCGA-KIRC) clinical data, from [Genomic Data Commons Data Portal](https://portal.gdc.cancer.gov/exploration?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.project_id%22%2C%22value%22%3A%5B%22TCGA-KIRC%22%5D%7D%7D%5D%7D) and [cBioPortal](https://www.cbioportal.org/study/summary?id=kirp_tcga).
 #' 
-#' In this section, we present a preprocessing analysis of clinical data. 
+#' In this section, the initial preprocessing is applied to clean the data and arrange following the Tidyverse philosophy. Exploratory Data Analysis summarizes their main characteristics. 
 #' 
 #' 
 
@@ -87,38 +87,44 @@ kirc_clean0 <- kirc_clean %>%
 
 #' 
 #' Remove nuneric variables with unique observations:  
-#' 
-## ----message=FALSE, warning=FALSE, paged.print=TRUE---------------------------
-skim(kirc_clean0)
-
-#' 
 #' <!-- # TO DO @PATRICK: function to select variables with unique observations? -->
 #' <!-- # kirc_cleanX <- kirc_clean1 %>% -->
 #' <!-- #     summarise_if(is.numeric, ~ n=unique(.)) -->
 #' 
 ## ----message=FALSE, warning=FALSE, paged.print=TRUE---------------------------
+kirc_clean0 %>%
+     select_if(is.numeric) %>%
+     skim()
+
 kirc_clean1 <-  kirc_clean0  %>%
      select(!c('Last Alive Less Initial Pathologic Diagnosis Date Calculated Day Value', 
                'Number of Samples Per Patient', 
                'Sample type id'))
 
-skim(kirc_clean1) 
-
 #' 
 #' Remove character variables with unique observations:
 #' 
 ## ----message=FALSE, warning=FALSE, paged.print=TRUE---------------------------
+kirc_clean1 %>%
+     select_if(is.character) %>%
+     skim()
 
+#' 
+## ----message=FALSE, warning=FALSE, paged.print=TRUE---------------------------
 kirc_clean2 <- kirc_clean1  %>%
      select(!c('Study ID', 'Cancer Type', 'Cancer Type Detailed', 
                'Neoplasm Histologic Type Name', 'ICD-10 Classification', 
                'International Classification of Diseases for Oncology, Third Edition ICD-O-3 Site Code', 
                'Informed consent verified', 'Is FFPE', 'Oncotree Code', 'Sample Type', 'Tumor Tissue Site'))
 
-skim(kirc_clean2)
-
 #' 
 #' Remove character variables with similar information - check each one!
+#' 
+## -----------------------------------------------------------------------------
+kirc_clean2 %>%
+     select_if(is.character) %>%
+     skim()
+
 #' 
 ## -----------------------------------------------------------------------------
 table(kirc_clean2$`Overall Survival Status`, exclude = NULL)
@@ -128,8 +134,15 @@ table(kirc_clean2$`Patient's Vital Status`, exclude = NULL)
 ## -----------------------------------------------------------------------------
 kirc_clean3 <- kirc_clean2  %>%
      select(!c('Sample ID', 'Other Patient ID', 'Other Sample ID', 'Pathology Report File Name', 'Pathology report uuid', "Patient's Vital Status"))
-          
-# removing other variables not directly related to patient - check each one!
+
+#' 
+#' Remove other variables not directly related to patient - check each one!
+#' 
+## -----------------------------------------------------------------------------
+kirc_clean2 %>%
+     select_if(is.character) %>%
+     skim()
+
 kirc_clean4 <- kirc_clean3  %>%
      select(!c('Form completion date','International Classification of Diseases for Oncology, Third Edition ICD-O-3 Histology Code','Vial number'))
 
@@ -305,15 +318,15 @@ kirc_clinic <- kirc_clinic %>%
                          OTHERS = c('G6', 'GK', 'MM', 'MW',
                                     '3Z', '6D', 'DV', 'EU', 'T7')))
 
-# droping levels
+# droping levels ??? What about others?? 
+# check chunk bellow!
 kirc_clinic <- kirc_clinic %>%
      mutate(race = fct_recode(race, NULL = 'ASIAN'))
 
 # kirc_clinic <- kirc_clinic %>%
 #     mutate(race = fct_drop(race, only = 'ASIAN'))
 
-# recoding levels
-# OBS: It can be donne latter, for regression analysis
+# recoding levels ??
 # 
 # kirc_clinic <- kirc_clinic %>%
 #      mutate(gender = fct_recode(gender, '1'='Male', '2'='Female'))
@@ -324,27 +337,9 @@ kirc_clinic <- kirc_clinic %>%
 
 #' 
 ## -----------------------------------------------------------------------------
-# table(kirc_clinic$metastasis_stg, exclude = NULL)
-# table(kirc_clinic$neoplasm_ln_stg, exclude = NULL)
-# table(kirc_clinic$neoplasm_stg, exclude = NULL)
-# table(kirc_clinic$tumor_stg, exclude = NULL)
-# table(kirc_clinic$disease_free_stt, exclude = NULL)
-# table(kirc_clinic$ethnicity, exclude = NULL)
-# table(kirc_clinic$histology_grd, exclude = NULL)
-# table(kirc_clinic$hemoglobin, exclude = NULL)
-# table(kirc_clinic$neoadj_therapy, exclude = NULL)
-# table(kirc_clinic$prior_cancer, exclude = NULL)
-# table(kirc_clinic$tumor_lateral, exclude = NULL)
-# table(kirc_clinic$primer_ln_ind3, exclude = NULL)
-# table(kirc_clinic$platelet, exclude = NULL)
-# table(kirc_clinic$tissue_prospect, exclude = NULL)
-# table(kirc_clinic$race, exclude = NULL)
-# table(kirc_clinic$tissue_retrospect, exclude = NULL)
-# table(kirc_clinic$serum_ca, exclude = NULL)
-# table(kirc_clinic$gender, exclude = NULL)
-# table(kirc_clinic$tissue_site, exclude = NULL)
-# table(kirc_clinic$person_neoplasm_stt, exclude = NULL)
-# table(kirc_clinic$wbc, exclude = NULL)
+kirc_clinic %>%
+     select_if(is.factor) %>%
+     summary()
 
 #' 
 #' ## 8. Saving dataset
@@ -357,8 +352,8 @@ rm(kirc_clean4, kirc_clean3, kirc_clean2, kirc_clean1, kirc_clean0, kirc_clean, 
 #' 
 #' ## Further analysis
 #' 
-#' - [A correlation analysis](2.correlation.md) with t-test and ANOVA checking significant distinction  between variables acording their vital status.
-#' - [A logistic regression analysis](3.logistic_regression.md) of each clinical variable weight.
+#' - [Comparison and Hyphotesis test](2.correlation.md) 
+#' - [Logistic Regression Model](3.logistic_regression.md)
 #' 
 ## -----------------------------------------------------------------------------
 sessionInfo()
