@@ -23,7 +23,7 @@
 #' 
 ## ----message=FALSE, warning=FALSE, paged.print=FALSE--------------------------
 # Set the packages of interest
-packages = c("tidyverse","skimr","finalfit","rstatix", "ggpubr","GGally")
+packages = c("tidyverse","skimr","finalfit","rstatix", "ggpubr","GGally", "plotly")
 
 # if a package is installed, it will be loaded
 # otherwise, the missing package(s) will be installed and loaded
@@ -61,7 +61,8 @@ skim(kirc_clinic)
 
 #' 
 #' ## 4. Numeric variables vs. over_surv_stt
-#' graphic visualization and t-test
+#' 
+#' Correlation matrix - graphic visualization
 #' 
 ## ----message=FALSE, warning=FALSE---------------------------------------------
 cols_numeric <- kirc_clinic %>% 
@@ -84,7 +85,7 @@ ggpairs(kirc_clinic_numeric, columns = cols_numeric,
         
 
 #' 
-#' ### 4.1 Run multiple T-tests on over_surv_stt
+#' Run multiple T-tests on over_surv_stt
 #' 
 #' Transform the data into long format
 #' 
@@ -162,53 +163,53 @@ for(i in 1:length(variables)){
 #' 
 #' 
 ## -----------------------------------------------------------------------------
-ggplot(kirc_clinic, aes(age, fill= over_surv_stt)) +
-  geom_histogram(bins = 15, position = "dodge")
-t.test(kirc_clinic$age ~ kirc_clinic$over_surv_stt) 
-
-ggplot(kirc_clinic, aes(year_diagnose, fill= over_surv_stt)) +
-  geom_histogram(bins = 15, position = "dodge")
-t.test(kirc_clinic$year_diagnose ~ kirc_clinic$over_surv_stt) 
-
-ggplot(kirc_clinic, aes(x=over_surv_stt, y=disease_free_mth)) +
-  geom_boxplot(width = .5) +
-  geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-t.test(kirc_clinic$disease_free_mth ~ kirc_clinic$over_surv_stt) 
-
-ggplot(kirc_clinic, aes(x=over_surv_stt, y=frac_genome_alter)) +
-  geom_boxplot(width = .5) +
-  geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-t.test(kirc_clinic$frac_genome_alter ~ kirc_clinic$over_surv_stt)
-
-ggplot(kirc_clinic, aes(x=over_surv_stt, y=long_dim)) +
-  geom_boxplot(width = .5) +
-  geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-t.test(kirc_clinic$long_dim ~ kirc_clinic$over_surv_stt)
-
-ggplot(kirc_clinic, aes(x=over_surv_stt, y=mutation_cnt)) +
-  geom_boxplot(width = .5) +
-  geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-t.test(kirc_clinic$mutation_cnt ~ kirc_clinic$over_surv_stt)
-
-ggplot(kirc_clinic, aes(x=over_surv_stt, y=over_surv_mth)) +
-  geom_boxplot(width = .5) +
-  geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-t.test(kirc_clinic$over_surv_mth ~ kirc_clinic$over_surv_stt)
-
-ggplot(kirc_clinic, aes(x=over_surv_stt, y=short_dim)) +
-  geom_boxplot(width = .5) +
-  geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-t.test(kirc_clinic$short_dim ~ kirc_clinic$over_surv_stt)
-
-ggplot(kirc_clinic, aes(x=over_surv_stt, y=second_long_dim)) +
-  geom_boxplot(width = .5) +
-  geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-t.test(kirc_clinic$second_long_dim ~ kirc_clinic$over_surv_stt)
+# ggplot(kirc_clinic, aes(age, fill= over_surv_stt)) +
+#   geom_histogram(bins = 15, position = "dodge")
+# t.test(kirc_clinic$age ~ kirc_clinic$over_surv_stt) 
+# 
+# ggplot(kirc_clinic, aes(year_diagnose, fill= over_surv_stt)) +
+#   geom_histogram(bins = 15, position = "dodge")
+# t.test(kirc_clinic$year_diagnose ~ kirc_clinic$over_surv_stt) 
+# 
+# ggplot(kirc_clinic, aes(x=over_surv_stt, y=disease_free_mth)) +
+#   geom_boxplot(width = .5) +
+#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
+# t.test(kirc_clinic$disease_free_mth ~ kirc_clinic$over_surv_stt) 
+# 
+# ggplot(kirc_clinic, aes(x=over_surv_stt, y=frac_genome_alter)) +
+#   geom_boxplot(width = .5) +
+#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
+# t.test(kirc_clinic$frac_genome_alter ~ kirc_clinic$over_surv_stt)
+# 
+# ggplot(kirc_clinic, aes(x=over_surv_stt, y=long_dim)) +
+#   geom_boxplot(width = .5) +
+#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
+# t.test(kirc_clinic$long_dim ~ kirc_clinic$over_surv_stt)
+# 
+# ggplot(kirc_clinic, aes(x=over_surv_stt, y=mutation_cnt)) +
+#   geom_boxplot(width = .5) +
+#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
+# t.test(kirc_clinic$mutation_cnt ~ kirc_clinic$over_surv_stt)
+# 
+# ggplot(kirc_clinic, aes(x=over_surv_stt, y=over_surv_mth)) +
+#   geom_boxplot(width = .5) +
+#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
+# t.test(kirc_clinic$over_surv_mth ~ kirc_clinic$over_surv_stt)
+# 
+# ggplot(kirc_clinic, aes(x=over_surv_stt, y=short_dim)) +
+#   geom_boxplot(width = .5) +
+#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
+# t.test(kirc_clinic$short_dim ~ kirc_clinic$over_surv_stt)
+# 
+# ggplot(kirc_clinic, aes(x=over_surv_stt, y=second_long_dim)) +
+#   geom_boxplot(width = .5) +
+#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
+# t.test(kirc_clinic$second_long_dim ~ kirc_clinic$over_surv_stt)
 
 #' 
 #' ## 5. Categorical variables vs. over_surv_stt
 #' 
-#' ## 5.1 Checking categorical variables
+#' Checking categorical variables
 #' 
 ## ----echo=FALSE---------------------------------------------------------------
 # TO DO: levels with < 5 observations -> hemoglobin and tumor_lateral
@@ -220,8 +221,6 @@ kirc_clinic %>%
 #' Tabulation and chi-square test
 #' 
 ## ----warning=FALSE------------------------------------------------------------
-# # talvez isso possa sair uma vez que ja tem a mesma analise com tablefit
-# 
 # t_metas_stg <- table(kirc_clinic$metastasis_stg, kirc_clinic$over_surv_stt, exclude = NULL)
 # t_metas_stg <- addmargins(round(100*prop.table(t_metas_stg)))
 # t_metas_stg
@@ -305,7 +304,8 @@ kirc_clinic %>%
 #' 
 #' ## 7. FinalFit
 #' 
-#' Summarise variables/factors by a categorical variable
+#' Summary for chategorical explanatory variables
+#' Chi-squared warnings will be generated when the expected count in any cell is less than 5.
 #' 
 ## -----------------------------------------------------------------------------
 #  warning=FALSE
@@ -321,7 +321,8 @@ table_fit <- kirc_clinic %>%
 knitr::kable(table_fit, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
 
 #' 
-#' Summarise numerical variables by a categorical variable
+#' Summary for continuous explanatory variables 
+#' use a parametric or non-parametric test?? 
 #' 
 ## -----------------------------------------------------------------------------
 

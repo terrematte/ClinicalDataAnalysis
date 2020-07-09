@@ -72,7 +72,6 @@ skim(kirc_clin_raw)
 ## 2. Cleaning data
 
 Select variables based on NA count (> 50% complete is a good choice!).
-
 <!-- # TO DO @PATRICK: simplify code NA_sum? -->
 <!-- # kirc_clean <- kirc_clin_raw %>% -->
 <!-- #     summarise_all(~ sum(is.na(.)))  -->

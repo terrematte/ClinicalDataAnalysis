@@ -109,8 +109,6 @@ kirc_clean1 %>%
      select_if(is.character) %>%
      skim()
 
-#' 
-## ----message=FALSE, warning=FALSE, paged.print=TRUE---------------------------
 kirc_clean2 <- kirc_clean1  %>%
      select(!c('Study ID', 'Cancer Type', 'Cancer Type Detailed', 
                'Neoplasm Histologic Type Name', 'ICD-10 Classification', 
@@ -125,13 +123,9 @@ kirc_clean2 %>%
      select_if(is.character) %>%
      skim()
 
-#' 
-## -----------------------------------------------------------------------------
 table(kirc_clean2$`Overall Survival Status`, exclude = NULL)
 table(kirc_clean2$`Patient's Vital Status`, exclude = NULL)
 
-#' 
-## -----------------------------------------------------------------------------
 kirc_clean3 <- kirc_clean2  %>%
      select(!c('Sample ID', 'Other Patient ID', 'Other Sample ID', 'Pathology Report File Name', 'Pathology report uuid', "Patient's Vital Status"))
 

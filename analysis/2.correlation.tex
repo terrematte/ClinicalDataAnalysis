@@ -131,7 +131,7 @@ indicates the strength of evidence in supportting the null hypothesis.
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# Set the packages of interest}
-\NormalTok{packages =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"tidyverse"}\NormalTok{,}\StringTok{"skimr"}\NormalTok{,}\StringTok{"finalfit"}\NormalTok{,}\StringTok{"rstatix"}\NormalTok{, }\StringTok{"ggpubr"}\NormalTok{,}\StringTok{"GGally"}\NormalTok{)}
+\NormalTok{packages =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"tidyverse"}\NormalTok{,}\StringTok{"skimr"}\NormalTok{,}\StringTok{"finalfit"}\NormalTok{,}\StringTok{"rstatix"}\NormalTok{, }\StringTok{"ggpubr"}\NormalTok{,}\StringTok{"GGally"}\NormalTok{, }\StringTok{"plotly"}\NormalTok{)}
 
 \CommentTok{# if a package is installed, it will be loaded}
 \CommentTok{# otherwise, the missing package(s) will be installed and loaded}
@@ -289,7 +289,7 @@ second\_long\_dim & 35 & 0.93 & 0.94 & 0.31 & 0.30 & 0.70 & 0.90 & 1.10
 \subsection{4. Numeric variables
 vs.~over\_surv\_stt}\label{numeric-variables-vs.over_surv_stt}
 
-graphic visualization and t-test
+Correlation matrix - graphic visualization
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -315,8 +315,7 @@ graphic visualization and t-test
 
 \includegraphics{figs/render-unnamed-chunk-6-1.pdf}
 
-\subsubsection{4.1 Run multiple T-tests on
-over\_surv\_stt}\label{run-multiple-t-tests-on-over_surv_stt}
+Run multiple T-tests on over\_surv\_stt
 
 Transform the data into long format
 
@@ -348,14 +347,14 @@ Transform the data into long format
 
 \begin{verbatim}
 ## # A tibble: 6 x 4
-##   over_surv_stt variables        value value.log
-##   <fct>         <chr>            <dbl>     <dbl>
-## 1 DECEASED      long_dim           1.7     1.43 
-## 2 LIVING        year_diagnose   2007      11.0  
-## 3 DECEASED      second_long_dim    1.5     1.32 
-## 4 DECEASED      year_diagnose   2002      11.0  
-## 5 LIVING        short_dim          0.3     0.379
-## 6 LIVING        mutation_cnt      17       4.17
+##   over_surv_stt variables           value value.log
+##   <fct>         <chr>               <dbl>     <dbl>
+## 1 LIVING        long_dim           1.6       1.38  
+## 2 DECEASED      over_surv_mth     28.8       4.90  
+## 3 LIVING        second_long_dim    1         1     
+## 4 DECEASED      over_surv_mth     18.5       4.29  
+## 5 LIVING        second_long_dim    0.7       0.766 
+## 6 LIVING        frac_genome_alter  0.0342    0.0485
 \end{verbatim}
 
 Group the data by variables and compare over\_surv\_stt groups
@@ -468,323 +467,55 @@ Adjust the p-values and add significance levels
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{ggplot}\NormalTok{(kirc_clinic, }\KeywordTok{aes}\NormalTok{(age, }\DataTypeTok{fill=}\NormalTok{ over_surv_stt)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{bins =} \DecValTok{15}\NormalTok{, }\DataTypeTok{position =} \StringTok{"dodge"}\NormalTok{)}
+\CommentTok{# ggplot(kirc_clinic, aes(age, fill= over_surv_stt)) +}
+\CommentTok{#   geom_histogram(bins = 15, position = "dodge")}
+\CommentTok{# t.test(kirc_clinic$age ~ kirc_clinic$over_surv_stt) }
+\CommentTok{# }
+\CommentTok{# ggplot(kirc_clinic, aes(year_diagnose, fill= over_surv_stt)) +}
+\CommentTok{#   geom_histogram(bins = 15, position = "dodge")}
+\CommentTok{# t.test(kirc_clinic$year_diagnose ~ kirc_clinic$over_surv_stt) }
+\CommentTok{# }
+\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=disease_free_mth)) +}
+\CommentTok{#   geom_boxplot(width = .5) +}
+\CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
+\CommentTok{# t.test(kirc_clinic$disease_free_mth ~ kirc_clinic$over_surv_stt) }
+\CommentTok{# }
+\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=frac_genome_alter)) +}
+\CommentTok{#   geom_boxplot(width = .5) +}
+\CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
+\CommentTok{# t.test(kirc_clinic$frac_genome_alter ~ kirc_clinic$over_surv_stt)}
+\CommentTok{# }
+\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=long_dim)) +}
+\CommentTok{#   geom_boxplot(width = .5) +}
+\CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
+\CommentTok{# t.test(kirc_clinic$long_dim ~ kirc_clinic$over_surv_stt)}
+\CommentTok{# }
+\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=mutation_cnt)) +}
+\CommentTok{#   geom_boxplot(width = .5) +}
+\CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
+\CommentTok{# t.test(kirc_clinic$mutation_cnt ~ kirc_clinic$over_surv_stt)}
+\CommentTok{# }
+\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=over_surv_mth)) +}
+\CommentTok{#   geom_boxplot(width = .5) +}
+\CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
+\CommentTok{# t.test(kirc_clinic$over_surv_mth ~ kirc_clinic$over_surv_stt)}
+\CommentTok{# }
+\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=short_dim)) +}
+\CommentTok{#   geom_boxplot(width = .5) +}
+\CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
+\CommentTok{# t.test(kirc_clinic$short_dim ~ kirc_clinic$over_surv_stt)}
+\CommentTok{# }
+\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=second_long_dim)) +}
+\CommentTok{#   geom_boxplot(width = .5) +}
+\CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
+\CommentTok{# t.test(kirc_clinic$second_long_dim ~ kirc_clinic$over_surv_stt)}
 \end{Highlighting}
 \end{Shaded}
-
-\includegraphics{figs/render-unnamed-chunk-12-1.pdf}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{t.test}\NormalTok{(kirc_clinic}\OperatorTok{$}\NormalTok{age }\OperatorTok{~}\StringTok{ }\NormalTok{kirc_clinic}\OperatorTok{$}\NormalTok{over_surv_stt) }
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-##  Welch Two Sample t-test
-## 
-## data:  kirc_clinic$age by kirc_clinic$over_surv_stt
-## t = 4.887, df = 348.17, p-value = 1.565e-06
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  3.196986 7.503485
-## sample estimates:
-## mean in group DECEASED   mean in group LIVING 
-##               64.18079               58.83056
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{ggplot}\NormalTok{(kirc_clinic, }\KeywordTok{aes}\NormalTok{(year_diagnose, }\DataTypeTok{fill=}\NormalTok{ over_surv_stt)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{bins =} \DecValTok{15}\NormalTok{, }\DataTypeTok{position =} \StringTok{"dodge"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\includegraphics{figs/render-unnamed-chunk-12-2.pdf}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{t.test}\NormalTok{(kirc_clinic}\OperatorTok{$}\NormalTok{year_diagnose }\OperatorTok{~}\StringTok{ }\NormalTok{kirc_clinic}\OperatorTok{$}\NormalTok{over_surv_stt) }
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-##  Welch Two Sample t-test
-## 
-## data:  kirc_clinic$year_diagnose by kirc_clinic$over_surv_stt
-## t = -8.898, df = 377.09, p-value < 2.2e-16
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -2.510367 -1.601685
-## sample estimates:
-## mean in group DECEASED   mean in group LIVING 
-##               2004.638               2006.694
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{ggplot}\NormalTok{(kirc_clinic, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{over_surv_stt, }\DataTypeTok{y=}\NormalTok{disease_free_mth)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{width =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.05}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.2}\NormalTok{, }\DataTypeTok{color =} \StringTok{"orange"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## Warning: Removed 99 rows containing non-finite values (stat_boxplot).
-\end{verbatim}
-
-\begin{verbatim}
-## Warning: Removed 99 rows containing missing values (geom_point).
-\end{verbatim}
-
-\includegraphics{figs/render-unnamed-chunk-12-3.pdf}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{t.test}\NormalTok{(kirc_clinic}\OperatorTok{$}\NormalTok{disease_free_mth }\OperatorTok{~}\StringTok{ }\NormalTok{kirc_clinic}\OperatorTok{$}\NormalTok{over_surv_stt) }
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-##  Welch Two Sample t-test
-## 
-## data:  kirc_clinic$disease_free_mth by kirc_clinic$over_surv_stt
-## t = -10.985, df = 188.22, p-value < 2.2e-16
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -34.63580 -24.08972
-## sample estimates:
-## mean in group DECEASED   mean in group LIVING 
-##               16.10846               45.47122
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{ggplot}\NormalTok{(kirc_clinic, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{over_surv_stt, }\DataTypeTok{y=}\NormalTok{frac_genome_alter)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{width =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.05}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.2}\NormalTok{, }\DataTypeTok{color =} \StringTok{"orange"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## Warning: Removed 9 rows containing non-finite values (stat_boxplot).
-\end{verbatim}
-
-\begin{verbatim}
-## Warning: Removed 9 rows containing missing values (geom_point).
-\end{verbatim}
-
-\includegraphics{figs/render-unnamed-chunk-12-4.pdf}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{t.test}\NormalTok{(kirc_clinic}\OperatorTok{$}\NormalTok{frac_genome_alter }\OperatorTok{~}\StringTok{ }\NormalTok{kirc_clinic}\OperatorTok{$}\NormalTok{over_surv_stt)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-##  Welch Two Sample t-test
-## 
-## data:  kirc_clinic$frac_genome_alter by kirc_clinic$over_surv_stt
-## t = 1.196, df = 343.6, p-value = 0.2325
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -0.01199882  0.04923234
-## sample estimates:
-## mean in group DECEASED   mean in group LIVING 
-##              0.1826051              0.1639884
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{ggplot}\NormalTok{(kirc_clinic, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{over_surv_stt, }\DataTypeTok{y=}\NormalTok{long_dim)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{width =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.05}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.2}\NormalTok{, }\DataTypeTok{color =} \StringTok{"orange"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## Warning: Removed 35 rows containing non-finite values (stat_boxplot).
-\end{verbatim}
-
-\begin{verbatim}
-## Warning: Removed 35 rows containing missing values (geom_point).
-\end{verbatim}
-
-\includegraphics{figs/render-unnamed-chunk-12-5.pdf}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{t.test}\NormalTok{(kirc_clinic}\OperatorTok{$}\NormalTok{long_dim }\OperatorTok{~}\StringTok{ }\NormalTok{kirc_clinic}\OperatorTok{$}\NormalTok{over_surv_stt)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-##  Welch Two Sample t-test
-## 
-## data:  kirc_clinic$long_dim by kirc_clinic$over_surv_stt
-## t = 4.1297, df = 363.45, p-value = 4.51e-05
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  0.1295804 0.3651751
-## sample estimates:
-## mean in group DECEASED   mean in group LIVING 
-##               1.824277               1.576900
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{ggplot}\NormalTok{(kirc_clinic, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{over_surv_stt, }\DataTypeTok{y=}\NormalTok{mutation_cnt)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{width =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.05}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.2}\NormalTok{, }\DataTypeTok{color =} \StringTok{"orange"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## Warning: Removed 86 rows containing non-finite values (stat_boxplot).
-\end{verbatim}
-
-\begin{verbatim}
-## Warning: Removed 86 rows containing missing values (geom_point).
-\end{verbatim}
-
-\includegraphics{figs/render-unnamed-chunk-12-6.pdf}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{t.test}\NormalTok{(kirc_clinic}\OperatorTok{$}\NormalTok{mutation_cnt }\OperatorTok{~}\StringTok{ }\NormalTok{kirc_clinic}\OperatorTok{$}\NormalTok{over_surv_stt)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-##  Welch Two Sample t-test
-## 
-## data:  kirc_clinic$mutation_cnt by kirc_clinic$over_surv_stt
-## t = -1.8306, df = 428.83, p-value = 0.06786
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -41.980661   1.492307
-## sample estimates:
-## mean in group DECEASED   mean in group LIVING 
-##               60.47059               80.71477
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{ggplot}\NormalTok{(kirc_clinic, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{over_surv_stt, }\DataTypeTok{y=}\NormalTok{over_surv_mth)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{width =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.05}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.2}\NormalTok{, }\DataTypeTok{color =} \StringTok{"orange"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\includegraphics{figs/render-unnamed-chunk-12-7.pdf}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{t.test}\NormalTok{(kirc_clinic}\OperatorTok{$}\NormalTok{over_surv_mth }\OperatorTok{~}\StringTok{ }\NormalTok{kirc_clinic}\OperatorTok{$}\NormalTok{over_surv_stt)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-##  Welch Two Sample t-test
-## 
-## data:  kirc_clinic$over_surv_mth by kirc_clinic$over_surv_stt
-## t = -7.3172, df = 450.92, p-value = 1.169e-12
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -23.99320 -13.83372
-## sample estimates:
-## mean in group DECEASED   mean in group LIVING 
-##               31.57734               50.49081
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{ggplot}\NormalTok{(kirc_clinic, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{over_surv_stt, }\DataTypeTok{y=}\NormalTok{short_dim)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{width =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.05}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.2}\NormalTok{, }\DataTypeTok{color =} \StringTok{"orange"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## Warning: Removed 35 rows containing non-finite values (stat_boxplot).
-\end{verbatim}
-
-\begin{verbatim}
-## Warning: Removed 35 rows containing missing values (geom_point).
-\end{verbatim}
-
-\includegraphics{figs/render-unnamed-chunk-12-8.pdf}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{t.test}\NormalTok{(kirc_clinic}\OperatorTok{$}\NormalTok{short_dim }\OperatorTok{~}\StringTok{ }\NormalTok{kirc_clinic}\OperatorTok{$}\NormalTok{over_surv_stt)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-##  Welch Two Sample t-test
-## 
-## data:  kirc_clinic$short_dim by kirc_clinic$over_surv_stt
-## t = 0.47841, df = 344.68, p-value = 0.6327
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -0.02935985  0.04823295
-## sample estimates:
-## mean in group DECEASED   mean in group LIVING 
-##              0.3820809              0.3726444
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{ggplot}\NormalTok{(kirc_clinic, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x=}\NormalTok{over_surv_stt, }\DataTypeTok{y=}\NormalTok{second_long_dim)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{width =}\NormalTok{ .}\DecValTok{5}\NormalTok{) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{geom_jitter}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.05}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.2}\NormalTok{, }\DataTypeTok{color =} \StringTok{"orange"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## Warning: Removed 35 rows containing non-finite values (stat_boxplot).
-
-## Warning: Removed 35 rows containing missing values (geom_point).
-\end{verbatim}
-
-\includegraphics{figs/render-unnamed-chunk-12-9.pdf}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{t.test}\NormalTok{(kirc_clinic}\OperatorTok{$}\NormalTok{second_long_dim }\OperatorTok{~}\StringTok{ }\NormalTok{kirc_clinic}\OperatorTok{$}\NormalTok{over_surv_stt)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## 
-##  Welch Two Sample t-test
-## 
-## data:  kirc_clinic$second_long_dim by kirc_clinic$over_surv_stt
-## t = 4.0639, df = 287.92, p-value = 6.231e-05
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  0.06333111 0.18229322
-## sample estimates:
-## mean in group DECEASED   mean in group LIVING 
-##              1.0173410              0.8945289
-\end{verbatim}
 
 \subsection{5. Categorical variables
 vs.~over\_surv\_stt}\label{categorical-variables-vs.over_surv_stt}
 
-\subsection{5.1 Checking categorical
-variables}\label{checking-categorical-variables}
+Checking categorical variables
 
 \begin{verbatim}
 ##  metastasis_stg neoplasm_ln_stg    neoplasm_stg tumor_stg
@@ -835,8 +566,6 @@ Tabulation and chi-square test
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# # talvez isso possa sair uma vez que ja tem a mesma analise com tablefit}
-\CommentTok{# }
 \CommentTok{# t_metas_stg <- table(kirc_clinic$metastasis_stg, kirc_clinic$over_surv_stt, exclude = NULL)}
 \CommentTok{# t_metas_stg <- addmargins(round(100*prop.table(t_metas_stg)))}
 \CommentTok{# t_metas_stg}
@@ -921,7 +650,8 @@ Tabulation and chi-square test
 
 \subsection{7. FinalFit}\label{finalfit}
 
-Summarise variables/factors by a categorical variable
+Summary for chategorical explanatory variables Chi-squared warnings will
+be generated when the expected count in any cell is less than 5.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1065,7 +795,8 @@ wbc & Elevated & 46 (26.0) & 118 (32.8) & 0.011\tabularnewline
 \bottomrule
 \end{longtable}
 
-Summarise numerical variables by a categorical variable
+Summary for continuous explanatory variables use a parametric or
+non-parametric test??
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1136,31 +867,32 @@ second\_long\_dim & Mean (SD) & 1.0 (0.3) & 0.9 (0.3) &
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] GGally_1.5.0    ggpubr_0.2.5    magrittr_1.5    rstatix_0.6.0  
-##  [5] finalfit_1.0.1  skimr_2.1.1     forcats_0.5.0   stringr_1.4.0  
-##  [9] dplyr_0.8.5     purrr_0.3.3     readr_1.3.1     tidyr_1.0.2    
-## [13] tibble_3.0.0    ggplot2_3.3.0   tidyverse_1.3.0
+##  [1] plotly_4.9.2.1  GGally_1.5.0    ggpubr_0.2.5    magrittr_1.5   
+##  [5] rstatix_0.6.0   finalfit_1.0.1  skimr_2.1.1     forcats_0.5.0  
+##  [9] stringr_1.4.0   dplyr_0.8.5     purrr_0.3.3     readr_1.3.1    
+## [13] tidyr_1.0.2     tibble_3.0.0    ggplot2_3.3.0   tidyverse_1.3.0
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] nlme_3.1-145       fs_1.4.1           lubridate_1.7.8    RColorBrewer_1.1-2
 ##  [5] httr_1.4.1         ggsci_2.9          repr_1.1.0         tools_3.6.3       
-##  [9] backports_1.1.6    utf8_1.1.4         R6_2.4.1           DBI_1.1.0         
-## [13] mgcv_1.8-31        colorspace_1.4-1   withr_2.1.2        tidyselect_1.0.0  
-## [17] curl_4.3           compiler_3.6.3     cli_2.0.2          rvest_0.3.5       
-## [21] mice_3.8.0         xml2_1.3.0         labeling_0.3       scales_1.1.0      
-## [25] digest_0.6.25      foreign_0.8-76     rmarkdown_2.1      rio_0.5.16        
-## [29] base64enc_0.1-3    pkgconfig_2.0.3    htmltools_0.4.0    dbplyr_1.4.2      
-## [33] highr_0.8          rlang_0.4.5        readxl_1.3.1       rstudioapi_0.11   
-## [37] generics_0.0.2     farver_2.0.3       jsonlite_1.6.1     zip_2.0.4         
-## [41] car_3.0-7          Matrix_1.2-18      Rcpp_1.0.4         munsell_0.5.0     
-## [45] fansi_0.4.1        abind_1.4-5        lifecycle_0.2.0    stringi_1.4.6     
-## [49] yaml_2.2.1         carData_3.0-3      plyr_1.8.6         grid_3.6.3        
-## [53] crayon_1.3.4       lattice_0.20-41    haven_2.2.0        splines_3.6.3     
-## [57] hms_0.5.3          knitr_1.28         pillar_1.4.3       boot_1.3-24       
-## [61] ggsignif_0.6.0     reprex_0.3.0       glue_1.4.0         evaluate_0.14     
-## [65] data.table_1.12.8  modelr_0.1.6       vctrs_0.2.4        cellranger_1.1.0  
-## [69] gtable_0.3.0       reshape_0.8.8      assertthat_0.2.1   xfun_0.12         
-## [73] openxlsx_4.1.4     broom_0.7.0        survival_3.1-11    ellipsis_0.3.0
+##  [9] backports_1.1.6    utf8_1.1.4         R6_2.4.1           mgcv_1.8-31       
+## [13] DBI_1.1.0          lazyeval_0.2.2     colorspace_1.4-1   withr_2.1.2       
+## [17] tidyselect_1.0.0   curl_4.3           compiler_3.6.3     cli_2.0.2         
+## [21] rvest_0.3.5        mice_3.8.0         xml2_1.3.0         labeling_0.3      
+## [25] scales_1.1.0       digest_0.6.25      foreign_0.8-76     rmarkdown_2.1     
+## [29] rio_0.5.16         base64enc_0.1-3    pkgconfig_2.0.3    htmltools_0.4.0   
+## [33] dbplyr_1.4.2       highr_0.8          htmlwidgets_1.5.1  rlang_0.4.5       
+## [37] readxl_1.3.1       rstudioapi_0.11    generics_0.0.2     farver_2.0.3      
+## [41] jsonlite_1.6.1     zip_2.0.4          car_3.0-7          Matrix_1.2-18     
+## [45] Rcpp_1.0.4         munsell_0.5.0      fansi_0.4.1        abind_1.4-5       
+## [49] lifecycle_0.2.0    stringi_1.4.6      yaml_2.2.1         carData_3.0-3     
+## [53] plyr_1.8.6         grid_3.6.3         crayon_1.3.4       lattice_0.20-41   
+## [57] haven_2.2.0        splines_3.6.3      hms_0.5.3          knitr_1.28        
+## [61] pillar_1.4.3       boot_1.3-24        ggsignif_0.6.0     reprex_0.3.0      
+## [65] glue_1.4.0         evaluate_0.14      data.table_1.12.8  modelr_0.1.6      
+## [69] vctrs_0.2.4        cellranger_1.1.0   gtable_0.3.0       reshape_0.8.8     
+## [73] assertthat_0.2.1   xfun_0.12          openxlsx_4.1.4     broom_0.7.0       
+## [77] survival_3.1-11    viridisLite_0.3.0  ellipsis_0.3.0
 \end{verbatim}
 
 \end{document}
