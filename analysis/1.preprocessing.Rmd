@@ -46,6 +46,7 @@ package.check <- lapply(packages, FUN = function(x) {
 })
 
 suppressMessages(library("tidyverse"))
+rm(packages)
 setwd(".")
 ```
 

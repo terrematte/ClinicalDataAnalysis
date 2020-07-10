@@ -24,7 +24,7 @@
 #' 
 ## ----message=FALSE, warning=FALSE, paged.print=FALSE--------------------------
 # Set the packages of interest
-packages = c("tidyverse","skimr","finalfit")
+packages = c("tidyverse","skimr","finalfit", "caret", "ggplot2", "plotROC")
 
 # if a package is installed, it will be loaded
 # otherwise, the missing package(s) will be installed and loaded
@@ -36,6 +36,7 @@ package.check <- lapply(packages, FUN = function(x) {
 })
 
 suppressMessages(library("tidyverse"))
+rm(packages)
 setwd(".")
 
 #' 
@@ -48,7 +49,122 @@ kirc_clinic <- read_csv("data/kirc_clinic.csv")
 
 
 #' 
-#' ## TO DO
+#' 
+#' 
+#' ## 2. Taming data and selecting numeric and categorical columns
+#' 
+## -----------------------------------------------------------------------------
+kirc_clinic <- kirc_clinic %>%
+  mutate_if(is.character, as.factor) %>%
+  mutate(patient_id = as.character(patient_id))
+
+cols_numeric <- kirc_clinic %>% select_if(is.numeric) %>% names
+
+cols_categorical <- kirc_clinic %>% select_if(is.factor) %>% names
+cols_categorical <- setdiff(cols_categorical,  "over_surv_stt") 
+
+#' 
+#' 
+#' 
+## -----------------------------------------------------------------------------
+plot(kirc_clinic$over_surv_stt)
+
+#' 
+#' ## 3. Creating training and test data 70-30 split
+#' 
+## -----------------------------------------------------------------------------
+set.seed(123)
+
+df <- data.frame(kirc_clinic)
+
+trainIndex <- createDataPartition(df$over_surv_stt, p = .7, 
+                                  list = FALSE, 
+                                  times = 1)
+dtrain<-df[trainIndex,]
+dtest<-df[-trainIndex,]
+
+#' 
+#' 
+#' ## 4. Modeling: Logistic regression for numerical values with 10 fold cross validation
+#' 
+## -----------------------------------------------------------------------------
+fitControl <- trainControl(## 10-fold CV
+  method = "cv",
+  number = 10,
+  savePredictions = TRUE
+)
+
+## Logistic regression
+lreg<-train(x = dtrain[,c(cols_numeric)],
+            y = dtrain[,"over_surv_stt"], 
+            method="glm",
+            family=binomial(),
+            trControl=fitControl)
+lreg
+
+## -----------------------------------------------------------------------------
+varImp(lreg)
+
+#' 
+#' 
+## -----------------------------------------------------------------------------
+lreg_pred<-predict(lreg,dtest)
+confusionMatrix(lreg_pred,dtest$over_surv_stt)
+
+#' 
+#' ## 5. Removing all nas of dataset
+#' 
+## -----------------------------------------------------------------------------
+
+set.seed(123)
+
+df <- data.frame(kirc_clinic %>% drop_na() )
+
+
+trainIndex <- createDataPartition(df$over_surv_stt, p = .7, 
+                                  list = FALSE, 
+                                  times = 1)
+dtrain<-df[trainIndex,]
+dtest<-df[-trainIndex,]
+
+#' 
+## -----------------------------------------------------------------------------
+fitControl <- trainControl(## 10-fold CV
+  method = "cv",
+  number = 10,
+  savePredictions = FALSE
+)
+
+## Logistic regression
+lreg<-train(over_surv_stt ~.,
+        data = df[ , c(cols_numeric,  cols_categorical,  "over_surv_stt")],
+            method="glm",
+            family=binomial(),
+            trControl=fitControl)
+lreg
+
+#' 
+## -----------------------------------------------------------------------------
+varImp(lreg)
+
+#' 
+#' 
+## -----------------------------------------------------------------------------
+lreg_pred<-predict(lreg,dtest)
+confusionMatrix(lreg_pred,dtest$over_surv_stt)
+
+#' 
+## -----------------------------------------------------------------------------
+df_no.na <- dtrain %>% drop_na()
+
+fit<-glm(over_surv_stt ~.,
+        data = df_no.na[ , c(cols_numeric, "over_surv_stt")],
+        family = "binomial")
+
+df_roc <- data.frame(Survival = df_no.na$over_surv_stt, Prob = fit$fitted.values)
+ggplot(df_roc, aes(d = Survival, m = Prob)) + geom_roc()
+
+#' 
 #' 
 ## -----------------------------------------------------------------------------
 sessionInfo()
