@@ -109,6 +109,9 @@ levels(kirc_clinic_numeric$over_surv_stt) <- c("DECEASED","LIVING")
 kirc_clinic_numeric.long <- kirc_clinic_numeric %>%
   pivot_longer(-over_surv_stt, names_to = "variables", values_to = "value")
 
+kirc_clinic_numeric.long2 <-  gather(kirc_clinic_numeric, key = 'variables', value = 'value', -over_surv_stt, na.rm = TRUE) 
+
+
 # Convert to Tidyverse
 kirc_clinic_numeric.long <- kirc_clinic_numeric.long[!is.na(kirc_clinic_numeric.long$value), ]
 
