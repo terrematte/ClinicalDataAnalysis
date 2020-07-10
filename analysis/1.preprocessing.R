@@ -35,11 +35,12 @@ package.check <- lapply(packages, FUN = function(x) {
 })
 
 suppressMessages(library("tidyverse"))
+rm(packages)
 setwd(".")
 
 #' 
 #' 
-#' ## 1. Importing data
+#' ## 1. Data importing and visualizing
 #' 
 ## ----message=FALSE, warning=FALSE, paged.print=TRUE---------------------------
 kirc_clin_raw <- read_delim("data/kirc_tcga_clinical_data.tsv", "\t", 
@@ -61,7 +62,6 @@ skim(kirc_clin_raw)
 #' ## 2. Cleaning data
 #' 
 #' Select variables based on NA count (> 50% complete is a good choice!).
-#' 
 #' <!-- # TO DO @PATRICK: simplify code NA_sum? -->
 #' <!-- # kirc_clean <- kirc_clin_raw %>% -->
 #' <!-- #     summarise_all(~ sum(is.na(.)))  -->
@@ -87,7 +87,7 @@ kirc_clean0 <- kirc_clean %>%
 
 #' 
 #' Remove nuneric variables with unique observations:  
-#' <!-- # TO DO @PATRICK: function to select variables with unique observations? -->
+#' <!-- # TO DO @PATRICK: function to select variables with unique observations? 
 #' <!-- # kirc_cleanX <- kirc_clean1 %>% -->
 #' <!-- #     summarise_if(is.numeric, ~ n=unique(.)) -->
 #' 
@@ -105,9 +105,9 @@ kirc_clean1 <-  kirc_clean0  %>%
 #' Remove character variables with unique observations:
 #' 
 ## ----message=FALSE, warning=FALSE, paged.print=TRUE---------------------------
-kirc_clean1 %>%
-     select_if(is.character) %>%
-     skim()
+# kirc_clean1 %>%
+#      select_if(is.character) %>%
+#      skim()
 
 kirc_clean2 <- kirc_clean1  %>%
      select(!c('Study ID', 'Cancer Type', 'Cancer Type Detailed', 
@@ -119,9 +119,9 @@ kirc_clean2 <- kirc_clean1  %>%
 #' Remove character variables with similar information - check each one!
 #' 
 ## -----------------------------------------------------------------------------
-kirc_clean2 %>%
-     select_if(is.character) %>%
-     skim()
+# kirc_clean2 %>%
+#      select_if(is.character) %>%
+#      skim()
 
 table(kirc_clean2$`Overall Survival Status`, exclude = NULL)
 table(kirc_clean2$`Patient's Vital Status`, exclude = NULL)
@@ -133,9 +133,9 @@ kirc_clean3 <- kirc_clean2  %>%
 #' Remove other variables not directly related to patient - check each one!
 #' 
 ## -----------------------------------------------------------------------------
-kirc_clean2 %>%
-     select_if(is.character) %>%
-     skim()
+# kirc_clean2 %>%
+#      select_if(is.character) %>%
+#      skim()
 
 kirc_clean4 <- kirc_clean3  %>%
      select(!c('Form completion date','International Classification of Diseases for Oncology, Third Edition ICD-O-3 Histology Code','Vial number'))
@@ -312,13 +312,9 @@ kirc_clinic <- kirc_clinic %>%
                          OTHERS = c('G6', 'GK', 'MM', 'MW',
                                     '3Z', '6D', 'DV', 'EU', 'T7')))
 
-# droping levels ??? What about others?? 
-# check chunk bellow!
-kirc_clinic <- kirc_clinic %>%
-     mutate(race = fct_recode(race, NULL = 'ASIAN'))
-
-# kirc_clinic <- kirc_clinic %>%
-#     mutate(race = fct_drop(race, only = 'ASIAN'))
+kirc_clinic %>%
+     select_if(is.factor) %>%
+     summary()
 
 # recoding levels ??
 # 
@@ -328,15 +324,14 @@ kirc_clinic <- kirc_clinic %>%
 # kirc_clinic <- kirc_clinic %>%
 #      mutate(gender = if_else(gender %in% c('Male', 'Female'), 1, 0))
 
-
+#' 
+#' ## 8. Check again 
 #' 
 ## -----------------------------------------------------------------------------
-kirc_clinic %>%
-     select_if(is.factor) %>%
-     summary()
+skim(kirc_clinic)
 
 #' 
-#' ## 8. Saving dataset
+#' ## 9. Saving dataset
 #' 
 ## -----------------------------------------------------------------------------
 write_csv(kirc_clinic, path = "data/kirc_clinic.csv")

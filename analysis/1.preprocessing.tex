@@ -139,7 +139,8 @@ Analysis summarizes their main characteristics.
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{1. Importing data}\label{importing-data}
+\subsection{1. Data importing and
+visualizing}\label{data-importing-and-visualizing}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -251,95 +252,10 @@ Remove character variables with unique observations:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{kirc_clean1 }\OperatorTok{%>%}
-\StringTok{     }\KeywordTok{select_if}\NormalTok{(is.character) }\OperatorTok{%>%}
-\StringTok{     }\KeywordTok{skim}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
+\CommentTok{# kirc_clean1 %>%}
+\CommentTok{#      select_if(is.character) %>%}
+\CommentTok{#      skim()}
 
-\begin{longtable}[]{@{}ll@{}}
-\caption{Data summary}\tabularnewline
-\toprule
-Name & Piped data\tabularnewline
-Number of rows & 537\tabularnewline
-Number of columns & 43\tabularnewline
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
-Column type frequency: &\tabularnewline
-character & 43\tabularnewline
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
-Group variables & None\tabularnewline
-\bottomrule
-\end{longtable}
-
-\textbf{Variable type: character}
-
-\begin{longtable}[]{@{}lrrrrrrr@{}}
-\toprule
-skim\_variable & n\_missing & complete\_rate & min & max & empty &
-n\_unique & whitespace\tabularnewline
-\midrule
-\endhead
-Study ID & 0 & 1.00 & 9 & 9 & 0 & 1 & 0\tabularnewline
-Patient ID & 0 & 1.00 & 12 & 12 & 0 & 537 & 0\tabularnewline
-Sample ID & 0 & 1.00 & 15 & 15 & 0 & 537 & 0\tabularnewline
-American Joint Committee on Cancer Metastasis Stage Code & 2 & 1.00 & 2
-& 2 & 0 & 3 & 0\tabularnewline
-Neoplasm Disease Lymph Node Stage American Joint Committee on Cancer
-Code & 0 & 1.00 & 2 & 2 & 0 & 3 & 0\tabularnewline
-Neoplasm Disease Stage American Joint Committee on Cancer Code & 3 &
-0.99 & 7 & 9 & 0 & 4 & 0\tabularnewline
-American Joint Committee on Cancer Tumor Stage Code & 0 & 1.00 & 2 & 3 &
-0 & 11 & 0\tabularnewline
-Cancer Type & 0 & 1.00 & 20 & 20 & 0 & 1 & 0\tabularnewline
-Cancer Type Detailed & 0 & 1.00 & 26 & 26 & 0 & 1 & 0\tabularnewline
-Disease Free Status & 99 & 0.82 & 11 & 19 & 0 & 2 & 0\tabularnewline
-Ethnicity Category & 152 & 0.72 & 18 & 22 & 0 & 2 & 0\tabularnewline
-Form completion date & 0 & 1.00 & 6 & 10 & 0 & 114 & 0\tabularnewline
-Neoplasm Histologic Grade & 3 & 0.99 & 2 & 2 & 0 & 5 & 0\tabularnewline
-Hemoglobin level & 83 & 0.85 & 3 & 8 & 0 & 3 & 0\tabularnewline
-Neoplasm Histologic Type Name & 0 & 1.00 & 33 & 33 & 0 & 1 &
-0\tabularnewline
-Neoadjuvant Therapy Type Administered Prior To Resection Text & 0 & 1.00
-& 2 & 3 & 0 & 2 & 0\tabularnewline
-Prior Cancer Diagnosis Occurence & 0 & 1.00 & 2 & 48 & 0 & 4 &
-0\tabularnewline
-ICD-10 Classification & 0 & 1.00 & 5 & 5 & 0 & 1 & 0\tabularnewline
-International Classification of Diseases for Oncology, Third Edition
-ICD-O-3 Histology Code & 0 & 1.00 & 6 & 6 & 0 & 2 & 0\tabularnewline
-International Classification of Diseases for Oncology, Third Edition
-ICD-O-3 Site Code & 0 & 1.00 & 5 & 5 & 0 & 1 & 0\tabularnewline
-Informed consent verified & 0 & 1.00 & 3 & 3 & 0 & 1 & 0\tabularnewline
-Is FFPE & 0 & 1.00 & 2 & 2 & 0 & 1 & 0\tabularnewline
-Primary Tumor Laterality & 0 & 1.00 & 4 & 9 & 0 & 3 & 0\tabularnewline
-Primary Lymph Node Presentation Assessment Ind-3 & 7 & 0.99 & 2 & 3 & 0
-& 2 & 0\tabularnewline
-Oncotree Code & 0 & 1.00 & 5 & 5 & 0 & 1 & 0\tabularnewline
-Overall Survival Status & 0 & 1.00 & 6 & 8 & 0 & 2 & 0\tabularnewline
-Other Patient ID & 0 & 1.00 & 36 & 36 & 0 & 537 & 0\tabularnewline
-Other Sample ID & 0 & 1.00 & 36 & 36 & 0 & 537 & 0\tabularnewline
-Pathology Report File Name & 0 & 1.00 & 53 & 53 & 0 & 537 &
-0\tabularnewline
-Pathology report uuid & 0 & 1.00 & 36 & 36 & 0 & 537 & 0\tabularnewline
-Platelet count & 93 & 0.83 & 3 & 8 & 0 & 3 & 0\tabularnewline
-Tissue Prospective Collection Indicator & 20 & 0.96 & 2 & 3 & 0 & 2 &
-0\tabularnewline
-Race Category & 7 & 0.99 & 5 & 25 & 0 & 3 & 0\tabularnewline
-Tissue Retrospective Collection Indicator & 18 & 0.97 & 2 & 3 & 0 & 2 &
-0\tabularnewline
-Sample Type & 0 & 1.00 & 7 & 7 & 0 & 1 & 0\tabularnewline
-Serum calcium level & 172 & 0.68 & 3 & 8 & 0 & 3 & 0\tabularnewline
-Sex & 0 & 1.00 & 4 & 6 & 0 & 3 & 0\tabularnewline
-Tumor Tissue Site & 0 & 1.00 & 6 & 6 & 0 & 1 & 0\tabularnewline
-Tissue Source Site & 0 & 1.00 & 2 & 2 & 0 & 20 & 0\tabularnewline
-Person Neoplasm Status & 35 & 0.93 & 10 & 10 & 0 & 2 & 0\tabularnewline
-Vial number & 0 & 1.00 & 1 & 1 & 0 & 2 & 0\tabularnewline
-Patient's Vital Status & 3 & 0.99 & 4 & 5 & 0 & 2 & 0\tabularnewline
-WBC & 96 & 0.82 & 3 & 8 & 0 & 3 & 0\tabularnewline
-\bottomrule
-\end{longtable}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \NormalTok{kirc_clean2 <-}\StringTok{ }\NormalTok{kirc_clean1  }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{select}\NormalTok{(}\OperatorTok{!}\KeywordTok{c}\NormalTok{(}\StringTok{'Study ID'}\NormalTok{, }\StringTok{'Cancer Type'}\NormalTok{, }\StringTok{'Cancer Type Detailed'}\NormalTok{, }
                \StringTok{'Neoplasm Histologic Type Name'}\NormalTok{, }\StringTok{'ICD-10 Classification'}\NormalTok{, }
@@ -352,82 +268,10 @@ Remove character variables with similar information - check each one!
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{kirc_clean2 }\OperatorTok{%>%}
-\StringTok{     }\KeywordTok{select_if}\NormalTok{(is.character) }\OperatorTok{%>%}
-\StringTok{     }\KeywordTok{skim}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
+\CommentTok{# kirc_clean2 %>%}
+\CommentTok{#      select_if(is.character) %>%}
+\CommentTok{#      skim()}
 
-\begin{longtable}[]{@{}ll@{}}
-\caption{Data summary}\tabularnewline
-\toprule
-Name & Piped data\tabularnewline
-Number of rows & 537\tabularnewline
-Number of columns & 32\tabularnewline
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
-Column type frequency: &\tabularnewline
-character & 32\tabularnewline
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
-Group variables & None\tabularnewline
-\bottomrule
-\end{longtable}
-
-\textbf{Variable type: character}
-
-\begin{longtable}[]{@{}lrrrrrrr@{}}
-\toprule
-skim\_variable & n\_missing & complete\_rate & min & max & empty &
-n\_unique & whitespace\tabularnewline
-\midrule
-\endhead
-Patient ID & 0 & 1.00 & 12 & 12 & 0 & 537 & 0\tabularnewline
-Sample ID & 0 & 1.00 & 15 & 15 & 0 & 537 & 0\tabularnewline
-American Joint Committee on Cancer Metastasis Stage Code & 2 & 1.00 & 2
-& 2 & 0 & 3 & 0\tabularnewline
-Neoplasm Disease Lymph Node Stage American Joint Committee on Cancer
-Code & 0 & 1.00 & 2 & 2 & 0 & 3 & 0\tabularnewline
-Neoplasm Disease Stage American Joint Committee on Cancer Code & 3 &
-0.99 & 7 & 9 & 0 & 4 & 0\tabularnewline
-American Joint Committee on Cancer Tumor Stage Code & 0 & 1.00 & 2 & 3 &
-0 & 11 & 0\tabularnewline
-Disease Free Status & 99 & 0.82 & 11 & 19 & 0 & 2 & 0\tabularnewline
-Ethnicity Category & 152 & 0.72 & 18 & 22 & 0 & 2 & 0\tabularnewline
-Form completion date & 0 & 1.00 & 6 & 10 & 0 & 114 & 0\tabularnewline
-Neoplasm Histologic Grade & 3 & 0.99 & 2 & 2 & 0 & 5 & 0\tabularnewline
-Hemoglobin level & 83 & 0.85 & 3 & 8 & 0 & 3 & 0\tabularnewline
-Neoadjuvant Therapy Type Administered Prior To Resection Text & 0 & 1.00
-& 2 & 3 & 0 & 2 & 0\tabularnewline
-Prior Cancer Diagnosis Occurence & 0 & 1.00 & 2 & 48 & 0 & 4 &
-0\tabularnewline
-International Classification of Diseases for Oncology, Third Edition
-ICD-O-3 Histology Code & 0 & 1.00 & 6 & 6 & 0 & 2 & 0\tabularnewline
-Primary Tumor Laterality & 0 & 1.00 & 4 & 9 & 0 & 3 & 0\tabularnewline
-Primary Lymph Node Presentation Assessment Ind-3 & 7 & 0.99 & 2 & 3 & 0
-& 2 & 0\tabularnewline
-Overall Survival Status & 0 & 1.00 & 6 & 8 & 0 & 2 & 0\tabularnewline
-Other Patient ID & 0 & 1.00 & 36 & 36 & 0 & 537 & 0\tabularnewline
-Other Sample ID & 0 & 1.00 & 36 & 36 & 0 & 537 & 0\tabularnewline
-Pathology Report File Name & 0 & 1.00 & 53 & 53 & 0 & 537 &
-0\tabularnewline
-Pathology report uuid & 0 & 1.00 & 36 & 36 & 0 & 537 & 0\tabularnewline
-Platelet count & 93 & 0.83 & 3 & 8 & 0 & 3 & 0\tabularnewline
-Tissue Prospective Collection Indicator & 20 & 0.96 & 2 & 3 & 0 & 2 &
-0\tabularnewline
-Race Category & 7 & 0.99 & 5 & 25 & 0 & 3 & 0\tabularnewline
-Tissue Retrospective Collection Indicator & 18 & 0.97 & 2 & 3 & 0 & 2 &
-0\tabularnewline
-Serum calcium level & 172 & 0.68 & 3 & 8 & 0 & 3 & 0\tabularnewline
-Sex & 0 & 1.00 & 4 & 6 & 0 & 3 & 0\tabularnewline
-Tissue Source Site & 0 & 1.00 & 2 & 2 & 0 & 20 & 0\tabularnewline
-Person Neoplasm Status & 35 & 0.93 & 10 & 10 & 0 & 2 & 0\tabularnewline
-Vial number & 0 & 1.00 & 1 & 1 & 0 & 2 & 0\tabularnewline
-Patient's Vital Status & 3 & 0.99 & 4 & 5 & 0 & 2 & 0\tabularnewline
-WBC & 96 & 0.82 & 3 & 8 & 0 & 3 & 0\tabularnewline
-\bottomrule
-\end{longtable}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \KeywordTok{table}\NormalTok{(kirc_clean2}\OperatorTok{$}\StringTok{`}\DataTypeTok{Overall Survival Status}\StringTok{`}\NormalTok{, }\DataTypeTok{exclude =} \OtherTok{NULL}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -461,82 +305,10 @@ Remove other variables not directly related to patient - check each one!
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{kirc_clean2 }\OperatorTok{%>%}
-\StringTok{     }\KeywordTok{select_if}\NormalTok{(is.character) }\OperatorTok{%>%}
-\StringTok{     }\KeywordTok{skim}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
+\CommentTok{# kirc_clean2 %>%}
+\CommentTok{#      select_if(is.character) %>%}
+\CommentTok{#      skim()}
 
-\begin{longtable}[]{@{}ll@{}}
-\caption{Data summary}\tabularnewline
-\toprule
-Name & Piped data\tabularnewline
-Number of rows & 537\tabularnewline
-Number of columns & 32\tabularnewline
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
-Column type frequency: &\tabularnewline
-character & 32\tabularnewline
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
-Group variables & None\tabularnewline
-\bottomrule
-\end{longtable}
-
-\textbf{Variable type: character}
-
-\begin{longtable}[]{@{}lrrrrrrr@{}}
-\toprule
-skim\_variable & n\_missing & complete\_rate & min & max & empty &
-n\_unique & whitespace\tabularnewline
-\midrule
-\endhead
-Patient ID & 0 & 1.00 & 12 & 12 & 0 & 537 & 0\tabularnewline
-Sample ID & 0 & 1.00 & 15 & 15 & 0 & 537 & 0\tabularnewline
-American Joint Committee on Cancer Metastasis Stage Code & 2 & 1.00 & 2
-& 2 & 0 & 3 & 0\tabularnewline
-Neoplasm Disease Lymph Node Stage American Joint Committee on Cancer
-Code & 0 & 1.00 & 2 & 2 & 0 & 3 & 0\tabularnewline
-Neoplasm Disease Stage American Joint Committee on Cancer Code & 3 &
-0.99 & 7 & 9 & 0 & 4 & 0\tabularnewline
-American Joint Committee on Cancer Tumor Stage Code & 0 & 1.00 & 2 & 3 &
-0 & 11 & 0\tabularnewline
-Disease Free Status & 99 & 0.82 & 11 & 19 & 0 & 2 & 0\tabularnewline
-Ethnicity Category & 152 & 0.72 & 18 & 22 & 0 & 2 & 0\tabularnewline
-Form completion date & 0 & 1.00 & 6 & 10 & 0 & 114 & 0\tabularnewline
-Neoplasm Histologic Grade & 3 & 0.99 & 2 & 2 & 0 & 5 & 0\tabularnewline
-Hemoglobin level & 83 & 0.85 & 3 & 8 & 0 & 3 & 0\tabularnewline
-Neoadjuvant Therapy Type Administered Prior To Resection Text & 0 & 1.00
-& 2 & 3 & 0 & 2 & 0\tabularnewline
-Prior Cancer Diagnosis Occurence & 0 & 1.00 & 2 & 48 & 0 & 4 &
-0\tabularnewline
-International Classification of Diseases for Oncology, Third Edition
-ICD-O-3 Histology Code & 0 & 1.00 & 6 & 6 & 0 & 2 & 0\tabularnewline
-Primary Tumor Laterality & 0 & 1.00 & 4 & 9 & 0 & 3 & 0\tabularnewline
-Primary Lymph Node Presentation Assessment Ind-3 & 7 & 0.99 & 2 & 3 & 0
-& 2 & 0\tabularnewline
-Overall Survival Status & 0 & 1.00 & 6 & 8 & 0 & 2 & 0\tabularnewline
-Other Patient ID & 0 & 1.00 & 36 & 36 & 0 & 537 & 0\tabularnewline
-Other Sample ID & 0 & 1.00 & 36 & 36 & 0 & 537 & 0\tabularnewline
-Pathology Report File Name & 0 & 1.00 & 53 & 53 & 0 & 537 &
-0\tabularnewline
-Pathology report uuid & 0 & 1.00 & 36 & 36 & 0 & 537 & 0\tabularnewline
-Platelet count & 93 & 0.83 & 3 & 8 & 0 & 3 & 0\tabularnewline
-Tissue Prospective Collection Indicator & 20 & 0.96 & 2 & 3 & 0 & 2 &
-0\tabularnewline
-Race Category & 7 & 0.99 & 5 & 25 & 0 & 3 & 0\tabularnewline
-Tissue Retrospective Collection Indicator & 18 & 0.97 & 2 & 3 & 0 & 2 &
-0\tabularnewline
-Serum calcium level & 172 & 0.68 & 3 & 8 & 0 & 3 & 0\tabularnewline
-Sex & 0 & 1.00 & 4 & 6 & 0 & 3 & 0\tabularnewline
-Tissue Source Site & 0 & 1.00 & 2 & 2 & 0 & 20 & 0\tabularnewline
-Person Neoplasm Status & 35 & 0.93 & 10 & 10 & 0 & 2 & 0\tabularnewline
-Vial number & 0 & 1.00 & 1 & 1 & 0 & 2 & 0\tabularnewline
-Patient's Vital Status & 3 & 0.99 & 4 & 5 & 0 & 2 & 0\tabularnewline
-WBC & 96 & 0.82 & 3 & 8 & 0 & 3 & 0\tabularnewline
-\bottomrule
-\end{longtable}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \NormalTok{kirc_clean4 <-}\StringTok{ }\NormalTok{kirc_clean3  }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{select}\NormalTok{(}\OperatorTok{!}\KeywordTok{c}\NormalTok{(}\StringTok{'Form completion date'}\NormalTok{,}\StringTok{'International Classification of Diseases for Oncology, Third Edition ICD-O-3 Histology Code'}\NormalTok{,}\StringTok{'Vial number'}\NormalTok{))}
 \end{Highlighting}
@@ -1075,26 +847,6 @@ Check frequency, lables and levels
                          \DataTypeTok{OTHERS =} \KeywordTok{c}\NormalTok{(}\StringTok{'G6'}\NormalTok{, }\StringTok{'GK'}\NormalTok{, }\StringTok{'MM'}\NormalTok{, }\StringTok{'MW'}\NormalTok{,}
                                     \StringTok{'3Z'}\NormalTok{, }\StringTok{'6D'}\NormalTok{, }\StringTok{'DV'}\NormalTok{, }\StringTok{'EU'}\NormalTok{, }\StringTok{'T7'}\NormalTok{)))}
 
-\CommentTok{# droping levels ??? What about others?? }
-\CommentTok{# check chunk bellow!}
-\NormalTok{kirc_clinic <-}\StringTok{ }\NormalTok{kirc_clinic }\OperatorTok{%>%}
-\StringTok{     }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{race =} \KeywordTok{fct_recode}\NormalTok{(race, }\DataTypeTok{NULL =} \StringTok{'ASIAN'}\NormalTok{))}
-
-\CommentTok{# kirc_clinic <- kirc_clinic %>%}
-\CommentTok{#     mutate(race = fct_drop(race, only = 'ASIAN'))}
-
-\CommentTok{# recoding levels ??}
-\CommentTok{# }
-\CommentTok{# kirc_clinic <- kirc_clinic %>%}
-\CommentTok{#      mutate(gender = fct_recode(gender, '1'='Male', '2'='Female'))}
-\CommentTok{# }
-\CommentTok{# kirc_clinic <- kirc_clinic %>%}
-\CommentTok{#      mutate(gender = if_else(gender %in% c('Male', 'Female'), 1, 0))}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \NormalTok{kirc_clinic }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{select_if}\NormalTok{(is.factor) }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{summary}\NormalTok{()}
@@ -1124,10 +876,10 @@ Check frequency, lables and levels
 ##                                                                           
 ##                                                                           
 ##   over_surv_stt     platelet   tissue_prospect                        race    
-##  DECEASED:177   Elevated: 38   NO  :465        BLACK OR AFRICAN AMERICAN: 56  
-##  LIVING  :360   Low     : 46   YES : 52        WHITE                    :466  
-##                 Normal  :360   NA's: 20        NA's                     : 15  
-##                 NA's    : 93                                                  
+##  DECEASED:177   Elevated: 38   NO  :465        ASIAN                    :  8  
+##  LIVING  :360   Low     : 46   YES : 52        BLACK OR AFRICAN AMERICAN: 56  
+##                 Normal  :360   NA's: 20        WHITE                    :466  
+##                 NA's    : 93                   NA's                     :  7  
 ##                                                                               
 ##                                                                               
 ##  tissue_retrospect     serum_ca      gender    tissue_site  person_neoplasm_stt
@@ -1146,7 +898,133 @@ Check frequency, lables and levels
 ## 
 \end{verbatim}
 
-\subsection{8. Saving dataset}\label{saving-dataset}
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# recoding levels ??}
+\CommentTok{# }
+\CommentTok{# kirc_clinic <- kirc_clinic %>%}
+\CommentTok{#      mutate(gender = fct_recode(gender, '1'='Male', '2'='Female'))}
+\CommentTok{# }
+\CommentTok{# kirc_clinic <- kirc_clinic %>%}
+\CommentTok{#      mutate(gender = if_else(gender %in% c('Male', 'Female'), 1, 0))}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{8. Check again}\label{check-again}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{skim}\NormalTok{(kirc_clinic)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}ll@{}}
+\caption{Data summary}\tabularnewline
+\toprule
+Name & kirc\_clinic\tabularnewline
+Number of rows & 537\tabularnewline
+Number of columns & 32\tabularnewline
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
+Column type frequency: &\tabularnewline
+character & 1\tabularnewline
+factor & 22\tabularnewline
+numeric & 9\tabularnewline
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
+Group variables & None\tabularnewline
+\bottomrule
+\end{longtable}
+
+\textbf{Variable type: character}
+
+\begin{longtable}[]{@{}lrrrrrrr@{}}
+\toprule
+skim\_variable & n\_missing & complete\_rate & min & max & empty &
+n\_unique & whitespace\tabularnewline
+\midrule
+\endhead
+patient\_id & 0 & 1 & 12 & 12 & 0 & 537 & 0\tabularnewline
+\bottomrule
+\end{longtable}
+
+\textbf{Variable type: factor}
+
+\begin{longtable}[]{@{}lrrlrl@{}}
+\toprule
+skim\_variable & n\_missing & complete\_rate & ordered & n\_unique &
+top\_counts\tabularnewline
+\midrule
+\endhead
+metastasis\_stg & 2 & 1.00 & FALSE & 3 & M0: 426, M1: 79, MX:
+30\tabularnewline
+neoplasm\_ln\_stg & 0 & 1.00 & FALSE & 3 & NX: 280, N0: 240, N1:
+17\tabularnewline
+neoplasm\_stg & 3 & 0.99 & FALSE & 4 & Sta: 269, Sta: 125, Sta: 83, Sta:
+57\tabularnewline
+tumor\_stg & 0 & 1.00 & FALSE & 4 & T1: 275, T3: 182, T2: 69, T4:
+11\tabularnewline
+disease\_free\_stt & 99 & 0.82 & FALSE & 2 & Dis: 311, Rec:
+127\tabularnewline
+ethnicity & 152 & 0.72 & FALSE & 2 & NOT: 359, HIS: 26\tabularnewline
+histology\_grd & 3 & 0.99 & FALSE & 5 & G2: 230, G3: 207, G4: 78, G1:
+14\tabularnewline
+hemoglobin & 83 & 0.85 & FALSE & 3 & Low: 263, Nor: 186, Ele:
+5\tabularnewline
+neoadj\_therapy & 0 & 1.00 & FALSE & 2 & No: 519, Yes: 18\tabularnewline
+prior\_cancer & 0 & 1.00 & FALSE & 2 & No: 459, Yes: 78\tabularnewline
+tumor\_lateral & 0 & 1.00 & FALSE & 3 & Rig: 283, Lef: 253, Bil:
+1\tabularnewline
+primer\_ln\_ind3 & 7 & 0.99 & FALSE & 2 & NO: 395, YES:
+135\tabularnewline
+over\_surv\_stt & 0 & 1.00 & FALSE & 2 & LIV: 360, DEC:
+177\tabularnewline
+platelet & 93 & 0.83 & FALSE & 3 & Nor: 360, Low: 46, Ele:
+38\tabularnewline
+tissue\_prospect & 20 & 0.96 & FALSE & 2 & NO: 465, YES:
+52\tabularnewline
+race & 7 & 0.99 & FALSE & 3 & WHI: 466, BLA: 56, ASI: 8\tabularnewline
+tissue\_retrospect & 18 & 0.97 & FALSE & 2 & YES: 466, NO:
+53\tabularnewline
+serum\_ca & 172 & 0.68 & FALSE & 3 & Low: 204, Nor: 151, Ele:
+10\tabularnewline
+gender & 0 & 1.00 & FALSE & 2 & Mal: 346, Fem: 191\tabularnewline
+tissue\_site & 0 & 1.00 & FALSE & 4 & B: 303, C: 127, A: 79, OTH:
+28\tabularnewline
+person\_neoplasm\_stt & 35 & 0.93 & FALSE & 2 & TUM: 361, WIT:
+141\tabularnewline
+wbc & 96 & 0.82 & FALSE & 3 & Nor: 268, Ele: 164, Low: 9\tabularnewline
+\bottomrule
+\end{longtable}
+
+\textbf{Variable type: numeric}
+
+\begin{longtable}[]{@{}lrrrrrrrrrl@{}}
+\toprule
+skim\_variable & n\_missing & complete\_rate & mean & sd & p0 & p25 &
+p50 & p75 & p100 & hist\tabularnewline
+\midrule
+\endhead
+age & 0 & 1.00 & 60.59 & 12.15 & 26.00 & 52.00 & 61.00 & 70.00 & 90.00 &
+▁▅▇▆▂\tabularnewline
+disease\_free\_mth & 99 & 0.82 & 40.24 & 31.66 & -11.79 & 13.43 & 36.20
+& 60.51 & 133.84 & ▇▇▇▂▂\tabularnewline
+frac\_genome\_alter & 9 & 0.98 & 0.17 & 0.17 & 0.00 & 0.06 & 0.12 & 0.21
+& 0.95 & ▇▂▁▁▁\tabularnewline
+year\_diagnose & 0 & 1.00 & 2006.02 & 2.76 & 1998.00 & 2004.00 & 2006.00
+& 2007.00 & 2013.00 & ▁▆▇▃▁\tabularnewline
+long\_dim & 35 & 0.93 & 1.66 & 0.66 & 0.40 & 1.20 & 1.50 & 2.00 & 4.00 &
+▃▇▃▂▁\tabularnewline
+mutation\_cnt & 86 & 0.84 & 73.85 & 127.76 & 1.00 & 34.00 & 48.00 &
+65.50 & 1392.00 & ▇▁▁▁▁\tabularnewline
+over\_surv\_mth & 0 & 1.00 & 44.26 & 32.25 & 0.00 & 18.10 & 38.96 &
+63.21 & 149.05 & ▇▇▃▂▁\tabularnewline
+short\_dim & 35 & 0.93 & 0.38 & 0.21 & 0.10 & 0.20 & 0.30 & 0.50 & 1.00
+& ▆▇▂▁▁\tabularnewline
+second\_long\_dim & 35 & 0.93 & 0.94 & 0.31 & 0.30 & 0.70 & 0.90 & 1.10
+& 2.00 & ▃▇▆▂▁\tabularnewline
+\bottomrule
+\end{longtable}
+
+\subsection{9. Saving dataset}\label{saving-dataset}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1198,17 +1076,17 @@ Check frequency, lables and levels
 ##  [9] repr_1.1.0       backports_1.1.6  reprex_0.3.0     evaluate_0.14   
 ## [13] highr_0.8        httr_1.4.1       pillar_1.4.3     rlang_0.4.5     
 ## [17] readxl_1.3.1     rstudioapi_0.11  Matrix_1.2-18    rmarkdown_2.1   
-## [21] labeling_0.3     splines_3.6.3    munsell_0.5.0    broom_0.5.5     
+## [21] labeling_0.3     splines_3.6.3    munsell_0.5.0    broom_0.7.0     
 ## [25] compiler_3.6.3   modelr_0.1.6     xfun_0.12        pkgconfig_2.0.3 
 ## [29] base64enc_0.1-3  htmltools_0.4.0  tidyselect_1.0.0 fansi_0.4.1     
 ## [33] crayon_1.3.4     dbplyr_1.4.2     withr_2.1.2      grid_3.6.3      
-## [37] nlme_3.1-145     jsonlite_1.6.1   gtable_0.3.0     lifecycle_0.2.0 
-## [41] DBI_1.1.0        magrittr_1.5     scales_1.1.0     cli_2.0.2       
-## [45] stringi_1.4.6    farver_2.0.3     fs_1.4.1         mice_3.8.0      
-## [49] xml2_1.3.0       ellipsis_0.3.0   generics_0.0.2   vctrs_0.2.4     
-## [53] boot_1.3-24      tools_3.6.3      glue_1.4.0       hms_0.5.3       
-## [57] survival_3.1-11  yaml_2.2.1       colorspace_1.4-1 rvest_0.3.5     
-## [61] knitr_1.28       haven_2.2.0
+## [37] jsonlite_1.6.1   gtable_0.3.0     lifecycle_0.2.0  DBI_1.1.0       
+## [41] magrittr_1.5     scales_1.1.0     cli_2.0.2        stringi_1.4.6   
+## [45] farver_2.0.3     fs_1.4.1         mice_3.8.0       xml2_1.3.0      
+## [49] ellipsis_0.3.0   generics_0.0.2   vctrs_0.2.4      boot_1.3-24     
+## [53] tools_3.6.3      glue_1.4.0       hms_0.5.3        survival_3.1-11 
+## [57] yaml_2.2.1       colorspace_1.4-1 rvest_0.3.5      knitr_1.28      
+## [61] haven_2.2.0
 \end{verbatim}
 
 \end{document}
