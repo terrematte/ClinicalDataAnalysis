@@ -188,7 +188,9 @@ kirc_clean4 <- kirc_clean4 %>%
 ## -----------------------------------------------------------------------------
 kirc_clean4 <- kirc_clean4 %>%
      mutate_if(is.character, as.factor) %>%
-     mutate(patient_id = as.character(patient_id))
+     mutate(patient_id = as.character(patient_id),
+            age = as.integer(age),
+            year_diagnose = as.integer(year_diagnose))
 
 #' 
 #' ## 5. Checking NA patterns 
@@ -328,9 +330,8 @@ kirc_clinic %>%
 #' ## 8. Correcting and checking again 
 #' 
 ## -----------------------------------------------------------------------------
-kirc_clinic2 <- kirc_clinic %>%
-  filter(disease_free_mth >= 0) %>%
-  mutate(year_diagnose = as.integer(year_diagnose))
+kirc_clinic <- kirc_clinic %>%
+  filter(disease_free_mth >= 0)
 
 skim(kirc_clinic)
 

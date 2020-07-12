@@ -449,7 +449,9 @@ Use lubridate for dates
 \begin{Highlighting}[]
 \NormalTok{kirc_clean4 <-}\StringTok{ }\NormalTok{kirc_clean4 }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{mutate_if}\NormalTok{(is.character, as.factor) }\OperatorTok{%>%}
-\StringTok{     }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{patient_id =} \KeywordTok{as.character}\NormalTok{(patient_id))}
+\StringTok{     }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{patient_id =} \KeywordTok{as.character}\NormalTok{(patient_id),}
+            \DataTypeTok{age =} \KeywordTok{as.integer}\NormalTok{(age),}
+            \DataTypeTok{year_diagnose =} \KeywordTok{as.integer}\NormalTok{(year_diagnose))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -475,7 +477,7 @@ Check distincts types of NAs: MCAR, MAR, MNAR
 \begin{verbatim}
 ##                                   label var_type   n missing_n missing_percent
 ## patient_id                   patient_id    <chr> 537         0             0.0
-## age                                 age    <dbl> 537         0             0.0
+## age                                 age    <int> 537         0             0.0
 ## metastasis_stg           metastasis_stg    <fct> 535         2             0.4
 ## neoplasm_ln_stg         neoplasm_ln_stg    <fct> 537         0             0.0
 ## neoplasm_stg               neoplasm_stg    <fct> 534         3             0.6
@@ -488,7 +490,7 @@ Check distincts types of NAs: MCAR, MAR, MNAR
 ## hemoglobin                   hemoglobin    <fct> 454        83            15.5
 ## neoadj_therapy           neoadj_therapy    <fct> 537         0             0.0
 ## prior_cancer               prior_cancer    <fct> 537         0             0.0
-## year_diagnose             year_diagnose    <dbl> 537         0             0.0
+## year_diagnose             year_diagnose    <int> 537         0             0.0
 ## tumor_lateral             tumor_lateral    <fct> 537         0             0.0
 ## long_dim                       long_dim    <dbl> 502        35             6.5
 ## primer_ln_ind3           primer_ln_ind3    <fct> 530         7             1.3
@@ -1000,9 +1002,8 @@ again}\label{correcting-and-checking-again}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{kirc_clinic2 <-}\StringTok{ }\NormalTok{kirc_clinic }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{filter}\NormalTok{(disease_free_mth }\OperatorTok{>=}\StringTok{ }\DecValTok{0}\NormalTok{) }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{year_diagnose =} \KeywordTok{as.integer}\NormalTok{(year_diagnose))}
+\NormalTok{kirc_clinic <-}\StringTok{ }\NormalTok{kirc_clinic }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(disease_free_mth }\OperatorTok{>=}\StringTok{ }\DecValTok{0}\NormalTok{)}
 
 \KeywordTok{skim}\NormalTok{(kirc_clinic)}
 \end{Highlighting}
@@ -1012,7 +1013,7 @@ again}\label{correcting-and-checking-again}
 \caption{Data summary}\tabularnewline
 \toprule
 Name & kirc\_clinic\tabularnewline
-Number of rows & 537\tabularnewline
+Number of rows & 436\tabularnewline
 Number of columns & 32\tabularnewline
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
 Column type frequency: &\tabularnewline
@@ -1032,7 +1033,7 @@ skim\_variable & n\_missing & complete\_rate & min & max & empty &
 n\_unique & whitespace\tabularnewline
 \midrule
 \endhead
-patient\_id & 0 & 1 & 12 & 12 & 0 & 537 & 0\tabularnewline
+patient\_id & 0 & 1 & 12 & 12 & 0 & 436 & 0\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -1044,44 +1045,44 @@ skim\_variable & n\_missing & complete\_rate & ordered & n\_unique &
 top\_counts\tabularnewline
 \midrule
 \endhead
-metastasis\_stg & 2 & 1.00 & FALSE & 3 & M0: 426, M1: 79, MX:
-30\tabularnewline
-neoplasm\_ln\_stg & 0 & 1.00 & FALSE & 3 & NX: 280, N0: 240, N1:
-17\tabularnewline
-neoplasm\_stg & 3 & 0.99 & FALSE & 4 & Sta: 269, Sta: 125, Sta: 83, Sta:
-57\tabularnewline
-tumor\_stg & 0 & 1.00 & FALSE & 4 & T1: 275, T3: 182, T2: 69, T4:
-11\tabularnewline
-disease\_free\_stt & 99 & 0.82 & FALSE & 2 & Dis: 311, Rec:
-127\tabularnewline
-ethnicity & 152 & 0.72 & FALSE & 2 & NOT: 359, HIS: 26\tabularnewline
-histology\_grd & 3 & 0.99 & FALSE & 5 & G2: 230, G3: 207, G4: 78, G1:
-14\tabularnewline
-hemoglobin & 83 & 0.85 & FALSE & 3 & Low: 263, Nor: 186, Ele:
-5\tabularnewline
-neoadj\_therapy & 0 & 1.00 & FALSE & 2 & No: 519, Yes: 18\tabularnewline
-prior\_cancer & 0 & 1.00 & FALSE & 2 & No: 459, Yes: 78\tabularnewline
-tumor\_lateral & 0 & 1.00 & FALSE & 3 & Rig: 283, Lef: 253, Bil:
-1\tabularnewline
-primer\_ln\_ind3 & 7 & 0.99 & FALSE & 2 & NO: 395, YES:
-135\tabularnewline
-over\_surv\_stt & 0 & 1.00 & FALSE & 2 & LIV: 360, DEC:
-177\tabularnewline
-platelet & 93 & 0.83 & FALSE & 3 & Nor: 360, Low: 46, Ele:
-38\tabularnewline
-tissue\_prospect & 20 & 0.96 & FALSE & 2 & NO: 465, YES:
-52\tabularnewline
-race & 7 & 0.99 & FALSE & 3 & WHI: 466, BLA: 56, ASI: 8\tabularnewline
-tissue\_retrospect & 18 & 0.97 & FALSE & 2 & YES: 466, NO:
-53\tabularnewline
-serum\_ca & 172 & 0.68 & FALSE & 3 & Low: 204, Nor: 151, Ele:
-10\tabularnewline
-gender & 0 & 1.00 & FALSE & 2 & Mal: 346, Fem: 191\tabularnewline
-tissue\_site & 0 & 1.00 & FALSE & 4 & B: 303, C: 127, A: 79, OTH:
+metastasis\_stg & 2 & 1.00 & FALSE & 3 & M0: 355, M1: 51, MX:
 28\tabularnewline
-person\_neoplasm\_stt & 35 & 0.93 & FALSE & 2 & TUM: 361, WIT:
-141\tabularnewline
-wbc & 96 & 0.82 & FALSE & 3 & Nor: 268, Ele: 164, Low: 9\tabularnewline
+neoplasm\_ln\_stg & 0 & 1.00 & FALSE & 3 & NX: 231, N0: 192, N1:
+13\tabularnewline
+neoplasm\_stg & 2 & 1.00 & FALSE & 4 & Sta: 231, Sta: 99, Sta: 54, Sta:
+50\tabularnewline
+tumor\_stg & 0 & 1.00 & FALSE & 4 & T1: 234, T3: 139, T2: 60, T4:
+3\tabularnewline
+disease\_free\_stt & 0 & 1.00 & FALSE & 2 & Dis: 311, Rec:
+125\tabularnewline
+ethnicity & 128 & 0.71 & FALSE & 2 & NOT: 284, HIS: 24\tabularnewline
+histology\_grd & 3 & 0.99 & FALSE & 5 & G2: 198, G3: 167, G4: 50, G1:
+14\tabularnewline
+hemoglobin & 76 & 0.83 & FALSE & 3 & Low: 196, Nor: 161, Ele:
+3\tabularnewline
+neoadj\_therapy & 0 & 1.00 & FALSE & 2 & No: 422, Yes: 14\tabularnewline
+prior\_cancer & 0 & 1.00 & FALSE & 2 & No: 376, Yes: 60\tabularnewline
+tumor\_lateral & 0 & 1.00 & FALSE & 3 & Rig: 239, Lef: 196, Bil:
+1\tabularnewline
+primer\_ln\_ind3 & 6 & 0.99 & FALSE & 2 & NO: 319, YES:
+111\tabularnewline
+over\_surv\_stt & 0 & 1.00 & FALSE & 2 & LIV: 359, DEC:
+77\tabularnewline
+platelet & 81 & 0.81 & FALSE & 3 & Nor: 303, Low: 30, Ele:
+22\tabularnewline
+tissue\_prospect & 17 & 0.96 & FALSE & 2 & NO: 368, YES:
+51\tabularnewline
+race & 5 & 0.99 & FALSE & 3 & WHI: 376, BLA: 48, ASI: 7\tabularnewline
+tissue\_retrospect & 15 & 0.97 & FALSE & 2 & YES: 369, NO:
+52\tabularnewline
+serum\_ca & 153 & 0.65 & FALSE & 3 & Low: 163, Nor: 115, Ele:
+5\tabularnewline
+gender & 0 & 1.00 & FALSE & 2 & Mal: 286, Fem: 150\tabularnewline
+tissue\_site & 0 & 1.00 & FALSE & 4 & B: 234, C: 107, A: 71, OTH:
+24\tabularnewline
+person\_neoplasm\_stt & 24 & 0.94 & FALSE & 2 & TUM: 309, WIT:
+103\tabularnewline
+wbc & 83 & 0.81 & FALSE & 3 & Nor: 209, Ele: 139, Low: 5\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -1093,24 +1094,24 @@ skim\_variable & n\_missing & complete\_rate & mean & sd & p0 & p25 &
 p50 & p75 & p100 & hist\tabularnewline
 \midrule
 \endhead
-age & 0 & 1.00 & 60.59 & 12.15 & 26.00 & 52.00 & 61.00 & 70.00 & 90.00 &
+age & 0 & 1.00 & 59.08 & 11.89 & 26.0 & 50.00 & 59.00 & 68.00 & 86.00 &
 ▁▅▇▆▂\tabularnewline
-disease\_free\_mth & 99 & 0.82 & 40.24 & 31.66 & -11.79 & 13.43 & 36.20
-& 60.51 & 133.84 & ▇▇▇▂▂\tabularnewline
-frac\_genome\_alter & 9 & 0.98 & 0.17 & 0.17 & 0.00 & 0.06 & 0.12 & 0.21
+disease\_free\_mth & 0 & 1.00 & 40.46 & 31.57 & 0.0 & 13.80 & 36.35 &
+60.64 & 133.84 & ▇▅▃▁▁\tabularnewline
+frac\_genome\_alter & 8 & 0.98 & 0.17 & 0.17 & 0.0 & 0.06 & 0.12 & 0.21
 & 0.95 & ▇▂▁▁▁\tabularnewline
-year\_diagnose & 0 & 1.00 & 2006.02 & 2.76 & 1998.00 & 2004.00 & 2006.00
-& 2007.00 & 2013.00 & ▁▆▇▃▁\tabularnewline
-long\_dim & 35 & 0.93 & 1.66 & 0.66 & 0.40 & 1.20 & 1.50 & 2.00 & 4.00 &
-▃▇▃▂▁\tabularnewline
-mutation\_cnt & 86 & 0.84 & 73.85 & 127.76 & 1.00 & 34.00 & 48.00 &
-65.50 & 1392.00 & ▇▁▁▁▁\tabularnewline
-over\_surv\_mth & 0 & 1.00 & 44.26 & 32.25 & 0.00 & 18.10 & 38.96 &
-63.21 & 149.05 & ▇▇▃▂▁\tabularnewline
-short\_dim & 35 & 0.93 & 0.38 & 0.21 & 0.10 & 0.20 & 0.30 & 0.50 & 1.00
-& ▆▇▂▁▁\tabularnewline
-second\_long\_dim & 35 & 0.93 & 0.94 & 0.31 & 0.30 & 0.70 & 0.90 & 1.10
-& 2.00 & ▃▇▆▂▁\tabularnewline
+year\_diagnose & 0 & 1.00 & 2006.31 & 2.72 & 1998.0 & 2004.00 & 2006.00
+& 2008.00 & 2013.00 & ▁▅▇▃▁\tabularnewline
+long\_dim & 32 & 0.93 & 1.63 & 0.67 & 0.4 & 1.20 & 1.50 & 2.00 & 4.00 &
+▅▇▃▂▁\tabularnewline
+mutation\_cnt & 70 & 0.84 & 76.05 & 133.95 & 1.0 & 34.00 & 47.00 & 62.00
+& 1392.00 & ▇▁▁▁▁\tabularnewline
+over\_surv\_mth & 0 & 1.00 & 47.04 & 32.83 & 0.0 & 20.19 & 43.07 & 65.66
+& 149.05 & ▇▇▅▂▁\tabularnewline
+short\_dim & 32 & 0.93 & 0.38 & 0.21 & 0.1 & 0.20 & 0.30 & 0.50 & 1.00 &
+▆▇▂▂▁\tabularnewline
+second\_long\_dim & 32 & 0.93 & 0.91 & 0.29 & 0.3 & 0.70 & 0.90 & 1.00 &
+2.00 & ▃▇▅▁▁\tabularnewline
 \bottomrule
 \end{longtable}
 
