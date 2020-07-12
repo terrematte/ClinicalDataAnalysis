@@ -35,6 +35,7 @@ package.check <- lapply(packages, FUN = function(x) {
 })
 
 suppressMessages(library("tidyverse"))
+rm(packages)
 setwd(".")
 
 #' 
@@ -49,14 +50,16 @@ kirc_clinic <- read_csv("data/kirc_clinic.csv")
 ## -----------------------------------------------------------------------------
 kirc_clinic <- kirc_clinic %>%
   mutate_if(is.character, as.factor) %>%
-  mutate(patient_id = as.character(patient_id))
+  mutate(patient_id = as.character(patient_id),
+         age = as.integer(age),
+         year_diagnose = as.integer(year_diagnose))
 
 #' 
 #' ## 3. Checking variables
 #' 
 ## -----------------------------------------------------------------------------
-skim(kirc_clinic) 
-# glimpse(kirc_clinic)
+glimpse(kirc_clinic)
+# skim(kirc_clinic) 
 # View(kirc_clinic)
 
 #' 
@@ -94,13 +97,16 @@ ggpairs(kirc_clinic_numeric, columns = cols_numeric,
 
 levels(kirc_clinic_numeric$over_surv_stt) <- c("DECEASED","LIVING")
 
+# Convert to Tidyverse
 kirc_clinic_numeric.long <- kirc_clinic_numeric %>%
   pivot_longer(-over_surv_stt, names_to = "variables", values_to = "value")
-
-# Convert to Tidyverse
 kirc_clinic_numeric.long <- kirc_clinic_numeric.long[!is.na(kirc_clinic_numeric.long$value), ]
-
 kirc_clinic_numeric.long$value.log <- log2(kirc_clinic_numeric.long$value+1)
+
+# OR
+# kirc_clinic_numeric.long <- kirc_clinic_numeric %>% 
+#   gather(key = 'variables', value = 'value', -over_surv_stt, na.rm = TRUE) %>%
+#     mutate(value.log = log2(kirc_clinic_numeric.long$value+1))
 
 kirc_clinic_numeric.long %>% sample_n(6)
 
@@ -127,7 +133,9 @@ myplot <- ggboxplot(
   ggtheme = theme_pubr(border = TRUE)
   ) +
   facet_wrap(~variables)
+
 # Add statistical test p-values
+# OBS: different p-values over vaule vs. log.value!! 
 stat.test <- stat.test %>% add_xy_position(x = "over_surv_stt")
 myplot + stat_pvalue_manual(stat.test, label = "p.adj.signif")
 
@@ -156,9 +164,10 @@ variables <- graphs$variables
 for(i in 1:length(variables)){
   graph.i <- graphs$plots[[i]] + 
     labs(title = variables[i]) +
-    stat_pvalue_manual(stat.test[i, ], label = "p.adj.signif")
+    #stat_pvalue_manual(stat.test[i, ], label = "p.adj.signif")
   print(graph.i)
 }
+# Error in print(graph.i) : objeto 'graph.i' não encontrado
 
 #' 
 #' 
@@ -174,7 +183,7 @@ for(i in 1:length(variables)){
 # ggplot(kirc_clinic, aes(x=over_surv_stt, y=disease_free_mth)) +
 #   geom_boxplot(width = .5) +
 #   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-# t.test(kirc_clinic$disease_free_mth ~ kirc_clinic$over_surv_stt) 
+# t.test(kirc_clinic$disease_free_mth ~ kirc_clinic$over_surv_stt)
 # 
 # ggplot(kirc_clinic, aes(x=over_surv_stt, y=frac_genome_alter)) +
 #   geom_boxplot(width = .5) +
@@ -213,9 +222,9 @@ for(i in 1:length(variables)){
 #' 
 ## ----echo=FALSE---------------------------------------------------------------
 # TO DO: levels with < 5 observations -> hemoglobin and tumor_lateral
-kirc_clinic %>%
-  select_if(is.factor) %>%
-  summary()
+# kirc_clinic %>%
+#   select_if(is.factor) %>%
+#   summary()
 
 #' 
 #' Tabulation and chi-square test
@@ -308,7 +317,6 @@ kirc_clinic %>%
 #' Chi-squared warnings will be generated when the expected count in any cell is less than 5.
 #' 
 ## -----------------------------------------------------------------------------
-#  warning=FALSE
 explanatory_char <- names(kirc_clinic %>%
               select(-over_surv_stt) %>%
               select_if(is.factor))
@@ -326,12 +334,13 @@ knitr::kable(table_fit, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
 #' 
 ## -----------------------------------------------------------------------------
 
-explanatory_num <- cols_numeric
-
-dependent <-  'over_surv_stt'
+explanatory_num <- names(kirc_clinic %>%
+                           select(-over_surv_stt) %>%
+                           select_if(is.numeric()))
+dependent <- 'over_surv_stt'
 
 table_fit <- kirc_clinic %>%
-  summary_factorlist(dependent, explanatory_num, p=TRUE, add_dependent_label=TRUE,  na_include = TRUE, na_include_dependent = TRUE)
+  summary_factorlist(dependent, explanatory_num, p=TRUE, add_dependent_label=TRUE,  na_include = TRUE)
 
 knitr::kable(table_fit, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
 
