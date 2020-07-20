@@ -353,10 +353,6 @@ Remove character variables with similar information - check each one!
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# kirc_clean2 %>%}
-\CommentTok{#      select_if(is.character) %>%}
-\CommentTok{#      skim()}
-
 \KeywordTok{table}\NormalTok{(kirc_clean2}\OperatorTok{$}\StringTok{`}\DataTypeTok{Overall Survival Status}\StringTok{`}\NormalTok{, }\DataTypeTok{exclude =} \OtherTok{NULL}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -390,10 +386,6 @@ Remove other variables not directly related to patient - check each one!
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# kirc_clean3 %>%}
-\CommentTok{#      select_if(is.character) %>%}
-\CommentTok{#      skim()}
-
 \NormalTok{kirc_clean4 <-}\StringTok{ }\NormalTok{kirc_clean3  }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{select}\NormalTok{(}\OperatorTok{!}\KeywordTok{c}\NormalTok{(}\StringTok{'Form completion date'}\NormalTok{,}\StringTok{'International Classification of Diseases for Oncology, Third Edition ICD-O-3 Histology Code'}\NormalTok{,}\StringTok{'Vial number'}\NormalTok{))}
 \end{Highlighting}
@@ -609,7 +601,7 @@ deleting outliers from dataset? Need to evaluate carefully each one!
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# filter(disease_free_mth >= 0) }
+\CommentTok{# error: disease_free_mth < 0}
 \end{Highlighting}
 \end{Shaded}
 
@@ -913,20 +905,20 @@ Check frequency, lables and levels
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# agregating levels}
-\NormalTok{kirc_clinic <-}\StringTok{ }\NormalTok{kirc_clean4 }\OperatorTok{%>%}
+\NormalTok{kirc_clin <-}\StringTok{ }\NormalTok{kirc_clean4 }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{tumor_stg =} \KeywordTok{fct_collapse}\NormalTok{(tumor_stg,}
                              \DataTypeTok{T1 =} \KeywordTok{c}\NormalTok{(}\StringTok{'T1'}\NormalTok{, }\StringTok{'T1a'}\NormalTok{, }\StringTok{'T1b'}\NormalTok{),}
                              \DataTypeTok{T2 =} \KeywordTok{c}\NormalTok{(}\StringTok{'T2'}\NormalTok{, }\StringTok{'T2a'}\NormalTok{, }\StringTok{'T2b'}\NormalTok{),}
                              \DataTypeTok{T3 =} \KeywordTok{c}\NormalTok{(}\StringTok{'T3'}\NormalTok{, }\StringTok{'T3a'}\NormalTok{, }\StringTok{'T3b'}\NormalTok{, }\StringTok{'T3c'}\NormalTok{)))}
 
-\NormalTok{kirc_clinic <-}\StringTok{ }\NormalTok{kirc_clinic }\OperatorTok{%>%}
+\NormalTok{kirc_clin <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{prior_cancer =} \KeywordTok{fct_collapse}\NormalTok{(prior_cancer, }
                \DataTypeTok{Yes =} \KeywordTok{c}\NormalTok{(}\StringTok{'Yes'}\NormalTok{, }\StringTok{'Yes, History of Prior Malignancy'}\NormalTok{, }\StringTok{'Yes, History of Synchronous/Bilateral Malignancy'}\NormalTok{)))}
 
-\NormalTok{kirc_clinic <-}\StringTok{ }\NormalTok{kirc_clinic }\OperatorTok{%>%}
+\NormalTok{kirc_clin <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{gender =} \KeywordTok{fct_collapse}\NormalTok{(gender, }\DataTypeTok{Male =} \KeywordTok{c}\NormalTok{(}\StringTok{'MALE'}\NormalTok{, }\StringTok{'Male'}\NormalTok{)))}
                                         
-\NormalTok{kirc_clinic <-}\StringTok{ }\NormalTok{kirc_clinic }\OperatorTok{%>%}
+\NormalTok{kirc_clin <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{tissue_site =} \KeywordTok{fct_collapse}\NormalTok{(tissue_site,}
                          \DataTypeTok{A =} \KeywordTok{c}\NormalTok{(}\StringTok{'A3'}\NormalTok{, }\StringTok{'AK'}\NormalTok{, }\StringTok{'AS'}\NormalTok{),}
                          \DataTypeTok{B =} \KeywordTok{c}\NormalTok{(}\StringTok{'B0'}\NormalTok{, }\StringTok{'B2'}\NormalTok{, }\StringTok{'B4'}\NormalTok{, }\StringTok{'B8'}\NormalTok{, }\StringTok{'BP'}\NormalTok{),}
@@ -934,7 +926,14 @@ Check frequency, lables and levels
                          \DataTypeTok{OTHERS =} \KeywordTok{c}\NormalTok{(}\StringTok{'G6'}\NormalTok{, }\StringTok{'GK'}\NormalTok{, }\StringTok{'MM'}\NormalTok{, }\StringTok{'MW'}\NormalTok{,}
                                     \StringTok{'3Z'}\NormalTok{, }\StringTok{'6D'}\NormalTok{, }\StringTok{'DV'}\NormalTok{, }\StringTok{'EU'}\NormalTok{, }\StringTok{'T7'}\NormalTok{)))}
 
-\NormalTok{kirc_clinic }\OperatorTok{%>%}
+\CommentTok{# changing level names}
+\NormalTok{kirc_clin <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
+\StringTok{     }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{ethnicity =} \KeywordTok{fct_recode}\NormalTok{(ethnicity, }\StringTok{'hispanic/latino'}\NormalTok{=}\StringTok{'HISPANIC OR LATINO'}\NormalTok{, }\StringTok{'not hispanic/latino'}\NormalTok{=}\StringTok{'NOT HISPANIC OR LATINO'}\NormalTok{),}
+            \DataTypeTok{race =} \KeywordTok{fct_recode}\NormalTok{(race, }\DataTypeTok{Asian=}\StringTok{'ASIAN'}\NormalTok{, }\StringTok{'Black/African.american'}\NormalTok{=}\StringTok{'BLACK OR AFRICAN AMERICAN'}\NormalTok{, }\DataTypeTok{White=}\StringTok{'WHITE'}\NormalTok{),}
+            \DataTypeTok{person_neoplasm_stt =} \KeywordTok{fct_recode}\NormalTok{(person_neoplasm_stt, }\DataTypeTok{Tumor.Free=}\StringTok{'TUMOR FREE'}\NormalTok{, }\DataTypeTok{With.Tumor=}\StringTok{'WITH TUMOR'}\NormalTok{))}
+
+
+\NormalTok{kirc_clin }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{select_if}\NormalTok{(is.factor) }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{summary}\NormalTok{()}
 \end{Highlighting}
@@ -948,13 +947,13 @@ Check frequency, lables and levels
 ##  NA's:  2                       Stage IV : 83   T4: 11   
 ##                                 NA's     :  3            
 ##                                                          
-##             disease_free_stt                  ethnicity   histology_grd
-##  DiseaseFree        :311     HISPANIC OR LATINO    : 26   G1  : 14     
-##  Recurred/Progressed:127     NOT HISPANIC OR LATINO:359   G2  :230     
-##  NA's               : 99     NA's                  :152   G3  :207     
-##                                                           G4  : 78     
-##                                                           GX  :  5     
-##                                                           NA's:  3     
+##             disease_free_stt               ethnicity   histology_grd
+##  DiseaseFree        :311     hispanic/latino    : 26   G1  : 14     
+##  Recurred/Progressed:127     not hispanic/latino:359   G2  :230     
+##  NA's               : 99     NA's               :152   G3  :207     
+##                                                        G4  : 78     
+##                                                        GX  :  5     
+##                                                        NA's:  3     
 ##     hemoglobin  neoadj_therapy prior_cancer   tumor_lateral primer_ln_ind3
 ##  Elevated:  5   No :519        No :459      Bilateral:  1   NO  :395      
 ##  Low     :263   Yes: 18        Yes: 78      Left     :253   YES :135      
@@ -962,16 +961,16 @@ Check frequency, lables and levels
 ##  NA's    : 83                                                             
 ##                                                                           
 ##                                                                           
-##   over_surv_stt     platelet   tissue_prospect                        race    
-##  DECEASED:177   Elevated: 38   NO  :465        ASIAN                    :  8  
-##  LIVING  :360   Low     : 46   YES : 52        BLACK OR AFRICAN AMERICAN: 56  
-##                 Normal  :360   NA's: 20        WHITE                    :466  
-##                 NA's    : 93                   NA's                     :  7  
-##                                                                               
-##                                                                               
+##   over_surv_stt     platelet   tissue_prospect                     race    
+##  DECEASED:177   Elevated: 38   NO  :465        Asian                 :  8  
+##  LIVING  :360   Low     : 46   YES : 52        Black/African.american: 56  
+##                 Normal  :360   NA's: 20        White                 :466  
+##                 NA's    : 93                   NA's                  :  7  
+##                                                                            
+##                                                                            
 ##  tissue_retrospect     serum_ca      gender    tissue_site  person_neoplasm_stt
-##  NO  : 53          Elevated: 10   Female:191   OTHERS: 28   TUMOR FREE:361     
-##  YES :466          Low     :204   Male  :346   A     : 79   WITH TUMOR:141     
+##  NO  : 53          Elevated: 10   Female:191   OTHERS: 28   Tumor.Free:361     
+##  YES :466          Low     :204   Male  :346   A     : 79   With.Tumor:141     
 ##  NA's: 18          Normal  :151                B     :303   NA's      : 35     
 ##                    NA's    :172                C     :127                      
 ##                                                                                
@@ -985,35 +984,24 @@ Check frequency, lables and levels
 ## 
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# recoding levels ??}
-\CommentTok{# }
-\CommentTok{# kirc_clinic <- kirc_clinic %>%}
-\CommentTok{#      mutate(gender = fct_recode(gender, '1'='Male', '2'='Female'))}
-\CommentTok{# }
-\CommentTok{# kirc_clinic <- kirc_clinic %>%}
-\CommentTok{#      mutate(gender = if_else(gender %in% c('Male', 'Female'), 1, 0))}
-\end{Highlighting}
-\end{Shaded}
-
 \subsection{8. Correcting and checking
 again}\label{correcting-and-checking-again}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{kirc_clinic <-}\StringTok{ }\NormalTok{kirc_clinic }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{filter}\NormalTok{(disease_free_mth }\OperatorTok{>=}\StringTok{ }\DecValTok{0}\NormalTok{)}
+\CommentTok{# month values < 0}
+\NormalTok{kirc_clin}\OperatorTok{$}\NormalTok{disease_free_mth[kirc_clin}\OperatorTok{$}\NormalTok{disease_free_mth }\OperatorTok{==}\StringTok{ }\OperatorTok{-}\FloatTok{11.79}\NormalTok{] <-}\StringTok{ }\FloatTok{11.79}
+\NormalTok{kirc_clin}\OperatorTok{$}\NormalTok{disease_free_mth[kirc_clin}\OperatorTok{$}\NormalTok{disease_free_mth }\OperatorTok{==}\StringTok{ }\OperatorTok{-}\FloatTok{0.62}\NormalTok{] <-}\StringTok{ }\FloatTok{0.62}
 
-\KeywordTok{skim}\NormalTok{(kirc_clinic)}
+\KeywordTok{skim}\NormalTok{(kirc_clin)}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{longtable}[]{@{}ll@{}}
 \caption{Data summary}\tabularnewline
 \toprule
-Name & kirc\_clinic\tabularnewline
-Number of rows & 436\tabularnewline
+Name & kirc\_clin\tabularnewline
+Number of rows & 537\tabularnewline
 Number of columns & 32\tabularnewline
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
 Column type frequency: &\tabularnewline
@@ -1033,7 +1021,7 @@ skim\_variable & n\_missing & complete\_rate & min & max & empty &
 n\_unique & whitespace\tabularnewline
 \midrule
 \endhead
-patient\_id & 0 & 1 & 12 & 12 & 0 & 436 & 0\tabularnewline
+patient\_id & 0 & 1 & 12 & 12 & 0 & 537 & 0\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -1045,44 +1033,44 @@ skim\_variable & n\_missing & complete\_rate & ordered & n\_unique &
 top\_counts\tabularnewline
 \midrule
 \endhead
-metastasis\_stg & 2 & 1.00 & FALSE & 3 & M0: 355, M1: 51, MX:
-28\tabularnewline
-neoplasm\_ln\_stg & 0 & 1.00 & FALSE & 3 & NX: 231, N0: 192, N1:
-13\tabularnewline
-neoplasm\_stg & 2 & 1.00 & FALSE & 4 & Sta: 231, Sta: 99, Sta: 54, Sta:
-50\tabularnewline
-tumor\_stg & 0 & 1.00 & FALSE & 4 & T1: 234, T3: 139, T2: 60, T4:
-3\tabularnewline
-disease\_free\_stt & 0 & 1.00 & FALSE & 2 & Dis: 311, Rec:
-125\tabularnewline
-ethnicity & 128 & 0.71 & FALSE & 2 & NOT: 284, HIS: 24\tabularnewline
-histology\_grd & 3 & 0.99 & FALSE & 5 & G2: 198, G3: 167, G4: 50, G1:
+metastasis\_stg & 2 & 1.00 & FALSE & 3 & M0: 426, M1: 79, MX:
+30\tabularnewline
+neoplasm\_ln\_stg & 0 & 1.00 & FALSE & 3 & NX: 280, N0: 240, N1:
+17\tabularnewline
+neoplasm\_stg & 3 & 0.99 & FALSE & 4 & Sta: 269, Sta: 125, Sta: 83, Sta:
+57\tabularnewline
+tumor\_stg & 0 & 1.00 & FALSE & 4 & T1: 275, T3: 182, T2: 69, T4:
+11\tabularnewline
+disease\_free\_stt & 99 & 0.82 & FALSE & 2 & Dis: 311, Rec:
+127\tabularnewline
+ethnicity & 152 & 0.72 & FALSE & 2 & not: 359, his: 26\tabularnewline
+histology\_grd & 3 & 0.99 & FALSE & 5 & G2: 230, G3: 207, G4: 78, G1:
 14\tabularnewline
-hemoglobin & 76 & 0.83 & FALSE & 3 & Low: 196, Nor: 161, Ele:
-3\tabularnewline
-neoadj\_therapy & 0 & 1.00 & FALSE & 2 & No: 422, Yes: 14\tabularnewline
-prior\_cancer & 0 & 1.00 & FALSE & 2 & No: 376, Yes: 60\tabularnewline
-tumor\_lateral & 0 & 1.00 & FALSE & 3 & Rig: 239, Lef: 196, Bil:
-1\tabularnewline
-primer\_ln\_ind3 & 6 & 0.99 & FALSE & 2 & NO: 319, YES:
-111\tabularnewline
-over\_surv\_stt & 0 & 1.00 & FALSE & 2 & LIV: 359, DEC:
-77\tabularnewline
-platelet & 81 & 0.81 & FALSE & 3 & Nor: 303, Low: 30, Ele:
-22\tabularnewline
-tissue\_prospect & 17 & 0.96 & FALSE & 2 & NO: 368, YES:
-51\tabularnewline
-race & 5 & 0.99 & FALSE & 3 & WHI: 376, BLA: 48, ASI: 7\tabularnewline
-tissue\_retrospect & 15 & 0.97 & FALSE & 2 & YES: 369, NO:
-52\tabularnewline
-serum\_ca & 153 & 0.65 & FALSE & 3 & Low: 163, Nor: 115, Ele:
+hemoglobin & 83 & 0.85 & FALSE & 3 & Low: 263, Nor: 186, Ele:
 5\tabularnewline
-gender & 0 & 1.00 & FALSE & 2 & Mal: 286, Fem: 150\tabularnewline
-tissue\_site & 0 & 1.00 & FALSE & 4 & B: 234, C: 107, A: 71, OTH:
-24\tabularnewline
-person\_neoplasm\_stt & 24 & 0.94 & FALSE & 2 & TUM: 309, WIT:
-103\tabularnewline
-wbc & 83 & 0.81 & FALSE & 3 & Nor: 209, Ele: 139, Low: 5\tabularnewline
+neoadj\_therapy & 0 & 1.00 & FALSE & 2 & No: 519, Yes: 18\tabularnewline
+prior\_cancer & 0 & 1.00 & FALSE & 2 & No: 459, Yes: 78\tabularnewline
+tumor\_lateral & 0 & 1.00 & FALSE & 3 & Rig: 283, Lef: 253, Bil:
+1\tabularnewline
+primer\_ln\_ind3 & 7 & 0.99 & FALSE & 2 & NO: 395, YES:
+135\tabularnewline
+over\_surv\_stt & 0 & 1.00 & FALSE & 2 & LIV: 360, DEC:
+177\tabularnewline
+platelet & 93 & 0.83 & FALSE & 3 & Nor: 360, Low: 46, Ele:
+38\tabularnewline
+tissue\_prospect & 20 & 0.96 & FALSE & 2 & NO: 465, YES:
+52\tabularnewline
+race & 7 & 0.99 & FALSE & 3 & Whi: 466, Bla: 56, Asi: 8\tabularnewline
+tissue\_retrospect & 18 & 0.97 & FALSE & 2 & YES: 466, NO:
+53\tabularnewline
+serum\_ca & 172 & 0.68 & FALSE & 3 & Low: 204, Nor: 151, Ele:
+10\tabularnewline
+gender & 0 & 1.00 & FALSE & 2 & Mal: 346, Fem: 191\tabularnewline
+tissue\_site & 0 & 1.00 & FALSE & 4 & B: 303, C: 127, A: 79, OTH:
+28\tabularnewline
+person\_neoplasm\_stt & 35 & 0.93 & FALSE & 2 & Tum: 361, Wit:
+141\tabularnewline
+wbc & 96 & 0.82 & FALSE & 3 & Nor: 268, Ele: 164, Low: 9\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -1094,24 +1082,24 @@ skim\_variable & n\_missing & complete\_rate & mean & sd & p0 & p25 &
 p50 & p75 & p100 & hist\tabularnewline
 \midrule
 \endhead
-age & 0 & 1.00 & 59.08 & 11.89 & 26.0 & 50.00 & 59.00 & 68.00 & 86.00 &
+age & 0 & 1.00 & 60.59 & 12.15 & 26.0 & 52.00 & 61.00 & 70.00 & 90.00 &
 ▁▅▇▆▂\tabularnewline
-disease\_free\_mth & 0 & 1.00 & 40.46 & 31.57 & 0.0 & 13.80 & 36.35 &
-60.64 & 133.84 & ▇▅▃▁▁\tabularnewline
-frac\_genome\_alter & 8 & 0.98 & 0.17 & 0.17 & 0.0 & 0.06 & 0.12 & 0.21
+disease\_free\_mth & 99 & 0.82 & 40.30 & 31.58 & 0.0 & 13.43 & 36.20 &
+60.51 & 133.84 & ▇▅▃▁▁\tabularnewline
+frac\_genome\_alter & 9 & 0.98 & 0.17 & 0.17 & 0.0 & 0.06 & 0.12 & 0.21
 & 0.95 & ▇▂▁▁▁\tabularnewline
-year\_diagnose & 0 & 1.00 & 2006.31 & 2.72 & 1998.0 & 2004.00 & 2006.00
-& 2008.00 & 2013.00 & ▁▅▇▃▁\tabularnewline
-long\_dim & 32 & 0.93 & 1.63 & 0.67 & 0.4 & 1.20 & 1.50 & 2.00 & 4.00 &
-▅▇▃▂▁\tabularnewline
-mutation\_cnt & 70 & 0.84 & 76.05 & 133.95 & 1.0 & 34.00 & 47.00 & 62.00
+year\_diagnose & 0 & 1.00 & 2006.02 & 2.76 & 1998.0 & 2004.00 & 2006.00
+& 2007.00 & 2013.00 & ▁▆▇▃▁\tabularnewline
+long\_dim & 35 & 0.93 & 1.66 & 0.66 & 0.4 & 1.20 & 1.50 & 2.00 & 4.00 &
+▃▇▃▂▁\tabularnewline
+mutation\_cnt & 86 & 0.84 & 73.85 & 127.76 & 1.0 & 34.00 & 48.00 & 65.50
 & 1392.00 & ▇▁▁▁▁\tabularnewline
-over\_surv\_mth & 0 & 1.00 & 47.04 & 32.83 & 0.0 & 20.19 & 43.07 & 65.66
-& 149.05 & ▇▇▅▂▁\tabularnewline
-short\_dim & 32 & 0.93 & 0.38 & 0.21 & 0.1 & 0.20 & 0.30 & 0.50 & 1.00 &
-▆▇▂▂▁\tabularnewline
-second\_long\_dim & 32 & 0.93 & 0.91 & 0.29 & 0.3 & 0.70 & 0.90 & 1.00 &
-2.00 & ▃▇▅▁▁\tabularnewline
+over\_surv\_mth & 0 & 1.00 & 44.26 & 32.25 & 0.0 & 18.10 & 38.96 & 63.21
+& 149.05 & ▇▇▃▂▁\tabularnewline
+short\_dim & 35 & 0.93 & 0.38 & 0.21 & 0.1 & 0.20 & 0.30 & 0.50 & 1.00 &
+▆▇▂▁▁\tabularnewline
+second\_long\_dim & 35 & 0.93 & 0.94 & 0.31 & 0.3 & 0.70 & 0.90 & 1.10 &
+2.00 & ▃▇▆▂▁\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -1119,7 +1107,7 @@ second\_long\_dim & 32 & 0.93 & 0.91 & 0.29 & 0.3 & 0.70 & 0.90 & 1.00 &
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{write_csv}\NormalTok{(kirc_clinic, }\DataTypeTok{path =} \StringTok{"data/kirc_clinic.csv"}\NormalTok{)}
+\KeywordTok{write_csv}\NormalTok{(kirc_clin, }\DataTypeTok{path =} \StringTok{"data/kirc_clin.csv"}\NormalTok{)}
 
 \KeywordTok{rm}\NormalTok{(kirc_clean4, kirc_clean3, kirc_clean2, kirc_clean1, kirc_clean0, kirc_clean, NA_sum, NA_fifty)}
 \end{Highlighting}
@@ -1157,7 +1145,7 @@ second\_long\_dim & 32 & 0.93 & 0.91 & 0.29 & 0.3 & 0.70 & 0.90 & 1.00 &
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] finalfit_1.0.1  skimr_2.1.1     forcats_0.5.0   stringr_1.4.0  
+##  [1] finalfit_1.0.2  skimr_2.1.1     forcats_0.5.0   stringr_1.4.0  
 ##  [5] dplyr_0.8.5     purrr_0.3.3     readr_1.3.1     tidyr_1.0.2    
 ##  [9] tibble_3.0.0    ggplot2_3.3.0   tidyverse_1.3.0
 ## 
@@ -1175,7 +1163,7 @@ second\_long\_dim & 32 & 0.93 & 0.91 & 0.29 & 0.3 & 0.70 & 0.90 & 1.00 &
 ## [41] magrittr_1.5     scales_1.1.0     cli_2.0.2        stringi_1.4.6   
 ## [45] farver_2.0.3     fs_1.4.1         mice_3.8.0       xml2_1.3.0      
 ## [49] ellipsis_0.3.0   generics_0.0.2   vctrs_0.2.4      boot_1.3-24     
-## [53] tools_3.6.3      glue_1.4.0       hms_0.5.3        survival_3.1-11 
+## [53] tools_3.6.3      glue_1.4.0       hms_0.5.3        survival_3.2-3  
 ## [57] yaml_2.2.1       colorspace_1.4-1 rvest_0.3.5      knitr_1.28      
 ## [61] haven_2.2.0
 \end{verbatim}

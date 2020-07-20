@@ -119,10 +119,6 @@ kirc_clean2 <- kirc_clean1  %>%
 #' Remove character variables with similar information - check each one!
 #' 
 ## -----------------------------------------------------------------------------
-# kirc_clean2 %>%
-#      select_if(is.character) %>%
-#      skim()
-
 table(kirc_clean2$`Overall Survival Status`, exclude = NULL)
 table(kirc_clean2$`Patient's Vital Status`, exclude = NULL)
 
@@ -133,10 +129,6 @@ kirc_clean3 <- kirc_clean2  %>%
 #' Remove other variables not directly related to patient - check each one!
 #' 
 ## -----------------------------------------------------------------------------
-# kirc_clean3 %>%
-#      select_if(is.character) %>%
-#      skim()
-
 kirc_clean4 <- kirc_clean3  %>%
      select(!c('Form completion date','International Classification of Diseases for Oncology, Third Edition ICD-O-3 Histology Code','Vial number'))
 
@@ -209,14 +201,6 @@ missing_glimpse(kirc_clean4)
 #' Check data distribution, plausible ranges, outliers;
 #' Thinking about deleting outliers from dataset? Need to evaluate carefully each one!
 #' 
-#' <!-- # TO DO @PATRICK: codigo para analizar todas as variaveis numericas? -->
-#' <!-- # kirc_clean6 <-  kirc_clean4 %>% -->
-#' <!-- #      select_if(is.numeric) %>% -->
-#' <!-- #      ggplot(aes(funs(.)) + -->
-#' <!-- #      geom_boxplot(width = .5) + -->
-#' <!-- #      geom_jitter(width = 0.05, alpha = 0.2, color = "orange")om_boxplot(width = .5) + -->
-#' <!-- #      geom_jitter(width = 0.05, alpha = 0.2, color = "orange") -->
-#' 
 ## -----------------------------------------------------------------------------
 kirc_clean4 %>%
      select_if(is.numeric) %>%
@@ -238,7 +222,7 @@ ggplot(kirc_clean4, aes(x ='', y=disease_free_mth)) +
      geom_boxplot(width = .5) +
      geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
 boxplot.stats(kirc_clean4$disease_free_mth)
-# filter(disease_free_mth >= 0) 
+# error: disease_free_mth < 0
 
 #' 
 ## -----------------------------------------------------------------------------
@@ -293,20 +277,20 @@ kirc_clean4 %>%
      summary() 
 
 # agregating levels
-kirc_clinic <- kirc_clean4 %>%
+kirc_clin <- kirc_clean4 %>%
      mutate(tumor_stg = fct_collapse(tumor_stg,
                              T1 = c('T1', 'T1a', 'T1b'),
                              T2 = c('T2', 'T2a', 'T2b'),
                              T3 = c('T3', 'T3a', 'T3b', 'T3c')))
 
-kirc_clinic <- kirc_clinic %>%
+kirc_clin <- kirc_clin %>%
      mutate(prior_cancer = fct_collapse(prior_cancer, 
                Yes = c('Yes', 'Yes, History of Prior Malignancy', 'Yes, History of Synchronous/Bilateral Malignancy')))
 
-kirc_clinic <- kirc_clinic %>%
+kirc_clin <- kirc_clin %>%
      mutate(gender = fct_collapse(gender, Male = c('MALE', 'Male')))
                                         
-kirc_clinic <- kirc_clinic %>%
+kirc_clin <- kirc_clin %>%
      mutate(tissue_site = fct_collapse(tissue_site,
                          A = c('A3', 'AK', 'AS'),
                          B = c('B0', 'B2', 'B4', 'B8', 'BP'),
@@ -314,32 +298,32 @@ kirc_clinic <- kirc_clinic %>%
                          OTHERS = c('G6', 'GK', 'MM', 'MW',
                                     '3Z', '6D', 'DV', 'EU', 'T7')))
 
-kirc_clinic %>%
+# changing level names
+kirc_clin <- kirc_clin %>%
+     mutate(ethnicity = fct_recode(ethnicity, 'hispanic/latino'='HISPANIC OR LATINO', 'not hispanic/latino'='NOT HISPANIC OR LATINO'),
+            race = fct_recode(race, Asian='ASIAN', 'Black/African.american'='BLACK OR AFRICAN AMERICAN', White='WHITE'),
+            person_neoplasm_stt = fct_recode(person_neoplasm_stt, Tumor.Free='TUMOR FREE', With.Tumor='WITH TUMOR'))
+
+
+kirc_clin %>%
      select_if(is.factor) %>%
      summary()
-
-# recoding levels ??
-# 
-# kirc_clinic <- kirc_clinic %>%
-#      mutate(gender = fct_recode(gender, '1'='Male', '2'='Female'))
-# 
-# kirc_clinic <- kirc_clinic %>%
-#      mutate(gender = if_else(gender %in% c('Male', 'Female'), 1, 0))
 
 #' 
 #' ## 8. Correcting and checking again 
 #' 
 ## -----------------------------------------------------------------------------
-kirc_clinic <- kirc_clinic %>%
-  filter(disease_free_mth >= 0)
+# month values < 0
+kirc_clin$disease_free_mth[kirc_clin$disease_free_mth == -11.79] <- 11.79
+kirc_clin$disease_free_mth[kirc_clin$disease_free_mth == -0.62] <- 0.62
 
-skim(kirc_clinic)
+skim(kirc_clin)
 
 #' 
 #' ## 9. Saving dataset
 #' 
 ## -----------------------------------------------------------------------------
-write_csv(kirc_clinic, path = "data/kirc_clinic.csv")
+write_csv(kirc_clin, path = "data/kirc_clin.csv")
 
 rm(kirc_clean4, kirc_clean3, kirc_clean2, kirc_clean1, kirc_clean0, kirc_clean, NA_sum, NA_fifty)
 
