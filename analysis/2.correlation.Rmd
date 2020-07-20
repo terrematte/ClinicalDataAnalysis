@@ -53,25 +53,27 @@ setwd(".")
 ## 1. Importing data
 
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
-kirc_clinic <- read_csv("data/kirc_clinic.csv")
+kirc_clin <- read_csv("data/kirc_clin.csv")
 ```
 
 ## 2. Taming data 
 
 ```{r}
-kirc_clinic <- kirc_clinic %>%
+kirc_clin <- kirc_clin %>%
   mutate_if(is.character, as.factor) %>%
   mutate(patient_id = as.character(patient_id),
          age = as.integer(age),
          year_diagnose = as.integer(year_diagnose))
+
+# check 
+glimpse(kirc_clin)
 ```
 
-## 3. Checking variables
+## 3.The dependent variable
 
 ```{r}
-glimpse(kirc_clinic)
-# skim(kirc_clinic) 
-# View(kirc_clinic)
+# Check the number of levels. If greater than 2, it thas to run a ordinal logistic regression presents only two levels (otherwise, it has to run a ordinal logistic regression)
+table(kirc_clin$over_surv_stt, exclude = NULL)
 ```
 
 ## 4. Numeric variables vs. over_surv_stt
@@ -79,16 +81,16 @@ glimpse(kirc_clinic)
 Correlation matrix - graphic visualization
 
 ```{r message=FALSE, warning=FALSE}
-cols_numeric <- kirc_clinic %>% 
+cols_numeric <- kirc_clin %>% 
   select_if(is.numeric) %>%
   names
 
-kirc_clinic_numeric <- kirc_clinic %>%
+kirc_clin_numeric <- kirc_clin %>%
                       select(one_of(c(cols_numeric, "over_surv_stt")))  
 
-levels(kirc_clinic_numeric$over_surv_stt) <- c("D","L")
+levels(kirc_clin_numeric$over_surv_stt) <- c("D","L")
 
-ggpairs(kirc_clinic_numeric, columns = cols_numeric, 
+ggpairs(kirc_clin_numeric, columns = cols_numeric, 
         title="Correlation matrix",               
         mapping= aes(colour = over_surv_stt), 
         upper = list(combo = wrap("box_no_facet", alpha=0.1), 
@@ -106,20 +108,20 @@ Transform the data into long format
 ```{r}
 # Put all variables in the same column except `over_surv_stt`, the grouping variable
 
-levels(kirc_clinic_numeric$over_surv_stt) <- c("DECEASED","LIVING")
+levels(kirc_clin_numeric$over_surv_stt) <- c("DECEASED","LIVING")
 
 # Convert to Tidyverse
-kirc_clinic_numeric.long <- kirc_clinic_numeric %>%
+kirc_clin_numeric.long <- kirc_clin_numeric %>%
   pivot_longer(-over_surv_stt, names_to = "variables", values_to = "value")
-kirc_clinic_numeric.long <- kirc_clinic_numeric.long[!is.na(kirc_clinic_numeric.long$value), ]
-kirc_clinic_numeric.long$value.log <- log2(kirc_clinic_numeric.long$value+1)
+kirc_clin_numeric.long <- kirc_clin_numeric.long[!is.na(kirc_clin_numeric.long$value), ]
+kirc_clin_numeric.long$value.log <- log2(kirc_clin_numeric.long$value+1)
 
 # OR
-# kirc_clinic_numeric.long <- kirc_clinic_numeric %>% 
+# kirc_clin_numeric.long <- kirc_clin_numeric %>% 
 #   gather(key = 'variables', value = 'value', -over_surv_stt, na.rm = TRUE) %>%
-#     mutate(value.log = log2(kirc_clinic_numeric.long$value+1))
+#     mutate(value.log = log2(kirc_clin_numeric.long$value+1))
 
-kirc_clinic_numeric.long %>% sample_n(6)
+kirc_clin_numeric.long %>% sample_n(6)
 ```
 
 Group the data by variables and compare over_surv_stt groups
@@ -127,7 +129,7 @@ Group the data by variables and compare over_surv_stt groups
 Adjust the p-values and add significance levels
 
 ```{r}
-stat.test <- kirc_clinic_numeric.long %>%
+stat.test <- kirc_clin_numeric.long %>%
   group_by(variables) %>%
   t_test(value ~ over_surv_stt) %>%
   adjust_pvalue(method = "BH") %>%
@@ -139,7 +141,7 @@ stat.test
 ```{r}
 # Create the plot on logscale
 myplot <- ggboxplot(
-  kirc_clinic_numeric.long, x = "over_surv_stt", y = "value.log",
+  kirc_clin_numeric.long, x = "over_surv_stt", y = "value.log",
   fill = "over_surv_stt", palette = "npg", legend = "none", 
   ggtheme = theme_pubr(border = TRUE)
   ) +
@@ -154,7 +156,7 @@ myplot + stat_pvalue_manual(stat.test, label = "p.adj.signif")
 
 ```{r}
 # Group the data by variables and do a graph for each variable
-graphs <- kirc_clinic_numeric.long %>%
+graphs <- kirc_clin_numeric.long %>%
   group_by(variables) %>%
   doo(
     ~ggboxplot(
@@ -171,173 +173,60 @@ graphs
 
 ```{r}
 # Add statitistical tests to each corresponding plot
-variables <- graphs$variables
-for(i in 1:length(variables)){
-  graph.i <- graphs$plots[[i]] + 
-    labs(title = variables[i]) +
-    #stat_pvalue_manual(stat.test[i, ], label = "p.adj.signif")
-  print(graph.i)
-}
+# variables <- graphs$variables
+# for(i in 1:length(variables)){
+#   graph.i <- graphs$plots[[i]] + 
+#     labs(title = variables[i]) +
+#     #stat_pvalue_manual(stat.test[i, ], label = "p.adj.signif")
+#   print(graph.i)
+# }
 # Error in print(graph.i) : objeto 'graph.i' não encontrado
 ```
 
 
 ```{r}
-# ggplot(kirc_clinic, aes(age, fill= over_surv_stt)) +
+# ggplot(kirc_clin, aes(age, fill= over_surv_stt)) +
 #   geom_histogram(bins = 15, position = "dodge")
-# t.test(kirc_clinic$age ~ kirc_clinic$over_surv_stt) 
+# t.test(kirc_clin$age ~ kirc_clin$over_surv_stt) 
 # 
-# ggplot(kirc_clinic, aes(year_diagnose, fill= over_surv_stt)) +
+# ggplot(kirc_clin, aes(year_diagnose, fill= over_surv_stt)) +
 #   geom_histogram(bins = 15, position = "dodge")
-# t.test(kirc_clinic$year_diagnose ~ kirc_clinic$over_surv_stt) 
+# t.test(kirc_clin$year_diagnose ~ kirc_clin$over_surv_stt) 
 # 
-# ggplot(kirc_clinic, aes(x=over_surv_stt, y=disease_free_mth)) +
+# ggplot(kirc_clin, aes(x=over_surv_stt, y=disease_free_mth)) +
 #   geom_boxplot(width = .5) +
 #   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-# t.test(kirc_clinic$disease_free_mth ~ kirc_clinic$over_surv_stt)
+# t.test(kirc_clin$disease_free_mth ~ kirc_clin$over_surv_stt)
 # 
-# ggplot(kirc_clinic, aes(x=over_surv_stt, y=frac_genome_alter)) +
+# ggplot(kirc_clin, aes(x=over_surv_stt, y=frac_genome_alter)) +
 #   geom_boxplot(width = .5) +
 #   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-# t.test(kirc_clinic$frac_genome_alter ~ kirc_clinic$over_surv_stt)
+# t.test(kirc_clin$frac_genome_alter ~ kirc_clin$over_surv_stt)
 # 
-# ggplot(kirc_clinic, aes(x=over_surv_stt, y=long_dim)) +
+# ggplot(kirc_clin, aes(x=over_surv_stt, y=long_dim)) +
 #   geom_boxplot(width = .5) +
 #   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-# t.test(kirc_clinic$long_dim ~ kirc_clinic$over_surv_stt)
+# t.test(kirc_clin$long_dim ~ kirc_clin$over_surv_stt)
 # 
-# ggplot(kirc_clinic, aes(x=over_surv_stt, y=mutation_cnt)) +
+# ggplot(kirc_clin, aes(x=over_surv_stt, y=mutation_cnt)) +
 #   geom_boxplot(width = .5) +
 #   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-# t.test(kirc_clinic$mutation_cnt ~ kirc_clinic$over_surv_stt)
+# t.test(kirc_clin$mutation_cnt ~ kirc_clin$over_surv_stt)
 # 
-# ggplot(kirc_clinic, aes(x=over_surv_stt, y=over_surv_mth)) +
+# ggplot(kirc_clin, aes(x=over_surv_stt, y=over_surv_mth)) +
 #   geom_boxplot(width = .5) +
 #   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-# t.test(kirc_clinic$over_surv_mth ~ kirc_clinic$over_surv_stt)
+# t.test(kirc_clin$over_surv_mth ~ kirc_clin$over_surv_stt)
 # 
-# ggplot(kirc_clinic, aes(x=over_surv_stt, y=short_dim)) +
+# ggplot(kirc_clin, aes(x=over_surv_stt, y=short_dim)) +
 #   geom_boxplot(width = .5) +
 #   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-# t.test(kirc_clinic$short_dim ~ kirc_clinic$over_surv_stt)
+# t.test(kirc_clin$short_dim ~ kirc_clin$over_surv_stt)
 # 
-# ggplot(kirc_clinic, aes(x=over_surv_stt, y=second_long_dim)) +
+# ggplot(kirc_clin, aes(x=over_surv_stt, y=second_long_dim)) +
 #   geom_boxplot(width = .5) +
 #   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")
-# t.test(kirc_clinic$second_long_dim ~ kirc_clinic$over_surv_stt)
-```
-
-## 5. Categorical variables vs. over_surv_stt
-
-Checking categorical variables
-
-```{r echo=FALSE}
-# TO DO: levels with < 5 observations -> hemoglobin and tumor_lateral
-# kirc_clinic %>%
-#   select_if(is.factor) %>%
-#   summary()
-```
-
-Tabulation and chi-square test
-
-```{r warning=FALSE}
-# t_metas_stg <- table(kirc_clinic$metastasis_stg, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_metas_stg <- addmargins(round(100*prop.table(t_metas_stg)))
-# t_metas_stg
-# chisq.test(x = kirc_clinic$metastasis_stg, y = kirc_clinic$over_surv_stt) 
-# 
-# t_lynph <- table(kirc_clinic$neoplasm_ln_stg, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_lynph <- addmargins(round(100*prop.table(t_lynph)))
-# t_lynph
-# chisq.test(x = kirc_clinic$neoplasm_ln_stg, y = kirc_clinic$over_surv_stt) 
-# 
-# t_neop <- table(kirc_clinic$neoplasm_stg, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_neop <- addmargins(round(100*prop.table(t_neop)))
-# t_neop
-# chisq.test(x = kirc_clinic$neoplasm_stg, y = kirc_clinic$over_surv_stt) 
-# 
-# t_tumor <- table(kirc_clinic$tumor_stg, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_tumor <- addmargins(round(100*prop.table(t_tumor)))
-# t_tumor
-# chisq.test(x = kirc_clinic$tumor_stg, y = kirc_clinic$over_surv_stt) 
-# 
-# t_free <- table(kirc_clinic$disease_free_stt, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_free <- addmargins(round(100*prop.table(t_free)))
-# t_free
-# chisq.test(x = kirc_clinic$disease_free_stt, y = kirc_clinic$over_surv_stt) 
-# 
-# t_prior <- table(kirc_clinic$prior_cancer, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_prior <- addmargins(round(100*prop.table(t_prior)))
-# t_prior
-# chisq.test(x = kirc_clinic$prior_cancer, y = kirc_clinic$over_surv_stt) 
-# 
-# t_neo <- table(kirc_clinic$neoadj_therapy, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_neo <- addmargins(round(100*prop.table(t_neo)))
-# t_neo
-# chisq.test(x = kirc_clinic$neoadj_therapy, y = kirc_clinic$over_surv_stt) 
-# 
-# t_platelet <- table(kirc_clinic$platelet, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_platelet <- addmargins(round(100*prop.table(t_platelet)))
-# t_platelet
-# chisq.test(x = kirc_clinic$platelet, y = kirc_clinic$over_surv_stt)
-# 
-# t_prospect <- table(kirc_clinic$tissue_prospect, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_prospect <- addmargins(round(100*prop.table(t_prospect)))
-# t_prospect
-# chisq.test(x = kirc_clinic$tissue_prospect, y = kirc_clinic$over_surv_stt)
-# 
-# t_race <- table(kirc_clinic$race, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_race <- addmargins(round(100*prop.table(t_race)))
-# t_race
-# chisq.test(x = kirc_clinic$race, y = kirc_clinic$over_surv_stt) 
-# 
-# t_retros <- table(kirc_clinic$tissue_retrospect, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_retros <- addmargins(round(100*prop.table(t_retros)))
-# t_retros
-# chisq.test(x = kirc_clinic$tissue_retrospect, y = kirc_clinic$over_surv_stt)
-# 
-# t_ca <- table(kirc_clinic$serum_ca, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_ca <- addmargins(round(100*prop.table(t_ca)))
-# t_ca
-# chisq.test(x = kirc_clinic$serum_ca, y = kirc_clinic$over_surv_stt) 
-# 
-# t_gender <- table(kirc_clinic$gender, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_gender <- addmargins(round(100*prop.table(t_gender)))
-# t_gender
-# chisq.test(x = kirc_clinic$gender, y = kirc_clinic$over_surv_stt) 
-# 
-# t_site <- table(kirc_clinic$tissue_site, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_site <- addmargins(round(100*prop.table(t_site)))
-# t_site
-# chisq.test(x = kirc_clinic$tissue_site, y = kirc_clinic$over_surv_stt) 
-# 
-# t_neop_st <- table(kirc_clinic$person_neoplasm_stt, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_neop_st <- addmargins(round(100*prop.table(t_neop_st)))
-# t_neop_st
-# chisq.test(x = kirc_clinic$person_neoplasm_stt, y = kirc_clinic$over_surv_stt) 
-# 
-# t_wbc <- table(kirc_clinic$wbc, kirc_clinic$over_surv_stt, exclude = NULL)
-# t_wbc <- addmargins(round(100*prop.table(t_wbc)))
-# t_wbc
-# chisq.test(x = kirc_clinic$wbc, y = kirc_clinic$over_surv_stt) 
-```
-
-## 7. FinalFit
-
-Summary for chategorical explanatory variables
-Chi-squared warnings will be generated when the expected count in any cell is less than 5.
-
-```{r}
-explanatory_char <- names(kirc_clinic %>%
-              select(-over_surv_stt) %>%
-              select_if(is.factor))
-dependent <-  'over_surv_stt'
-
-table_fit <- kirc_clinic %>%
-  summary_factorlist(dependent, explanatory_char, p=TRUE, add_dependent_label=TRUE,  na_include = TRUE)
-
-
-knitr::kable(table_fit, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
+# t.test(kirc_clin$second_long_dim ~ kirc_clin$over_surv_stt)
 ```
 
 Summary for continuous explanatory variables 
@@ -345,16 +234,84 @@ use a parametric or non-parametric test??
 
 ```{r}
 
-explanatory_num <- names(kirc_clinic %>%
-                           select(-over_surv_stt) %>%
-                           select_if(is.numeric()))
+explanatory_num <- kirc_clin %>%
+  select(-over_surv_stt) %>%
+  select_if(is.numeric) %>%
+  names
 dependent <- 'over_surv_stt'
 
-table_fit <- kirc_clinic %>%
-  summary_factorlist(dependent, explanatory_num, p=TRUE, add_dependent_label=TRUE,  na_include = TRUE)
+table_num <- kirc_clin %>%
+  summary_factorlist(dependent, explanatory_num, p=TRUE, 
+                     add_dependent_label=TRUE,  na_include = TRUE)
 
-knitr::kable(table_fit, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
+knitr::kable(table_num, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
 
+```
+
+```{r}
+# Correlation Matrix
+# Pearson's (normal distribution) or Spearman (not-normal) correlations
+corr_num <- kirc_clin %>%
+     select_if(is.numeric) %>%
+     drop_na()
+
+# Check the correlation between variables to exclude the higly correlated
+cor_matrix <- cor(corr_num, method = "spearman")
+cor_matrix <- round(cor_matrix, 2)
+cor_matrix
+```
+
+## 5. Categorical variables vs. over_surv_stt
+
+Tabulation and chi-square test
+
+```{r warning=FALSE}
+# t_metas_stg <- table(kirc_clin$metastasis_stg, kirc_clin$over_surv_stt, exclude = NULL)
+# t_metas_stg <- addmargins(round(100*prop.table(t_metas_stg)))
+# t_metas_stg
+# chisq.test(x = kirc_clin$metastasis_stg, y = kirc_clin$over_surv_stt) 
+```
+
+Summary for chategorical explanatory variables
+Chi-squared warnings will be generated when the expected count in any cell is less than 5.
+
+```{r}
+explanatory_char <- kirc_clin %>%
+  select(-over_surv_stt) %>%
+  select_if(is.factor) %>%
+  names
+
+dependent <-  'over_surv_stt'
+
+table_char <- kirc_clin %>%
+  summary_factorlist(dependent, explanatory_char, p=TRUE, 
+                     add_dependent_label=TRUE,  na_include = TRUE)
+
+knitr::kable(table_char, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
+
+
+# Droping levels with narrow distributions -> check warnings ()
+# Group some levels or drop one (NULL = 'level') when grouping is not possible  
+
+kirc_clin2 <- kirc_clin %>%
+     mutate(neoplasm_stg = fct_collapse(neoplasm_stg, 'Stage I-II' = c('Stage I','Stage II'), 'Stage III-IV' = c('Stage III','Stage IV')),
+            tumor_stg = fct_collapse(tumor_stg, 'T1-T2' = c('T1','T2'), 'T3-T4' = c('T3','T4')),
+            histology_grd = fct_collapse(histology_grd, 'G1-G2' = c('G1','G2'), 'G3-G4' = c('G3','G4')),
+            hemoglobin = fct_collapse(hemoglobin, 'Not.Low' = c('Normal', 'Elevated')),
+            serum_ca = fct_collapse(serum_ca, 'Not.Low' = c('Normal', 'Elevated')),
+            wbc = fct_collapse(wbc, 'Not.Elevated' = c('Low', 'Normal')))
+                                                       
+kirc_clin2 <- kirc_clin %>%
+     mutate(histology_grd = fct_recode(histology_grd,  NULL = 'GX'),
+            tumor_lateral = fct_recode(tumor_lateral, NULL = 'Bilateral'),
+            race = fct_recode(race, NULL = 'Asian'))
+
+
+table_char2 <- kirc_clin2 %>%
+  summary_factorlist(dependent, explanatory_char, p=TRUE, 
+                     add_dependent_label=TRUE,  na_include = TRUE)
+
+knitr::kable(table_char2, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
 ```
 
 ## Further analysis

@@ -143,6 +143,7 @@ indicates the strength of evidence in supportting the null hypothesis.
 \NormalTok{\})}
 
 \KeywordTok{suppressMessages}\NormalTok{(}\KeywordTok{library}\NormalTok{(}\StringTok{"tidyverse"}\NormalTok{))}
+\KeywordTok{rm}\NormalTok{(packages)}
 \KeywordTok{setwd}\NormalTok{(}\StringTok{"."}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
@@ -151,7 +152,7 @@ indicates the strength of evidence in supportting the null hypothesis.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{kirc_clinic <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"data/kirc_clinic.csv"}\NormalTok{)}
+\NormalTok{kirc_clin <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"data/kirc_clin.csv"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -159,132 +160,68 @@ indicates the strength of evidence in supportting the null hypothesis.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{kirc_clinic <-}\StringTok{ }\NormalTok{kirc_clinic }\OperatorTok{%>%}
+\NormalTok{kirc_clin <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{mutate_if}\NormalTok{(is.character, as.factor) }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{patient_id =} \KeywordTok{as.character}\NormalTok{(patient_id))}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{patient_id =} \KeywordTok{as.character}\NormalTok{(patient_id),}
+         \DataTypeTok{age =} \KeywordTok{as.integer}\NormalTok{(age),}
+         \DataTypeTok{year_diagnose =} \KeywordTok{as.integer}\NormalTok{(year_diagnose))}
+
+\CommentTok{# check }
+\KeywordTok{glimpse}\NormalTok{(kirc_clin)}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{3. Checking variables}\label{checking-variables}
+\begin{verbatim}
+## Rows: 537
+## Columns: 32
+## $ patient_id          <chr> "TCGA-3Z-A93Z", "TCGA-6D-AA2E", "TCGA-A3-3306",...
+## $ age                 <int> 69, 68, 67, 66, 77, 57, 59, 57, 67, 70, 52, 51,...
+## $ metastasis_stg      <fct> M0, MX, M0, M0, M0, M0, M0, M0, M0, M0, M0, M0,...
+## $ neoplasm_ln_stg     <fct> N0, NX, N0, N0, N0, NX, N0, NX, N0, NX, NX, NX,...
+## $ neoplasm_stg        <fct> Stage I, Stage I, Stage I, Stage III, Stage III...
+## $ tumor_stg           <fct> T1, T1, T1, T3, T3, T1, T1, T2, T2, T1, T1, T1,...
+## $ disease_free_mth    <dbl> 12.65, 11.89, 36.79, 47.17, 0.53, NA, NA, 49.05...
+## $ disease_free_stt    <fct> DiseaseFree, DiseaseFree, DiseaseFree, DiseaseF...
+## $ ethnicity           <fct> not hispanic/latino, not hispanic/latino, not h...
+## $ frac_genome_alter   <dbl> 0.2240, 0.0000, 0.2316, 0.0494, 0.0844, 0.0883,...
+## $ histology_grd       <fct> G2, G2, G3, G3, G2, G2, G3, G3, G2, G2, G1, G2,...
+## $ hemoglobin          <fct> Normal, NA, NA, NA, Normal, Low, Low, NA, NA, N...
+## $ neoadj_therapy      <fct> No, No, No, No, No, No, No, No, No, No, No, No,...
+## $ prior_cancer        <fct> No, No, No, Yes, No, No, No, No, No, No, No, No...
+## $ year_diagnose       <int> 2013, 2013, 2005, 2005, 2006, 2005, 2005, 2005,...
+## $ tumor_lateral       <fct> Right, Right, Left, Right, Right, Right, Right,...
+## $ long_dim            <dbl> NA, NA, 0.9, 1.0, 1.2, 1.7, 2.0, 1.7, 1.5, 1.5,...
+## $ primer_ln_ind3      <fct> NO, NO, NO, YES, NO, NO, NA, NO, NO, NO, NO, NO...
+## $ mutation_cnt        <dbl> NA, NA, NA, NA, 514, 56, 656, 577, 62, 537, 477...
+## $ over_surv_mth       <dbl> 12.65, 11.89, 36.79, 47.17, 0.53, 39.13, 24.15,...
+## $ over_surv_stt       <fct> LIVING, LIVING, LIVING, LIVING, LIVING, DECEASE...
+## $ platelet            <fct> Normal, NA, NA, NA, Normal, NA, NA, NA, NA, NA,...
+## $ tissue_prospect     <fct> YES, YES, NO, NO, NO, NO, NO, NO, NO, NO, NO, N...
+## $ race                <fct> Black/African.american, Black/African.american,...
+## $ tissue_retrospect   <fct> NO, NO, YES, YES, YES, YES, YES, YES, YES, YES,...
+## $ serum_ca            <fct> Normal, NA, NA, NA, Normal, NA, NA, NA, NA, NA,...
+## $ gender              <fct> Male, Female, Male, Male, Female, Male, Male, M...
+## $ short_dim           <dbl> NA, NA, 0.4, 0.6, 0.4, 0.4, 0.8, 0.8, 0.3, 0.4,...
+## $ second_long_dim     <dbl> NA, NA, 0.7, 0.8, 1.0, 1.0, 0.9, 0.8, 1.0, 1.1,...
+## $ tissue_site         <fct> OTHERS, OTHERS, A, A, A, A, A, A, A, A, A, A, A...
+## $ person_neoplasm_stt <fct> Tumor.Free, Tumor.Free, NA, With.Tumor, Tumor.F...
+## $ wbc                 <fct> Normal, NA, NA, NA, Normal, NA, NA, NA, NA, NA,...
+\end{verbatim}
+
+\subsection{3.The dependent variable}\label{the-dependent-variable}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{skim}\NormalTok{(kirc_clinic) }
+\CommentTok{# Check the number of levels. If greater than 2, it thas to run a ordinal logistic regression presents only two levels (otherwise, it has to run a ordinal logistic regression)}
+\KeywordTok{table}\NormalTok{(kirc_clin}\OperatorTok{$}\NormalTok{over_surv_stt, }\DataTypeTok{exclude =} \OtherTok{NULL}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{longtable}[]{@{}ll@{}}
-\caption{Data summary}\tabularnewline
-\toprule
-Name & kirc\_clinic\tabularnewline
-Number of rows & 537\tabularnewline
-Number of columns & 32\tabularnewline
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
-Column type frequency: &\tabularnewline
-character & 1\tabularnewline
-factor & 22\tabularnewline
-numeric & 9\tabularnewline
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
-Group variables & None\tabularnewline
-\bottomrule
-\end{longtable}
-
-\textbf{Variable type: character}
-
-\begin{longtable}[]{@{}lrrrrrrr@{}}
-\toprule
-skim\_variable & n\_missing & complete\_rate & min & max & empty &
-n\_unique & whitespace\tabularnewline
-\midrule
-\endhead
-patient\_id & 0 & 1 & 12 & 12 & 0 & 537 & 0\tabularnewline
-\bottomrule
-\end{longtable}
-
-\textbf{Variable type: factor}
-
-\begin{longtable}[]{@{}lrrlrl@{}}
-\toprule
-skim\_variable & n\_missing & complete\_rate & ordered & n\_unique &
-top\_counts\tabularnewline
-\midrule
-\endhead
-metastasis\_stg & 2 & 1.00 & FALSE & 3 & M0: 426, M1: 79, MX:
-30\tabularnewline
-neoplasm\_ln\_stg & 0 & 1.00 & FALSE & 3 & NX: 280, N0: 240, N1:
-17\tabularnewline
-neoplasm\_stg & 3 & 0.99 & FALSE & 4 & Sta: 269, Sta: 125, Sta: 83, Sta:
-57\tabularnewline
-tumor\_stg & 0 & 1.00 & FALSE & 4 & T1: 275, T3: 182, T2: 69, T4:
-11\tabularnewline
-disease\_free\_stt & 99 & 0.82 & FALSE & 2 & Dis: 311, Rec:
-127\tabularnewline
-ethnicity & 152 & 0.72 & FALSE & 2 & NOT: 359, HIS: 26\tabularnewline
-histology\_grd & 3 & 0.99 & FALSE & 5 & G2: 230, G3: 207, G4: 78, G1:
-14\tabularnewline
-hemoglobin & 83 & 0.85 & FALSE & 3 & Low: 263, Nor: 186, Ele:
-5\tabularnewline
-neoadj\_therapy & 0 & 1.00 & FALSE & 2 & No: 519, Yes: 18\tabularnewline
-prior\_cancer & 0 & 1.00 & FALSE & 2 & No: 459, Yes: 78\tabularnewline
-tumor\_lateral & 0 & 1.00 & FALSE & 3 & Rig: 283, Lef: 253, Bil:
-1\tabularnewline
-primer\_ln\_ind3 & 7 & 0.99 & FALSE & 2 & NO: 395, YES:
-135\tabularnewline
-over\_surv\_stt & 0 & 1.00 & FALSE & 2 & LIV: 360, DEC:
-177\tabularnewline
-platelet & 93 & 0.83 & FALSE & 3 & Nor: 360, Low: 46, Ele:
-38\tabularnewline
-tissue\_prospect & 20 & 0.96 & FALSE & 2 & NO: 465, YES:
-52\tabularnewline
-race & 15 & 0.97 & FALSE & 2 & WHI: 466, BLA: 56\tabularnewline
-tissue\_retrospect & 18 & 0.97 & FALSE & 2 & YES: 466, NO:
-53\tabularnewline
-serum\_ca & 172 & 0.68 & FALSE & 3 & Low: 204, Nor: 151, Ele:
-10\tabularnewline
-gender & 0 & 1.00 & FALSE & 2 & Mal: 346, Fem: 191\tabularnewline
-tissue\_site & 0 & 1.00 & FALSE & 4 & B: 303, C: 127, A: 79, OTH:
-28\tabularnewline
-person\_neoplasm\_stt & 35 & 0.93 & FALSE & 2 & TUM: 361, WIT:
-141\tabularnewline
-wbc & 96 & 0.82 & FALSE & 3 & Nor: 268, Ele: 164, Low: 9\tabularnewline
-\bottomrule
-\end{longtable}
-
-\textbf{Variable type: numeric}
-
-\begin{longtable}[]{@{}lrrrrrrrrrl@{}}
-\toprule
-skim\_variable & n\_missing & complete\_rate & mean & sd & p0 & p25 &
-p50 & p75 & p100 & hist\tabularnewline
-\midrule
-\endhead
-age & 0 & 1.00 & 60.59 & 12.15 & 26.00 & 52.00 & 61.00 & 70.00 & 90.00 &
-▁▅▇▆▂\tabularnewline
-disease\_free\_mth & 99 & 0.82 & 40.24 & 31.66 & -11.79 & 13.43 & 36.20
-& 60.51 & 133.84 & ▇▇▇▂▂\tabularnewline
-frac\_genome\_alter & 9 & 0.98 & 0.17 & 0.17 & 0.00 & 0.06 & 0.12 & 0.21
-& 0.95 & ▇▂▁▁▁\tabularnewline
-year\_diagnose & 0 & 1.00 & 2006.02 & 2.76 & 1998.00 & 2004.00 & 2006.00
-& 2007.00 & 2013.00 & ▁▆▇▃▁\tabularnewline
-long\_dim & 35 & 0.93 & 1.66 & 0.66 & 0.40 & 1.20 & 1.50 & 2.00 & 4.00 &
-▃▇▃▂▁\tabularnewline
-mutation\_cnt & 86 & 0.84 & 73.85 & 127.76 & 1.00 & 34.00 & 48.00 &
-65.50 & 1392.00 & ▇▁▁▁▁\tabularnewline
-over\_surv\_mth & 0 & 1.00 & 44.26 & 32.25 & 0.00 & 18.10 & 38.96 &
-63.21 & 149.05 & ▇▇▃▂▁\tabularnewline
-short\_dim & 35 & 0.93 & 0.38 & 0.21 & 0.10 & 0.20 & 0.30 & 0.50 & 1.00
-& ▆▇▂▁▁\tabularnewline
-second\_long\_dim & 35 & 0.93 & 0.94 & 0.31 & 0.30 & 0.70 & 0.90 & 1.10
-& 2.00 & ▃▇▆▂▁\tabularnewline
-\bottomrule
-\end{longtable}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# glimpse(kirc_clinic)}
-\CommentTok{# View(kirc_clinic)}
-\end{Highlighting}
-\end{Shaded}
+\begin{verbatim}
+## 
+## DECEASED   LIVING 
+##      177      360
+\end{verbatim}
 
 \subsection{4. Numeric variables
 vs.~over\_surv\_stt}\label{numeric-variables-vs.over_surv_stt}
@@ -293,16 +230,16 @@ Correlation matrix - graphic visualization
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{cols_numeric <-}\StringTok{ }\NormalTok{kirc_clinic }\OperatorTok{%>%}\StringTok{ }
+\NormalTok{cols_numeric <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}\StringTok{ }
 \StringTok{  }\KeywordTok{select_if}\NormalTok{(is.numeric) }\OperatorTok{%>%}
 \StringTok{  }\NormalTok{names}
 
-\NormalTok{kirc_clinic_numeric <-}\StringTok{ }\NormalTok{kirc_clinic }\OperatorTok{%>%}
+\NormalTok{kirc_clin_numeric <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
 \StringTok{                      }\KeywordTok{select}\NormalTok{(}\KeywordTok{one_of}\NormalTok{(}\KeywordTok{c}\NormalTok{(cols_numeric, }\StringTok{"over_surv_stt"}\NormalTok{)))  }
 
-\KeywordTok{levels}\NormalTok{(kirc_clinic_numeric}\OperatorTok{$}\NormalTok{over_surv_stt) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"D"}\NormalTok{,}\StringTok{"L"}\NormalTok{)}
+\KeywordTok{levels}\NormalTok{(kirc_clin_numeric}\OperatorTok{$}\NormalTok{over_surv_stt) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"D"}\NormalTok{,}\StringTok{"L"}\NormalTok{)}
 
-\KeywordTok{ggpairs}\NormalTok{(kirc_clinic_numeric, }\DataTypeTok{columns =}\NormalTok{ cols_numeric, }
+\KeywordTok{ggpairs}\NormalTok{(kirc_clin_numeric, }\DataTypeTok{columns =}\NormalTok{ cols_numeric, }
         \DataTypeTok{title=}\StringTok{"Correlation matrix"}\NormalTok{,               }
         \DataTypeTok{mapping=} \KeywordTok{aes}\NormalTok{(}\DataTypeTok{colour =}\NormalTok{ over_surv_stt), }
         \DataTypeTok{upper =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{combo =} \KeywordTok{wrap}\NormalTok{(}\StringTok{"box_no_facet"}\NormalTok{, }\DataTypeTok{alpha=}\FloatTok{0.1}\NormalTok{), }
@@ -323,25 +260,20 @@ Transform the data into long format
 \begin{Highlighting}[]
 \CommentTok{# Put all variables in the same column except `over_surv_stt`, the grouping variable}
 
-\KeywordTok{levels}\NormalTok{(kirc_clinic_numeric}\OperatorTok{$}\NormalTok{over_surv_stt) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"DECEASED"}\NormalTok{,}\StringTok{"LIVING"}\NormalTok{)}
-
-\NormalTok{kirc_clinic_numeric.long <-}\StringTok{ }\NormalTok{kirc_clinic_numeric }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{pivot_longer}\NormalTok{(}\OperatorTok{-}\NormalTok{over_surv_stt, }\DataTypeTok{names_to =} \StringTok{"variables"}\NormalTok{, }\DataTypeTok{values_to =} \StringTok{"value"}\NormalTok{)}
+\KeywordTok{levels}\NormalTok{(kirc_clin_numeric}\OperatorTok{$}\NormalTok{over_surv_stt) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"DECEASED"}\NormalTok{,}\StringTok{"LIVING"}\NormalTok{)}
 
 \CommentTok{# Convert to Tidyverse}
-\NormalTok{kirc_clinic_numeric.long <-}\StringTok{ }\NormalTok{kirc_clinic_numeric.long[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(kirc_clinic_numeric.long}\OperatorTok{$}\NormalTok{value), ]}
+\NormalTok{kirc_clin_numeric.long <-}\StringTok{ }\NormalTok{kirc_clin_numeric }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{pivot_longer}\NormalTok{(}\OperatorTok{-}\NormalTok{over_surv_stt, }\DataTypeTok{names_to =} \StringTok{"variables"}\NormalTok{, }\DataTypeTok{values_to =} \StringTok{"value"}\NormalTok{)}
+\NormalTok{kirc_clin_numeric.long <-}\StringTok{ }\NormalTok{kirc_clin_numeric.long[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(kirc_clin_numeric.long}\OperatorTok{$}\NormalTok{value), ]}
+\NormalTok{kirc_clin_numeric.long}\OperatorTok{$}\NormalTok{value.log <-}\StringTok{ }\KeywordTok{log2}\NormalTok{(kirc_clin_numeric.long}\OperatorTok{$}\NormalTok{value}\OperatorTok{+}\DecValTok{1}\NormalTok{)}
 
-\NormalTok{kirc_clinic_numeric.long}\OperatorTok{$}\NormalTok{value.log <-}\StringTok{ }\KeywordTok{log2}\NormalTok{(kirc_clinic_numeric.long}\OperatorTok{$}\NormalTok{value}\OperatorTok{+}\DecValTok{1}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\CommentTok{# OR}
+\CommentTok{# kirc_clin_numeric.long <- kirc_clin_numeric %>% }
+\CommentTok{#   gather(key = 'variables', value = 'value', -over_surv_stt, na.rm = TRUE) %>%}
+\CommentTok{#     mutate(value.log = log2(kirc_clin_numeric.long$value+1))}
 
-\begin{verbatim}
-## Warning: NaNs produzidos
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{kirc_clinic_numeric.long }\OperatorTok{%>%}\StringTok{ }\KeywordTok{sample_n}\NormalTok{(}\DecValTok{6}\NormalTok{)}
+\NormalTok{kirc_clin_numeric.long }\OperatorTok{%>%}\StringTok{ }\KeywordTok{sample_n}\NormalTok{(}\DecValTok{6}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -363,7 +295,7 @@ Adjust the p-values and add significance levels
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{stat.test <-}\StringTok{ }\NormalTok{kirc_clinic_numeric.long }\OperatorTok{%>%}
+\NormalTok{stat.test <-}\StringTok{ }\NormalTok{kirc_clin_numeric.long }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(variables) }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{t_test}\NormalTok{(value }\OperatorTok{~}\StringTok{ }\NormalTok{over_surv_stt) }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{adjust_pvalue}\NormalTok{(}\DataTypeTok{method =} \StringTok{"BH"}\NormalTok{) }\OperatorTok{%>%}
@@ -377,7 +309,7 @@ Adjust the p-values and add significance levels
 ##   variables .y.   group1 group2    n1    n2 statistic    df        p    p.adj
 ##   <chr>     <chr> <chr>  <chr>  <int> <int>     <dbl> <dbl>    <dbl>    <dbl>
 ## 1 age       value DECEA~ LIVING   177   360     4.89   348. 1.57e- 6 3.53e- 6
-## 2 disease_~ value DECEA~ LIVING    78   360   -11.0    188. 5.24e-22 4.72e-21
+## 2 disease_~ value DECEA~ LIVING    78   360   -11.0    192. 4.76e-22 4.28e-21
 ## 3 frac_gen~ value DECEA~ LIVING   175   353     1.20   344. 2.33e- 1 2.62e- 1
 ## 4 long_dim  value DECEA~ LIVING   173   329     4.13   363. 4.51e- 5 8.12e- 5
 ## 5 mutation~ value DECEA~ LIVING   153   298    -1.83   429. 6.79e- 2 8.73e- 2
@@ -392,27 +324,25 @@ Adjust the p-values and add significance levels
 \begin{Highlighting}[]
 \CommentTok{# Create the plot on logscale}
 \NormalTok{myplot <-}\StringTok{ }\KeywordTok{ggboxplot}\NormalTok{(}
-\NormalTok{  kirc_clinic_numeric.long, }\DataTypeTok{x =} \StringTok{"over_surv_stt"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"value.log"}\NormalTok{,}
+\NormalTok{  kirc_clin_numeric.long, }\DataTypeTok{x =} \StringTok{"over_surv_stt"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"value.log"}\NormalTok{,}
   \DataTypeTok{fill =} \StringTok{"over_surv_stt"}\NormalTok{, }\DataTypeTok{palette =} \StringTok{"npg"}\NormalTok{, }\DataTypeTok{legend =} \StringTok{"none"}\NormalTok{, }
   \DataTypeTok{ggtheme =} \KeywordTok{theme_pubr}\NormalTok{(}\DataTypeTok{border =} \OtherTok{TRUE}\NormalTok{)}
 \NormalTok{  ) }\OperatorTok{+}
 \StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\NormalTok{variables)}
+
 \CommentTok{# Add statistical test p-values}
+\CommentTok{# OBS: different p-values over vaule vs. log.value!! }
 \NormalTok{stat.test <-}\StringTok{ }\NormalTok{stat.test }\OperatorTok{%>%}\StringTok{ }\KeywordTok{add_xy_position}\NormalTok{(}\DataTypeTok{x =} \StringTok{"over_surv_stt"}\NormalTok{)}
 \NormalTok{myplot }\OperatorTok{+}\StringTok{ }\KeywordTok{stat_pvalue_manual}\NormalTok{(stat.test, }\DataTypeTok{label =} \StringTok{"p.adj.signif"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-## Warning: Removed 1 rows containing non-finite values (stat_boxplot).
-\end{verbatim}
 
 \includegraphics{figs/render-unnamed-chunk-9-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# Group the data by variables and do a graph for each variable}
-\NormalTok{graphs <-}\StringTok{ }\NormalTok{kirc_clinic_numeric.long }\OperatorTok{%>%}
+\NormalTok{graphs <-}\StringTok{ }\NormalTok{kirc_clin_numeric.long }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{group_by}\NormalTok{(variables) }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{doo}\NormalTok{(}
     \OperatorTok{~}\KeywordTok{ggboxplot}\NormalTok{(}
@@ -445,224 +375,175 @@ Adjust the p-values and add significance levels
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# Add statitistical tests to each corresponding plot}
-\NormalTok{variables <-}\StringTok{ }\NormalTok{graphs}\OperatorTok{$}\NormalTok{variables}
-\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{length}\NormalTok{(variables))\{}
-\NormalTok{  graph.i <-}\StringTok{ }\NormalTok{graphs}\OperatorTok{$}\NormalTok{plots[[i]] }\OperatorTok{+}\StringTok{ }
-\StringTok{    }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =}\NormalTok{ variables[i]) }\OperatorTok{+}
-\StringTok{    }\KeywordTok{stat_pvalue_manual}\NormalTok{(stat.test[i, ], }\DataTypeTok{label =} \StringTok{"p.adj.signif"}\NormalTok{)}
-  \KeywordTok{print}\NormalTok{(graph.i)}
-\NormalTok{\}}
+\CommentTok{# variables <- graphs$variables}
+\CommentTok{# for(i in 1:length(variables))\{}
+\CommentTok{#   graph.i <- graphs$plots[[i]] + }
+\CommentTok{#     labs(title = variables[i]) +}
+\CommentTok{#     #stat_pvalue_manual(stat.test[i, ], label = "p.adj.signif")}
+\CommentTok{#   print(graph.i)}
+\CommentTok{# \}}
+\CommentTok{# Error in print(graph.i) : objeto 'graph.i' não encontrado}
 \end{Highlighting}
 \end{Shaded}
-
-\includegraphics{figs/render-unnamed-chunk-11-1.pdf}
-\includegraphics{figs/render-unnamed-chunk-11-2.pdf}
-\includegraphics{figs/render-unnamed-chunk-11-3.pdf}
-\includegraphics{figs/render-unnamed-chunk-11-4.pdf}
-\includegraphics{figs/render-unnamed-chunk-11-5.pdf}
-\includegraphics{figs/render-unnamed-chunk-11-6.pdf}
-\includegraphics{figs/render-unnamed-chunk-11-7.pdf}
-\includegraphics{figs/render-unnamed-chunk-11-8.pdf}
-\includegraphics{figs/render-unnamed-chunk-11-9.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# ggplot(kirc_clinic, aes(age, fill= over_surv_stt)) +}
+\CommentTok{# ggplot(kirc_clin, aes(age, fill= over_surv_stt)) +}
 \CommentTok{#   geom_histogram(bins = 15, position = "dodge")}
-\CommentTok{# t.test(kirc_clinic$age ~ kirc_clinic$over_surv_stt) }
+\CommentTok{# t.test(kirc_clin$age ~ kirc_clin$over_surv_stt) }
 \CommentTok{# }
-\CommentTok{# ggplot(kirc_clinic, aes(year_diagnose, fill= over_surv_stt)) +}
+\CommentTok{# ggplot(kirc_clin, aes(year_diagnose, fill= over_surv_stt)) +}
 \CommentTok{#   geom_histogram(bins = 15, position = "dodge")}
-\CommentTok{# t.test(kirc_clinic$year_diagnose ~ kirc_clinic$over_surv_stt) }
+\CommentTok{# t.test(kirc_clin$year_diagnose ~ kirc_clin$over_surv_stt) }
 \CommentTok{# }
-\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=disease_free_mth)) +}
+\CommentTok{# ggplot(kirc_clin, aes(x=over_surv_stt, y=disease_free_mth)) +}
 \CommentTok{#   geom_boxplot(width = .5) +}
 \CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
-\CommentTok{# t.test(kirc_clinic$disease_free_mth ~ kirc_clinic$over_surv_stt) }
+\CommentTok{# t.test(kirc_clin$disease_free_mth ~ kirc_clin$over_surv_stt)}
 \CommentTok{# }
-\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=frac_genome_alter)) +}
+\CommentTok{# ggplot(kirc_clin, aes(x=over_surv_stt, y=frac_genome_alter)) +}
 \CommentTok{#   geom_boxplot(width = .5) +}
 \CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
-\CommentTok{# t.test(kirc_clinic$frac_genome_alter ~ kirc_clinic$over_surv_stt)}
+\CommentTok{# t.test(kirc_clin$frac_genome_alter ~ kirc_clin$over_surv_stt)}
 \CommentTok{# }
-\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=long_dim)) +}
+\CommentTok{# ggplot(kirc_clin, aes(x=over_surv_stt, y=long_dim)) +}
 \CommentTok{#   geom_boxplot(width = .5) +}
 \CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
-\CommentTok{# t.test(kirc_clinic$long_dim ~ kirc_clinic$over_surv_stt)}
+\CommentTok{# t.test(kirc_clin$long_dim ~ kirc_clin$over_surv_stt)}
 \CommentTok{# }
-\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=mutation_cnt)) +}
+\CommentTok{# ggplot(kirc_clin, aes(x=over_surv_stt, y=mutation_cnt)) +}
 \CommentTok{#   geom_boxplot(width = .5) +}
 \CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
-\CommentTok{# t.test(kirc_clinic$mutation_cnt ~ kirc_clinic$over_surv_stt)}
+\CommentTok{# t.test(kirc_clin$mutation_cnt ~ kirc_clin$over_surv_stt)}
 \CommentTok{# }
-\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=over_surv_mth)) +}
+\CommentTok{# ggplot(kirc_clin, aes(x=over_surv_stt, y=over_surv_mth)) +}
 \CommentTok{#   geom_boxplot(width = .5) +}
 \CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
-\CommentTok{# t.test(kirc_clinic$over_surv_mth ~ kirc_clinic$over_surv_stt)}
+\CommentTok{# t.test(kirc_clin$over_surv_mth ~ kirc_clin$over_surv_stt)}
 \CommentTok{# }
-\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=short_dim)) +}
+\CommentTok{# ggplot(kirc_clin, aes(x=over_surv_stt, y=short_dim)) +}
 \CommentTok{#   geom_boxplot(width = .5) +}
 \CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
-\CommentTok{# t.test(kirc_clinic$short_dim ~ kirc_clinic$over_surv_stt)}
+\CommentTok{# t.test(kirc_clin$short_dim ~ kirc_clin$over_surv_stt)}
 \CommentTok{# }
-\CommentTok{# ggplot(kirc_clinic, aes(x=over_surv_stt, y=second_long_dim)) +}
+\CommentTok{# ggplot(kirc_clin, aes(x=over_surv_stt, y=second_long_dim)) +}
 \CommentTok{#   geom_boxplot(width = .5) +}
 \CommentTok{#   geom_jitter(width = 0.05, alpha = 0.2, color = "orange")}
-\CommentTok{# t.test(kirc_clinic$second_long_dim ~ kirc_clinic$over_surv_stt)}
+\CommentTok{# t.test(kirc_clin$second_long_dim ~ kirc_clin$over_surv_stt)}
 \end{Highlighting}
 \end{Shaded}
 
-\subsection{5. Categorical variables
-vs.~over\_surv\_stt}\label{categorical-variables-vs.over_surv_stt}
+Summary for continuous explanatory variables use a parametric or
+non-parametric test??
 
-Checking categorical variables
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{explanatory_num <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\NormalTok{over_surv_stt) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select_if}\NormalTok{(is.numeric) }\OperatorTok{%>%}
+\StringTok{  }\NormalTok{names}
+\NormalTok{dependent <-}\StringTok{ 'over_surv_stt'}
+
+\NormalTok{table_num <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summary_factorlist}\NormalTok{(dependent, explanatory_num, }\DataTypeTok{p=}\OtherTok{TRUE}\NormalTok{, }
+                     \DataTypeTok{add_dependent_label=}\OtherTok{TRUE}\NormalTok{,  }\DataTypeTok{na_include =} \OtherTok{TRUE}\NormalTok{)}
+
+\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(table_num, }\DataTypeTok{row.names=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{align=}\KeywordTok{c}\NormalTok{(}\StringTok{"l"}\NormalTok{, }\StringTok{"l"}\NormalTok{, }\StringTok{"r"}\NormalTok{, }\StringTok{"r"}\NormalTok{, }\StringTok{"r"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}llrrr@{}}
+\toprule
+Dependent: over\_surv\_stt & & DECEASED & LIVING & p\tabularnewline
+\midrule
+\endhead
+age & Mean (SD) & 64.2 (12.0) & 58.8 (11.9) &
+\textless{}0.001\tabularnewline
+disease\_free\_mth & Mean (SD) & 16.4 (18.2) & 45.5 (31.5) &
+\textless{}0.001\tabularnewline
+frac\_genome\_alter & Mean (SD) & 0.2 (0.2) & 0.2 (0.2) &
+0.230\tabularnewline
+year\_diagnose & Mean (SD) & 2004.6 (2.4) & 2006.7 (2.7) &
+\textless{}0.001\tabularnewline
+long\_dim & Mean (SD) & 1.8 (0.6) & 1.6 (0.7) &
+\textless{}0.001\tabularnewline
+mutation\_cnt & Mean (SD) & 60.5 (90.9) & 80.7 (142.7) &
+0.111\tabularnewline
+over\_surv\_mth & Mean (SD) & 31.6 (25.1) & 50.5 (33.6) &
+\textless{}0.001\tabularnewline
+short\_dim & Mean (SD) & 0.4 (0.2) & 0.4 (0.2) & 0.631\tabularnewline
+second\_long\_dim & Mean (SD) & 1.0 (0.3) & 0.9 (0.3) &
+\textless{}0.001\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Correlation Matrix}
+\CommentTok{# Pearson's (normal distribution) or Spearman (not-normal) correlations}
+\NormalTok{corr_num <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
+\StringTok{     }\KeywordTok{select_if}\NormalTok{(is.numeric) }\OperatorTok{%>%}
+\StringTok{     }\KeywordTok{drop_na}\NormalTok{()}
+
+\CommentTok{# Check the correlation between variables to exclude the higly correlated}
+\NormalTok{cor_matrix <-}\StringTok{ }\KeywordTok{cor}\NormalTok{(corr_num, }\DataTypeTok{method =} \StringTok{"spearman"}\NormalTok{)}
+\NormalTok{cor_matrix <-}\StringTok{ }\KeywordTok{round}\NormalTok{(cor_matrix, }\DecValTok{2}\NormalTok{)}
+\NormalTok{cor_matrix}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
-##  metastasis_stg neoplasm_ln_stg    neoplasm_stg tumor_stg
-##  M0  :426       N0:240          Stage I  :269   T1:275   
-##  M1  : 79       N1: 17          Stage II : 57   T2: 69   
-##  MX  : 30       NX:280          Stage III:125   T3:182   
-##  NA's:  2                       Stage IV : 83   T4: 11   
-##                                 NA's     :  3            
-##                                                          
-##             disease_free_stt                  ethnicity   histology_grd
-##  DiseaseFree        :311     HISPANIC OR LATINO    : 26   G1  : 14     
-##  Recurred/Progressed:127     NOT HISPANIC OR LATINO:359   G2  :230     
-##  NA's               : 99     NA's                  :152   G3  :207     
-##                                                           G4  : 78     
-##                                                           GX  :  5     
-##                                                           NA's:  3     
-##     hemoglobin  neoadj_therapy prior_cancer   tumor_lateral primer_ln_ind3
-##  Elevated:  5   No :519        No :459      Bilateral:  1   NO  :395      
-##  Low     :263   Yes: 18        Yes: 78      Left     :253   YES :135      
-##  Normal  :186                               Right    :283   NA's:  7      
-##  NA's    : 83                                                             
-##                                                                           
-##                                                                           
-##   over_surv_stt     platelet   tissue_prospect                        race    
-##  DECEASED:177   Elevated: 38   NO  :465        BLACK OR AFRICAN AMERICAN: 56  
-##  LIVING  :360   Low     : 46   YES : 52        WHITE                    :466  
-##                 Normal  :360   NA's: 20        NA's                     : 15  
-##                 NA's    : 93                                                  
-##                                                                               
-##                                                                               
-##  tissue_retrospect     serum_ca      gender    tissue_site  person_neoplasm_stt
-##  NO  : 53          Elevated: 10   Female:191   A     : 79   TUMOR FREE:361     
-##  YES :466          Low     :204   Male  :346   B     :303   WITH TUMOR:141     
-##  NA's: 18          Normal  :151                C     :127   NA's      : 35     
-##                    NA's    :172                OTHERS: 28                      
-##                                                                                
-##                                                                                
-##        wbc     
-##  Elevated:164  
-##  Low     :  9  
-##  Normal  :268  
-##  NA's    : 96  
-##                
-## 
+##                     age disease_free_mth frac_genome_alter year_diagnose
+## age                1.00            -0.06              0.17         -0.03
+## disease_free_mth  -0.06             1.00             -0.05         -0.32
+## frac_genome_alter  0.17            -0.05              1.00         -0.04
+## year_diagnose     -0.03            -0.32             -0.04          1.00
+## long_dim           0.03             0.02              0.05         -0.29
+## mutation_cnt       0.26            -0.03              0.23          0.04
+## over_surv_mth     -0.02             0.83             -0.02         -0.45
+## short_dim          0.06             0.06             -0.03         -0.19
+## second_long_dim    0.02            -0.02             -0.02         -0.06
+##                   long_dim mutation_cnt over_surv_mth short_dim second_long_dim
+## age                   0.03         0.26         -0.02      0.06            0.02
+## disease_free_mth      0.02        -0.03          0.83      0.06           -0.02
+## frac_genome_alter     0.05         0.23         -0.02     -0.03           -0.02
+## year_diagnose        -0.29         0.04         -0.45     -0.19           -0.06
+## long_dim              1.00        -0.05          0.14      0.37            0.34
+## mutation_cnt         -0.05         1.00         -0.02      0.11           -0.10
+## over_surv_mth         0.14        -0.02          1.00      0.14           -0.01
+## short_dim             0.37         0.11          0.14      1.00           -0.07
+## second_long_dim       0.34        -0.10         -0.01     -0.07            1.00
 \end{verbatim}
+
+\subsection{5. Categorical variables
+vs.~over\_surv\_stt}\label{categorical-variables-vs.over_surv_stt}
 
 Tabulation and chi-square test
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# t_metas_stg <- table(kirc_clinic$metastasis_stg, kirc_clinic$over_surv_stt, exclude = NULL)}
+\CommentTok{# t_metas_stg <- table(kirc_clin$metastasis_stg, kirc_clin$over_surv_stt, exclude = NULL)}
 \CommentTok{# t_metas_stg <- addmargins(round(100*prop.table(t_metas_stg)))}
 \CommentTok{# t_metas_stg}
-\CommentTok{# chisq.test(x = kirc_clinic$metastasis_stg, y = kirc_clinic$over_surv_stt) }
-\CommentTok{# }
-\CommentTok{# t_lynph <- table(kirc_clinic$neoplasm_ln_stg, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_lynph <- addmargins(round(100*prop.table(t_lynph)))}
-\CommentTok{# t_lynph}
-\CommentTok{# chisq.test(x = kirc_clinic$neoplasm_ln_stg, y = kirc_clinic$over_surv_stt) }
-\CommentTok{# }
-\CommentTok{# t_neop <- table(kirc_clinic$neoplasm_stg, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_neop <- addmargins(round(100*prop.table(t_neop)))}
-\CommentTok{# t_neop}
-\CommentTok{# chisq.test(x = kirc_clinic$neoplasm_stg, y = kirc_clinic$over_surv_stt) }
-\CommentTok{# }
-\CommentTok{# t_tumor <- table(kirc_clinic$tumor_stg, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_tumor <- addmargins(round(100*prop.table(t_tumor)))}
-\CommentTok{# t_tumor}
-\CommentTok{# chisq.test(x = kirc_clinic$tumor_stg, y = kirc_clinic$over_surv_stt) }
-\CommentTok{# }
-\CommentTok{# t_free <- table(kirc_clinic$disease_free_stt, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_free <- addmargins(round(100*prop.table(t_free)))}
-\CommentTok{# t_free}
-\CommentTok{# chisq.test(x = kirc_clinic$disease_free_stt, y = kirc_clinic$over_surv_stt) }
-\CommentTok{# }
-\CommentTok{# t_prior <- table(kirc_clinic$prior_cancer, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_prior <- addmargins(round(100*prop.table(t_prior)))}
-\CommentTok{# t_prior}
-\CommentTok{# chisq.test(x = kirc_clinic$prior_cancer, y = kirc_clinic$over_surv_stt) }
-\CommentTok{# }
-\CommentTok{# t_neo <- table(kirc_clinic$neoadj_therapy, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_neo <- addmargins(round(100*prop.table(t_neo)))}
-\CommentTok{# t_neo}
-\CommentTok{# chisq.test(x = kirc_clinic$neoadj_therapy, y = kirc_clinic$over_surv_stt) }
-\CommentTok{# }
-\CommentTok{# t_platelet <- table(kirc_clinic$platelet, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_platelet <- addmargins(round(100*prop.table(t_platelet)))}
-\CommentTok{# t_platelet}
-\CommentTok{# chisq.test(x = kirc_clinic$platelet, y = kirc_clinic$over_surv_stt)}
-\CommentTok{# }
-\CommentTok{# t_prospect <- table(kirc_clinic$tissue_prospect, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_prospect <- addmargins(round(100*prop.table(t_prospect)))}
-\CommentTok{# t_prospect}
-\CommentTok{# chisq.test(x = kirc_clinic$tissue_prospect, y = kirc_clinic$over_surv_stt)}
-\CommentTok{# }
-\CommentTok{# t_race <- table(kirc_clinic$race, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_race <- addmargins(round(100*prop.table(t_race)))}
-\CommentTok{# t_race}
-\CommentTok{# chisq.test(x = kirc_clinic$race, y = kirc_clinic$over_surv_stt) }
-\CommentTok{# }
-\CommentTok{# t_retros <- table(kirc_clinic$tissue_retrospect, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_retros <- addmargins(round(100*prop.table(t_retros)))}
-\CommentTok{# t_retros}
-\CommentTok{# chisq.test(x = kirc_clinic$tissue_retrospect, y = kirc_clinic$over_surv_stt)}
-\CommentTok{# }
-\CommentTok{# t_ca <- table(kirc_clinic$serum_ca, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_ca <- addmargins(round(100*prop.table(t_ca)))}
-\CommentTok{# t_ca}
-\CommentTok{# chisq.test(x = kirc_clinic$serum_ca, y = kirc_clinic$over_surv_stt) }
-\CommentTok{# }
-\CommentTok{# t_gender <- table(kirc_clinic$gender, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_gender <- addmargins(round(100*prop.table(t_gender)))}
-\CommentTok{# t_gender}
-\CommentTok{# chisq.test(x = kirc_clinic$gender, y = kirc_clinic$over_surv_stt) }
-\CommentTok{# }
-\CommentTok{# t_site <- table(kirc_clinic$tissue_site, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_site <- addmargins(round(100*prop.table(t_site)))}
-\CommentTok{# t_site}
-\CommentTok{# chisq.test(x = kirc_clinic$tissue_site, y = kirc_clinic$over_surv_stt) }
-\CommentTok{# }
-\CommentTok{# t_neop_st <- table(kirc_clinic$person_neoplasm_stt, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_neop_st <- addmargins(round(100*prop.table(t_neop_st)))}
-\CommentTok{# t_neop_st}
-\CommentTok{# chisq.test(x = kirc_clinic$person_neoplasm_stt, y = kirc_clinic$over_surv_stt) }
-\CommentTok{# }
-\CommentTok{# t_wbc <- table(kirc_clinic$wbc, kirc_clinic$over_surv_stt, exclude = NULL)}
-\CommentTok{# t_wbc <- addmargins(round(100*prop.table(t_wbc)))}
-\CommentTok{# t_wbc}
-\CommentTok{# chisq.test(x = kirc_clinic$wbc, y = kirc_clinic$over_surv_stt) }
+\CommentTok{# chisq.test(x = kirc_clin$metastasis_stg, y = kirc_clin$over_surv_stt) }
 \end{Highlighting}
 \end{Shaded}
-
-\subsection{7. FinalFit}\label{finalfit}
 
 Summary for chategorical explanatory variables Chi-squared warnings will
 be generated when the expected count in any cell is less than 5.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{#  warning=FALSE}
-\NormalTok{explanatory_char <-}\StringTok{ }\KeywordTok{names}\NormalTok{(kirc_clinic }\OperatorTok{%>%}
-\StringTok{              }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\NormalTok{over_surv_stt) }\OperatorTok{%>%}
-\StringTok{              }\KeywordTok{select_if}\NormalTok{(is.factor))}
+\NormalTok{explanatory_char <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\NormalTok{over_surv_stt) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select_if}\NormalTok{(is.factor) }\OperatorTok{%>%}
+\StringTok{  }\NormalTok{names}
+
 \NormalTok{dependent <-}\StringTok{  'over_surv_stt'}
 
-\NormalTok{table_fit <-}\StringTok{ }\NormalTok{kirc_clinic }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{summary_factorlist}\NormalTok{(dependent, explanatory_char, }\DataTypeTok{p=}\OtherTok{TRUE}\NormalTok{, }\DataTypeTok{add_dependent_label=}\OtherTok{TRUE}\NormalTok{,  }\DataTypeTok{na_include =} \OtherTok{TRUE}\NormalTok{)}
+\NormalTok{table_char <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summary_factorlist}\NormalTok{(dependent, explanatory_char, }\DataTypeTok{p=}\OtherTok{TRUE}\NormalTok{, }
+                     \DataTypeTok{add_dependent_label=}\OtherTok{TRUE}\NormalTok{,  }\DataTypeTok{na_include =} \OtherTok{TRUE}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -687,6 +568,11 @@ be generated when the expected count in any cell is less than 5.
 \end{verbatim}
 
 \begin{verbatim}
+## Warning in chisq.test(race, over_surv_stt): Chi-squared approximation may be
+## incorrect
+\end{verbatim}
+
+\begin{verbatim}
 ## Warning in chisq.test(serum_ca, over_surv_stt): Chi-squared approximation may be
 ## incorrect
 \end{verbatim}
@@ -698,7 +584,7 @@ be generated when the expected count in any cell is less than 5.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(table_fit, }\DataTypeTok{row.names=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{align=}\KeywordTok{c}\NormalTok{(}\StringTok{"l"}\NormalTok{, }\StringTok{"l"}\NormalTok{, }\StringTok{"r"}\NormalTok{, }\StringTok{"r"}\NormalTok{, }\StringTok{"r"}\NormalTok{))}
+\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(table_char, }\DataTypeTok{row.names=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{align=}\KeywordTok{c}\NormalTok{(}\StringTok{"l"}\NormalTok{, }\StringTok{"l"}\NormalTok{, }\StringTok{"r"}\NormalTok{, }\StringTok{"r"}\NormalTok{, }\StringTok{"r"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -711,7 +597,7 @@ metastasis\_stg & M0 & 110 (62.1) & 316 (87.8) &
 \textless{}0.001\tabularnewline
 & M1 & 64 (36.2) & 15 (4.2) &\tabularnewline
 & MX & 3 (1.7) & 27 (7.5) &\tabularnewline
-& (Missing) & & 2 (0.6) &\tabularnewline
+& (Missing) & 0 (0.0) & 2 (0.6) &\tabularnewline
 neoplasm\_ln\_stg & N0 & 85 (48.0) & 155 (43.1) & 0.001\tabularnewline
 & N1 & 12 (6.8) & 5 (1.4) &\tabularnewline
 & NX & 80 (45.2) & 200 (55.6) &\tabularnewline
@@ -726,21 +612,20 @@ tumor\_stg & T1 & 50 (28.2) & 225 (62.5) &
 & T2 & 21 (11.9) & 48 (13.3) &\tabularnewline
 & T3 & 96 (54.2) & 86 (23.9) &\tabularnewline
 & T4 & 10 (5.6) & 1 (0.3) &\tabularnewline
-disease\_free\_stt & Recurred/Progressed & 78 (44.1) & 49 (13.6) &
+disease\_free\_stt & DiseaseFree & 0 (0.0) & 311 (86.4) &
 \textless{}0.001\tabularnewline
-& (Missing) & 99 (55.9) & &\tabularnewline
-& DiseaseFree & & 311 (86.4) &\tabularnewline
-ethnicity & HISPANIC OR LATINO & 3 (1.7) & 23 (6.4) &
-0.017\tabularnewline
-& NOT HISPANIC OR LATINO & 132 (74.6) & 227 (63.1) &\tabularnewline
+& Recurred/Progressed & 78 (44.1) & 49 (13.6) &\tabularnewline
+& (Missing) & 99 (55.9) & 0 (0.0) &\tabularnewline
+ethnicity & hispanic/latino & 3 (1.7) & 23 (6.4) & 0.017\tabularnewline
+& not hispanic/latino & 132 (74.6) & 227 (63.1) &\tabularnewline
 & (Missing) & 42 (23.7) & 110 (30.6) &\tabularnewline
-histology\_grd & G2 & 45 (25.4) & 185 (51.4) &
+histology\_grd & G1 & 0 (0.0) & 14 (3.9) &
 \textless{}0.001\tabularnewline
+& G2 & 45 (25.4) & 185 (51.4) &\tabularnewline
 & G3 & 74 (41.8) & 133 (36.9) &\tabularnewline
 & G4 & 57 (32.2) & 21 (5.8) &\tabularnewline
 & GX & 1 (0.6) & 4 (1.1) &\tabularnewline
-& G1 & & 14 (3.9) &\tabularnewline
-& (Missing) & & 3 (0.8) &\tabularnewline
+& (Missing) & 0 (0.0) & 3 (0.8) &\tabularnewline
 hemoglobin & Elevated & 3 (1.7) & 2 (0.6) &
 \textless{}0.001\tabularnewline
 & Low & 118 (66.7) & 145 (40.3) &\tabularnewline
@@ -750,9 +635,9 @@ neoadj\_therapy & No & 167 (94.4) & 352 (97.8) & 0.069\tabularnewline
 & Yes & 10 (5.6) & 8 (2.2) &\tabularnewline
 prior\_cancer & No & 153 (86.4) & 306 (85.0) & 0.753\tabularnewline
 & Yes & 24 (13.6) & 54 (15.0) &\tabularnewline
-tumor\_lateral & Left & 98 (55.4) & 155 (43.1) & 0.023\tabularnewline
+tumor\_lateral & Bilateral & 0 (0.0) & 1 (0.3) & 0.023\tabularnewline
+& Left & 98 (55.4) & 155 (43.1) &\tabularnewline
 & Right & 79 (44.6) & 204 (56.7) &\tabularnewline
-& Bilateral & & 1 (0.3) &\tabularnewline
 primer\_ln\_ind3 & NO & 120 (67.8) & 275 (76.4) & 0.024\tabularnewline
 & YES & 56 (31.6) & 79 (21.9) &\tabularnewline
 & (Missing) & 1 (0.6) & 6 (1.7) &\tabularnewline
@@ -765,9 +650,156 @@ tissue\_prospect & NO & 169 (95.5) & 296 (82.2) &
 \textless{}0.001\tabularnewline
 & YES & 2 (1.1) & 50 (13.9) &\tabularnewline
 & (Missing) & 6 (3.4) & 14 (3.9) &\tabularnewline
-race & BLACK OR AFRICAN AMERICAN & 11 (6.2) & 45 (12.5) &
+race & Asian & 1 (0.6) & 7 (1.9) & 0.032\tabularnewline
+& Black/African.american & 11 (6.2) & 45 (12.5) &\tabularnewline
+& White & 163 (92.1) & 303 (84.2) &\tabularnewline
+& (Missing) & 2 (1.1) & 5 (1.4) &\tabularnewline
+tissue\_retrospect & NO & 2 (1.1) & 51 (14.2) &
+\textless{}0.001\tabularnewline
+& YES & 169 (95.5) & 297 (82.5) &\tabularnewline
+& (Missing) & 6 (3.4) & 12 (3.3) &\tabularnewline
+serum\_ca & Elevated & 9 (5.1) & 1 (0.3) & 0.001\tabularnewline
+& Low & 66 (37.3) & 138 (38.3) &\tabularnewline
+& Normal & 62 (35.0) & 89 (24.7) &\tabularnewline
+& (Missing) & 40 (22.6) & 132 (36.7) &\tabularnewline
+gender & Female & 65 (36.7) & 126 (35.0) & 0.767\tabularnewline
+& Male & 112 (63.3) & 234 (65.0) &\tabularnewline
+tissue\_site & A & 11 (6.2) & 68 (18.9) &
+\textless{}0.001\tabularnewline
+& B & 112 (63.3) & 191 (53.1) &\tabularnewline
+& C & 49 (27.7) & 78 (21.7) &\tabularnewline
+& OTHERS & 5 (2.8) & 23 (6.4) &\tabularnewline
+person\_neoplasm\_stt & Tumor.Free & 57 (32.2) & 304 (84.4) &
+\textless{}0.001\tabularnewline
+& With.Tumor & 105 (59.3) & 36 (10.0) &\tabularnewline
+& (Missing) & 15 (8.5) & 20 (5.6) &\tabularnewline
+wbc & Elevated & 46 (26.0) & 118 (32.8) & 0.011\tabularnewline
+& Low & 6 (3.4) & 3 (0.8) &\tabularnewline
+& Normal & 104 (58.8) & 164 (45.6) &\tabularnewline
+& (Missing) & 21 (11.9) & 75 (20.8) &\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Droping levels with narrow distributions -> check warnings ()}
+\CommentTok{# Group some levels or drop one (NULL = 'level') when grouping is not possible  }
+
+\NormalTok{kirc_clin2 <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
+\StringTok{     }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{neoplasm_stg =} \KeywordTok{fct_collapse}\NormalTok{(neoplasm_stg, }\StringTok{'Stage I-II'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Stage I'}\NormalTok{,}\StringTok{'Stage II'}\NormalTok{), }\StringTok{'Stage III-IV'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Stage III'}\NormalTok{,}\StringTok{'Stage IV'}\NormalTok{)),}
+            \DataTypeTok{tumor_stg =} \KeywordTok{fct_collapse}\NormalTok{(tumor_stg, }\StringTok{'T1-T2'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'T1'}\NormalTok{,}\StringTok{'T2'}\NormalTok{), }\StringTok{'T3-T4'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'T3'}\NormalTok{,}\StringTok{'T4'}\NormalTok{)),}
+            \DataTypeTok{histology_grd =} \KeywordTok{fct_collapse}\NormalTok{(histology_grd, }\StringTok{'G1-G2'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'G1'}\NormalTok{,}\StringTok{'G2'}\NormalTok{), }\StringTok{'G3-G4'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'G3'}\NormalTok{,}\StringTok{'G4'}\NormalTok{)),}
+            \DataTypeTok{hemoglobin =} \KeywordTok{fct_collapse}\NormalTok{(hemoglobin, }\StringTok{'Not.Low'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Normal'}\NormalTok{, }\StringTok{'Elevated'}\NormalTok{)),}
+            \DataTypeTok{serum_ca =} \KeywordTok{fct_collapse}\NormalTok{(serum_ca, }\StringTok{'Not.Low'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Normal'}\NormalTok{, }\StringTok{'Elevated'}\NormalTok{)),}
+            \DataTypeTok{wbc =} \KeywordTok{fct_collapse}\NormalTok{(wbc, }\StringTok{'Not.Elevated'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Low'}\NormalTok{, }\StringTok{'Normal'}\NormalTok{)))}
+                                                       
+\NormalTok{kirc_clin2 <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
+\StringTok{     }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{histology_grd =} \KeywordTok{fct_recode}\NormalTok{(histology_grd,  }\DataTypeTok{NULL =} \StringTok{'GX'}\NormalTok{),}
+            \DataTypeTok{tumor_lateral =} \KeywordTok{fct_recode}\NormalTok{(tumor_lateral, }\DataTypeTok{NULL =} \StringTok{'Bilateral'}\NormalTok{),}
+            \DataTypeTok{race =} \KeywordTok{fct_recode}\NormalTok{(race, }\DataTypeTok{NULL =} \StringTok{'Asian'}\NormalTok{))}
+
+
+\NormalTok{table_char2 <-}\StringTok{ }\NormalTok{kirc_clin2 }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summary_factorlist}\NormalTok{(dependent, explanatory_char, }\DataTypeTok{p=}\OtherTok{TRUE}\NormalTok{, }
+                     \DataTypeTok{add_dependent_label=}\OtherTok{TRUE}\NormalTok{,  }\DataTypeTok{na_include =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in chisq.test(tumor_stg, over_surv_stt): Chi-squared approximation may
+## be incorrect
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in chisq.test(histology_grd, over_surv_stt): Chi-squared approximation
+## may be incorrect
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in chisq.test(hemoglobin, over_surv_stt): Chi-squared approximation may
+## be incorrect
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in chisq.test(serum_ca, over_surv_stt): Chi-squared approximation may be
+## incorrect
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in chisq.test(wbc, over_surv_stt): Chi-squared approximation may be
+## incorrect
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(table_char2, }\DataTypeTok{row.names=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{align=}\KeywordTok{c}\NormalTok{(}\StringTok{"l"}\NormalTok{, }\StringTok{"l"}\NormalTok{, }\StringTok{"r"}\NormalTok{, }\StringTok{"r"}\NormalTok{, }\StringTok{"r"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}llrrr@{}}
+\toprule
+Dependent: over\_surv\_stt & & DECEASED & LIVING & p\tabularnewline
+\midrule
+\endhead
+metastasis\_stg & M0 & 110 (62.1) & 316 (87.8) &
+\textless{}0.001\tabularnewline
+& M1 & 64 (36.2) & 15 (4.2) &\tabularnewline
+& MX & 3 (1.7) & 27 (7.5) &\tabularnewline
+& (Missing) & 0 (0.0) & 2 (0.6) &\tabularnewline
+neoplasm\_ln\_stg & N0 & 85 (48.0) & 155 (43.1) & 0.001\tabularnewline
+& N1 & 12 (6.8) & 5 (1.4) &\tabularnewline
+& NX & 80 (45.2) & 200 (55.6) &\tabularnewline
+neoplasm\_stg & Stage I & 45 (25.4) & 224 (62.2) &
+\textless{}0.001\tabularnewline
+& Stage II & 13 (7.3) & 44 (12.2) &\tabularnewline
+& Stage III & 51 (28.8) & 74 (20.6) &\tabularnewline
+& Stage IV & 67 (37.9) & 16 (4.4) &\tabularnewline
+& (Missing) & 1 (0.6) & 2 (0.6) &\tabularnewline
+tumor\_stg & T1 & 50 (28.2) & 225 (62.5) &
+\textless{}0.001\tabularnewline
+& T2 & 21 (11.9) & 48 (13.3) &\tabularnewline
+& T3 & 96 (54.2) & 86 (23.9) &\tabularnewline
+& T4 & 10 (5.6) & 1 (0.3) &\tabularnewline
+disease\_free\_stt & DiseaseFree & 0 (0.0) & 311 (86.4) &
+\textless{}0.001\tabularnewline
+& Recurred/Progressed & 78 (44.1) & 49 (13.6) &\tabularnewline
+& (Missing) & 99 (55.9) & 0 (0.0) &\tabularnewline
+ethnicity & hispanic/latino & 3 (1.7) & 23 (6.4) & 0.017\tabularnewline
+& not hispanic/latino & 132 (74.6) & 227 (63.1) &\tabularnewline
+& (Missing) & 42 (23.7) & 110 (30.6) &\tabularnewline
+histology\_grd & G1 & 0 (0.0) & 14 (3.9) &
+\textless{}0.001\tabularnewline
+& G2 & 45 (25.4) & 185 (51.4) &\tabularnewline
+& G3 & 74 (41.8) & 133 (36.9) &\tabularnewline
+& G4 & 57 (32.2) & 21 (5.8) &\tabularnewline
+& (Missing) & 1 (0.6) & 7 (1.9) &\tabularnewline
+hemoglobin & Elevated & 3 (1.7) & 2 (0.6) &
+\textless{}0.001\tabularnewline
+& Low & 118 (66.7) & 145 (40.3) &\tabularnewline
+& Normal & 43 (24.3) & 143 (39.7) &\tabularnewline
+& (Missing) & 13 (7.3) & 70 (19.4) &\tabularnewline
+neoadj\_therapy & No & 167 (94.4) & 352 (97.8) & 0.069\tabularnewline
+& Yes & 10 (5.6) & 8 (2.2) &\tabularnewline
+prior\_cancer & No & 153 (86.4) & 306 (85.0) & 0.753\tabularnewline
+& Yes & 24 (13.6) & 54 (15.0) &\tabularnewline
+tumor\_lateral & Left & 98 (55.4) & 155 (43.1) & 0.010\tabularnewline
+& Right & 79 (44.6) & 204 (56.7) &\tabularnewline
+& (Missing) & 0 (0.0) & 1 (0.3) &\tabularnewline
+primer\_ln\_ind3 & NO & 120 (67.8) & 275 (76.4) & 0.024\tabularnewline
+& YES & 56 (31.6) & 79 (21.9) &\tabularnewline
+& (Missing) & 1 (0.6) & 6 (1.7) &\tabularnewline
+platelet & Elevated & 30 (16.9) & 8 (2.2) &
+\textless{}0.001\tabularnewline
+& Low & 20 (11.3) & 26 (7.2) &\tabularnewline
+& Normal & 108 (61.0) & 252 (70.0) &\tabularnewline
+& (Missing) & 19 (10.7) & 74 (20.6) &\tabularnewline
+tissue\_prospect & NO & 169 (95.5) & 296 (82.2) &
+\textless{}0.001\tabularnewline
+& YES & 2 (1.1) & 50 (13.9) &\tabularnewline
+& (Missing) & 6 (3.4) & 14 (3.9) &\tabularnewline
+race & Black/African.american & 11 (6.2) & 45 (12.5) &
 0.032\tabularnewline
-& WHITE & 163 (92.1) & 303 (84.2) &\tabularnewline
+& White & 163 (92.1) & 303 (84.2) &\tabularnewline
 & (Missing) & 3 (1.7) & 12 (3.3) &\tabularnewline
 tissue\_retrospect & NO & 2 (1.1) & 51 (14.2) &
 \textless{}0.001\tabularnewline
@@ -784,55 +816,14 @@ tissue\_site & A & 11 (6.2) & 68 (18.9) &
 & B & 112 (63.3) & 191 (53.1) &\tabularnewline
 & C & 49 (27.7) & 78 (21.7) &\tabularnewline
 & OTHERS & 5 (2.8) & 23 (6.4) &\tabularnewline
-person\_neoplasm\_stt & TUMOR FREE & 57 (32.2) & 304 (84.4) &
+person\_neoplasm\_stt & Tumor.Free & 57 (32.2) & 304 (84.4) &
 \textless{}0.001\tabularnewline
-& WITH TUMOR & 105 (59.3) & 36 (10.0) &\tabularnewline
+& With.Tumor & 105 (59.3) & 36 (10.0) &\tabularnewline
 & (Missing) & 15 (8.5) & 20 (5.6) &\tabularnewline
 wbc & Elevated & 46 (26.0) & 118 (32.8) & 0.011\tabularnewline
 & Low & 6 (3.4) & 3 (0.8) &\tabularnewline
 & Normal & 104 (58.8) & 164 (45.6) &\tabularnewline
 & (Missing) & 21 (11.9) & 75 (20.8) &\tabularnewline
-\bottomrule
-\end{longtable}
-
-Summary for continuous explanatory variables use a parametric or
-non-parametric test??
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{explanatory_num <-}\StringTok{ }\NormalTok{cols_numeric}
-
-\NormalTok{dependent <-}\StringTok{  'over_surv_stt'}
-
-\NormalTok{table_fit <-}\StringTok{ }\NormalTok{kirc_clinic }\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{summary_factorlist}\NormalTok{(dependent, explanatory_num, }\DataTypeTok{p=}\OtherTok{TRUE}\NormalTok{, }\DataTypeTok{add_dependent_label=}\OtherTok{TRUE}\NormalTok{,  }\DataTypeTok{na_include =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{na_include_dependent =} \OtherTok{TRUE}\NormalTok{)}
-
-\NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(table_fit, }\DataTypeTok{row.names=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{align=}\KeywordTok{c}\NormalTok{(}\StringTok{"l"}\NormalTok{, }\StringTok{"l"}\NormalTok{, }\StringTok{"r"}\NormalTok{, }\StringTok{"r"}\NormalTok{, }\StringTok{"r"}\NormalTok{))}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{longtable}[]{@{}llrrr@{}}
-\toprule
-Dependent: over\_surv\_stt & & DECEASED & LIVING & p\tabularnewline
-\midrule
-\endhead
-age & Mean (SD) & 64.2 (12.0) & 58.8 (11.9) &
-\textless{}0.001\tabularnewline
-disease\_free\_mth & Mean (SD) & 16.1 (18.5) & 45.5 (31.5) &
-\textless{}0.001\tabularnewline
-frac\_genome\_alter & Mean (SD) & 0.2 (0.2) & 0.2 (0.2) &
-0.230\tabularnewline
-year\_diagnose & Mean (SD) & 2004.6 (2.4) & 2006.7 (2.7) &
-\textless{}0.001\tabularnewline
-long\_dim & Mean (SD) & 1.8 (0.6) & 1.6 (0.7) &
-\textless{}0.001\tabularnewline
-mutation\_cnt & Mean (SD) & 60.5 (90.9) & 80.7 (142.7) &
-0.111\tabularnewline
-over\_surv\_mth & Mean (SD) & 31.6 (25.1) & 50.5 (33.6) &
-\textless{}0.001\tabularnewline
-short\_dim & Mean (SD) & 0.4 (0.2) & 0.4 (0.2) & 0.631\tabularnewline
-second\_long\_dim & Mean (SD) & 1.0 (0.3) & 0.9 (0.3) &
-\textless{}0.001\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -868,7 +859,7 @@ second\_long\_dim & Mean (SD) & 1.0 (0.3) & 0.9 (0.3) &
 ## 
 ## other attached packages:
 ##  [1] plotly_4.9.2.1  GGally_1.5.0    ggpubr_0.2.5    magrittr_1.5   
-##  [5] rstatix_0.6.0   finalfit_1.0.1  skimr_2.1.1     forcats_0.5.0  
+##  [5] rstatix_0.6.0   finalfit_1.0.2  skimr_2.1.1     forcats_0.5.0  
 ##  [9] stringr_1.4.0   dplyr_0.8.5     purrr_0.3.3     readr_1.3.1    
 ## [13] tidyr_1.0.2     tibble_3.0.0    ggplot2_3.3.0   tidyverse_1.3.0
 ## 
@@ -881,7 +872,7 @@ second\_long\_dim & Mean (SD) & 1.0 (0.3) & 0.9 (0.3) &
 ## [21] rvest_0.3.5        mice_3.8.0         xml2_1.3.0         labeling_0.3      
 ## [25] scales_1.1.0       digest_0.6.25      foreign_0.8-76     rmarkdown_2.1     
 ## [29] rio_0.5.16         base64enc_0.1-3    pkgconfig_2.0.3    htmltools_0.4.0   
-## [33] dbplyr_1.4.2       highr_0.8          htmlwidgets_1.5.1  rlang_0.4.5       
+## [33] highr_0.8          dbplyr_1.4.2       htmlwidgets_1.5.1  rlang_0.4.5       
 ## [37] readxl_1.3.1       rstudioapi_0.11    generics_0.0.2     farver_2.0.3      
 ## [41] jsonlite_1.6.1     zip_2.0.4          car_3.0-7          Matrix_1.2-18     
 ## [45] Rcpp_1.0.4         munsell_0.5.0      fansi_0.4.1        abind_1.4-5       
@@ -892,7 +883,7 @@ second\_long\_dim & Mean (SD) & 1.0 (0.3) & 0.9 (0.3) &
 ## [65] glue_1.4.0         evaluate_0.14      data.table_1.12.8  modelr_0.1.6      
 ## [69] vctrs_0.2.4        cellranger_1.1.0   gtable_0.3.0       reshape_0.8.8     
 ## [73] assertthat_0.2.1   xfun_0.12          openxlsx_4.1.4     broom_0.7.0       
-## [77] survival_3.1-11    viridisLite_0.3.0  ellipsis_0.3.0
+## [77] survival_3.2-3     viridisLite_0.3.0  ellipsis_0.3.0
 \end{verbatim}
 
 \end{document}
