@@ -141,7 +141,7 @@ Remove other variables not directly related to patient - check each one!
 
 ```{r}
 kirc_clean4 <- kirc_clean3  %>%
-     select(!c('Form completion date','International Classification of Diseases for Oncology, Third Edition ICD-O-3 Histology Code','Vial number'))
+     select(!c('Form completion date','International Classification of Diseases for Oncology, Third Edition ICD-O-3 Histology Code','Primary Lymph Node Presentation Assessment Ind-3', 'Tissue Prospective Collection Indicator', 'Tissue Retrospective Collection Indicator','Vial number'))
 ```
 
 ## 3. Changing variables names
@@ -153,7 +153,7 @@ kirc_clean4 <- kirc_clean4 %>%
      rename(patient_id = 'Patient ID',
             age = 'Diagnosis Age',
             metastasis_stg = 'American Joint Committee on Cancer Metastasis Stage Code',
-            neoplasm_ln_stg = 'Neoplasm Disease Lymph Node Stage American Joint Committee on Cancer Code',
+            lymph_stg = 'Neoplasm Disease Lymph Node Stage American Joint Committee on Cancer Code',
             neoplasm_stg = 'Neoplasm Disease Stage American Joint Committee on Cancer Code',
             tumor_stg = 'American Joint Committee on Cancer Tumor Stage Code',
             disease_free_mth = 'Disease Free (Months)',
@@ -167,14 +167,11 @@ kirc_clean4 <- kirc_clean4 %>%
             year_diagnose = 'Year Cancer Initial Diagnosis',
             tumor_lateral = 'Primary Tumor Laterality',
             long_dim = 'Longest Dimension',
-            primer_ln_ind3 = 'Primary Lymph Node Presentation Assessment Ind-3',
             mutation_cnt = 'Mutation Count',
             over_surv_mth = 'Overall Survival (Months)',
             over_surv_stt = 'Overall Survival Status',
             platelet = 'Platelet count',
-            tissue_prospect = 'Tissue Prospective Collection Indicator',
             race = 'Race Category',
-            tissue_retrospect = 'Tissue Retrospective Collection Indicator',
             serum_ca = 'Serum calcium level',
             gender = 'Sex',
             short_dim = 'Shortest Dimension',

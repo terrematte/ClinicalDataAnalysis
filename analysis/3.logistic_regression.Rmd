@@ -67,7 +67,9 @@ kirc_clinic <- read_csv("data/kirc_clinic.csv")
 ```{r}
 kirc_clinic <- kirc_clinic %>%
   mutate_if(is.character, as.factor) %>%
-  mutate(patient_id = as.character(patient_id))
+  mutate(patient_id = as.character(patient_id),
+         age = as.integer(age),
+         year_diagnose = as.integer(year_diagnose))
 
 cols_numeric <- kirc_clinic %>% select_if(is.numeric) %>% names
 
