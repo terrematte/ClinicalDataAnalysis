@@ -280,7 +280,7 @@ knitr::kable(table_char, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
 
 
 # Droping levels with narrow distributions -> check warnings ()
-# Group some levels or drop one (NULL = 'level') when grouping is not possible  
+# Group some levels or drop one (NULL = 'level') when grouping is not possible 
 
 kirc_clin2 <- kirc_clin %>%
      mutate(neoplasm_stg = fct_collapse(neoplasm_stg, 'Stage I-II' = c('Stage I','Stage II'), 'Stage III-IV' = c('Stage III','Stage IV')),
@@ -290,7 +290,7 @@ kirc_clin2 <- kirc_clin %>%
             serum_ca = fct_collapse(serum_ca, 'Not.Low' = c('Normal', 'Elevated')),
             wbc = fct_collapse(wbc, 'Not.Elevated' = c('Low', 'Normal')))
                                                        
-kirc_clin2 <- kirc_clin %>%
+kirc_clin2 <- kirc_clin2 %>%
      mutate(histology_grd = fct_recode(histology_grd,  NULL = 'GX'),
             tumor_lateral = fct_recode(tumor_lateral, NULL = 'Bilateral'),
             race = fct_recode(race, NULL = 'Asian'))
@@ -301,6 +301,13 @@ table_char2 <- kirc_clin2 %>%
                      add_dependent_label=TRUE,  na_include = TRUE)
 
 knitr::kable(table_char2, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
+
+#' 
+#' ## 6. saving dataset for regression model
+#' 
+## -----------------------------------------------------------------------------
+kirc_glm <- kirc_clin2 
+write_csv(kirc_glm, path = "~/Google Drive/ClinicalDataAnalysis/kirc_glm.csv")
 
 #' 
 #' ## Further analysis

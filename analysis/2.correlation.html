@@ -295,14 +295,14 @@ kirc_clin_numeric.long$value.log &lt;- log2(kirc_clin_numeric.long$value+1)
 
 kirc_clin_numeric.long %&gt;% sample_n(6)</code></pre>
 <pre><code>## # A tibble: 6 x 4
-##   over_surv_stt variables             value value.log
-##   &lt;fct&gt;         &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;
-## 1 DECEASED      year_diagnose     2002        11.0   
-## 2 LIVING        mutation_cnt        75         6.25  
-## 3 DECEASED      long_dim             2.8       1.93  
-## 4 LIVING        over_surv_mth       46.4       5.57  
-## 5 LIVING        short_dim            0.4       0.485 
-## 6 DECEASED      frac_genome_alter    0.0617    0.0864</code></pre>
+##   over_surv_stt variables          value value.log
+##   &lt;fct&gt;         &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;
+## 1 DECEASED      short_dim          0.3       0.379
+## 2 DECEASED      mutation_cnt      46         5.55 
+## 3 DECEASED      long_dim           1.7       1.43 
+## 4 DECEASED      frac_genome_alter  0.327     0.409
+## 5 LIVING        frac_genome_alter  0.108     0.148
+## 6 LIVING        over_surv_mth      6.93      2.99</code></pre>
 <p>Group the data by variables and compare over_surv_stt groups</p>
 <p>Adjust the p-values and add significance levels</p>
 <pre class="r"><code>stat.test &lt;- kirc_clin_numeric.long %&gt;%
@@ -1090,7 +1090,7 @@ table_char &lt;- kirc_clin %&gt;%
 </tbody>
 </table>
 <pre class="r"><code># Droping levels with narrow distributions -&gt; check warnings ()
-# Group some levels or drop one (NULL = 'level') when grouping is not possible  
+# Group some levels or drop one (NULL = 'level') when grouping is not possible 
 
 kirc_clin2 &lt;- kirc_clin %&gt;%
      mutate(neoplasm_stg = fct_collapse(neoplasm_stg, 'Stage I-II' = c('Stage I','Stage II'), 'Stage III-IV' = c('Stage III','Stage IV')),
@@ -1100,7 +1100,7 @@ kirc_clin2 &lt;- kirc_clin %&gt;%
             serum_ca = fct_collapse(serum_ca, 'Not.Low' = c('Normal', 'Elevated')),
             wbc = fct_collapse(wbc, 'Not.Elevated' = c('Low', 'Normal')))
                                                        
-kirc_clin2 &lt;- kirc_clin %&gt;%
+kirc_clin2 &lt;- kirc_clin2 %&gt;%
      mutate(histology_grd = fct_recode(histology_grd,  NULL = 'GX'),
             tumor_lateral = fct_recode(tumor_lateral, NULL = 'Bilateral'),
             race = fct_recode(race, NULL = 'Asian'))
@@ -1108,18 +1108,9 @@ kirc_clin2 &lt;- kirc_clin %&gt;%
 
 table_char2 &lt;- kirc_clin2 %&gt;%
   summary_factorlist(dependent, explanatory_char, p=TRUE, 
-                     add_dependent_label=TRUE,  na_include = TRUE)</code></pre>
-<pre><code>## Warning in chisq.test(tumor_stg, over_surv_stt): Chi-squared approximation may
-## be incorrect</code></pre>
-<pre><code>## Warning in chisq.test(histology_grd, over_surv_stt): Chi-squared approximation
-## may be incorrect</code></pre>
-<pre><code>## Warning in chisq.test(hemoglobin, over_surv_stt): Chi-squared approximation may
-## be incorrect</code></pre>
-<pre><code>## Warning in chisq.test(serum_ca, over_surv_stt): Chi-squared approximation may be
-## incorrect</code></pre>
-<pre><code>## Warning in chisq.test(wbc, over_surv_stt): Chi-squared approximation may be
-## incorrect</code></pre>
-<pre class="r"><code>knitr::kable(table_char2, row.names=FALSE, align=c(&quot;l&quot;, &quot;l&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;))</code></pre>
+                     add_dependent_label=TRUE,  na_include = TRUE)
+
+knitr::kable(table_char2, row.names=FALSE, align=c(&quot;l&quot;, &quot;l&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;))</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -1182,30 +1173,16 @@ table_char2 &lt;- kirc_clin2 %&gt;%
 </tr>
 <tr class="even">
 <td align="left">neoplasm_stg</td>
-<td>Stage I</td>
-<td align="right">45 (25.4)</td>
-<td align="right">224 (62.2)</td>
+<td>Stage I-II</td>
+<td align="right">58 (32.8)</td>
+<td align="right">268 (74.4)</td>
 <td align="right">&lt;0.001</td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
-<td>Stage II</td>
-<td align="right">13 (7.3)</td>
-<td align="right">44 (12.2)</td>
-<td align="right"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td>Stage III</td>
-<td align="right">51 (28.8)</td>
-<td align="right">74 (20.6)</td>
-<td align="right"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td>Stage IV</td>
-<td align="right">67 (37.9)</td>
-<td align="right">16 (4.4)</td>
+<td>Stage III-IV</td>
+<td align="right">118 (66.7)</td>
+<td align="right">90 (25.0)</td>
 <td align="right"></td>
 </tr>
 <tr class="even">
@@ -1217,30 +1194,16 @@ table_char2 &lt;- kirc_clin2 %&gt;%
 </tr>
 <tr class="odd">
 <td align="left">tumor_stg</td>
-<td>T1</td>
-<td align="right">50 (28.2)</td>
-<td align="right">225 (62.5)</td>
+<td>T1-T2</td>
+<td align="right">71 (40.1)</td>
+<td align="right">273 (75.8)</td>
 <td align="right">&lt;0.001</td>
 </tr>
 <tr class="even">
 <td align="left"></td>
-<td>T2</td>
-<td align="right">21 (11.9)</td>
-<td align="right">48 (13.3)</td>
-<td align="right"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td>T3</td>
-<td align="right">96 (54.2)</td>
-<td align="right">86 (23.9)</td>
-<td align="right"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td>T4</td>
-<td align="right">10 (5.6)</td>
-<td align="right">1 (0.3)</td>
+<td>T3-T4</td>
+<td align="right">106 (59.9)</td>
+<td align="right">87 (24.2)</td>
 <td align="right"></td>
 </tr>
 <tr class="odd">
@@ -1287,30 +1250,16 @@ table_char2 &lt;- kirc_clin2 %&gt;%
 </tr>
 <tr class="odd">
 <td align="left">histology_grd</td>
-<td>G1</td>
-<td align="right">0 (0.0)</td>
-<td align="right">14 (3.9)</td>
+<td>G1-G2</td>
+<td align="right">45 (25.4)</td>
+<td align="right">199 (55.3)</td>
 <td align="right">&lt;0.001</td>
 </tr>
 <tr class="even">
 <td align="left"></td>
-<td>G2</td>
-<td align="right">45 (25.4)</td>
-<td align="right">185 (51.4)</td>
-<td align="right"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td>G3</td>
-<td align="right">74 (41.8)</td>
-<td align="right">133 (36.9)</td>
-<td align="right"></td>
-</tr>
-<tr class="even">
-<td align="left"></td>
-<td>G4</td>
-<td align="right">57 (32.2)</td>
-<td align="right">21 (5.8)</td>
+<td>G3-G4</td>
+<td align="right">131 (74.0)</td>
+<td align="right">154 (42.8)</td>
 <td align="right"></td>
 </tr>
 <tr class="odd">
@@ -1322,9 +1271,9 @@ table_char2 &lt;- kirc_clin2 %&gt;%
 </tr>
 <tr class="even">
 <td align="left">hemoglobin</td>
-<td>Elevated</td>
-<td align="right">3 (1.7)</td>
-<td align="right">2 (0.6)</td>
+<td>Not.Low</td>
+<td align="right">46 (26.0)</td>
+<td align="right">145 (40.3)</td>
 <td align="right">&lt;0.001</td>
 </tr>
 <tr class="odd">
@@ -1336,198 +1285,184 @@ table_char2 &lt;- kirc_clin2 %&gt;%
 </tr>
 <tr class="even">
 <td align="left"></td>
-<td>Normal</td>
-<td align="right">43 (24.3)</td>
-<td align="right">143 (39.7)</td>
-<td align="right"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
 <td>(Missing)</td>
 <td align="right">13 (7.3)</td>
 <td align="right">70 (19.4)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">neoadj_therapy</td>
 <td>No</td>
 <td align="right">167 (94.4)</td>
 <td align="right">352 (97.8)</td>
 <td align="right">0.069</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"></td>
 <td>Yes</td>
 <td align="right">10 (5.6)</td>
 <td align="right">8 (2.2)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">prior_cancer</td>
 <td>No</td>
 <td align="right">153 (86.4)</td>
 <td align="right">306 (85.0)</td>
 <td align="right">0.753</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"></td>
 <td>Yes</td>
 <td align="right">24 (13.6)</td>
 <td align="right">54 (15.0)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">tumor_lateral</td>
 <td>Left</td>
 <td align="right">98 (55.4)</td>
 <td align="right">155 (43.1)</td>
 <td align="right">0.010</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"></td>
 <td>Right</td>
 <td align="right">79 (44.6)</td>
 <td align="right">204 (56.7)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"></td>
 <td>(Missing)</td>
 <td align="right">0 (0.0)</td>
 <td align="right">1 (0.3)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">primer_ln_ind3</td>
 <td>NO</td>
 <td align="right">120 (67.8)</td>
 <td align="right">275 (76.4)</td>
 <td align="right">0.024</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"></td>
 <td>YES</td>
 <td align="right">56 (31.6)</td>
 <td align="right">79 (21.9)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"></td>
 <td>(Missing)</td>
 <td align="right">1 (0.6)</td>
 <td align="right">6 (1.7)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">platelet</td>
 <td>Elevated</td>
 <td align="right">30 (16.9)</td>
 <td align="right">8 (2.2)</td>
 <td align="right">&lt;0.001</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"></td>
 <td>Low</td>
 <td align="right">20 (11.3)</td>
 <td align="right">26 (7.2)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"></td>
 <td>Normal</td>
 <td align="right">108 (61.0)</td>
 <td align="right">252 (70.0)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"></td>
 <td>(Missing)</td>
 <td align="right">19 (10.7)</td>
 <td align="right">74 (20.6)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">tissue_prospect</td>
 <td>NO</td>
 <td align="right">169 (95.5)</td>
 <td align="right">296 (82.2)</td>
 <td align="right">&lt;0.001</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"></td>
 <td>YES</td>
 <td align="right">2 (1.1)</td>
 <td align="right">50 (13.9)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"></td>
 <td>(Missing)</td>
 <td align="right">6 (3.4)</td>
 <td align="right">14 (3.9)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">race</td>
 <td>Black/African.american</td>
 <td align="right">11 (6.2)</td>
 <td align="right">45 (12.5)</td>
 <td align="right">0.032</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"></td>
 <td>White</td>
 <td align="right">163 (92.1)</td>
 <td align="right">303 (84.2)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"></td>
 <td>(Missing)</td>
 <td align="right">3 (1.7)</td>
 <td align="right">12 (3.3)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">tissue_retrospect</td>
 <td>NO</td>
 <td align="right">2 (1.1)</td>
 <td align="right">51 (14.2)</td>
 <td align="right">&lt;0.001</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"></td>
 <td>YES</td>
 <td align="right">169 (95.5)</td>
 <td align="right">297 (82.5)</td>
 <td align="right"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"></td>
 <td>(Missing)</td>
 <td align="right">6 (3.4)</td>
 <td align="right">12 (3.3)</td>
 <td align="right"></td>
 </tr>
-<tr class="odd">
-<td align="left">serum_ca</td>
-<td>Elevated</td>
-<td align="right">9 (5.1)</td>
-<td align="right">1 (0.3)</td>
-<td align="right">0.001</td>
-</tr>
 <tr class="even">
+<td align="left">serum_ca</td>
+<td>Not.Low</td>
+<td align="right">71 (40.1)</td>
+<td align="right">90 (25.0)</td>
+<td align="right">0.028</td>
+</tr>
+<tr class="odd">
 <td align="left"></td>
 <td>Low</td>
 <td align="right">66 (37.3)</td>
 <td align="right">138 (38.3)</td>
-<td align="right"></td>
-</tr>
-<tr class="odd">
-<td align="left"></td>
-<td>Normal</td>
-<td align="right">62 (35.0)</td>
-<td align="right">89 (24.7)</td>
 <td align="right"></td>
 </tr>
 <tr class="even">
@@ -1605,23 +1540,16 @@ table_char2 &lt;- kirc_clin2 %&gt;%
 <td>Elevated</td>
 <td align="right">46 (26.0)</td>
 <td align="right">118 (32.8)</td>
-<td align="right">0.011</td>
+<td align="right">0.018</td>
 </tr>
 <tr class="odd">
 <td align="left"></td>
-<td>Low</td>
-<td align="right">6 (3.4)</td>
-<td align="right">3 (0.8)</td>
+<td>Not.Elevated</td>
+<td align="right">110 (62.1)</td>
+<td align="right">167 (46.4)</td>
 <td align="right"></td>
 </tr>
 <tr class="even">
-<td align="left"></td>
-<td>Normal</td>
-<td align="right">104 (58.8)</td>
-<td align="right">164 (45.6)</td>
-<td align="right"></td>
-</tr>
-<tr class="odd">
 <td align="left"></td>
 <td>(Missing)</td>
 <td align="right">21 (11.9)</td>
@@ -1630,6 +1558,11 @@ table_char2 &lt;- kirc_clin2 %&gt;%
 </tr>
 </tbody>
 </table>
+</div>
+<div id="saving-dataset-for-regression-model" class="section level2">
+<h2>6. saving dataset for regression model</h2>
+<pre class="r"><code>kirc_glm &lt;- kirc_clin2 
+write_csv(kirc_glm, path = &quot;~/Google Drive/ClinicalDataAnalysis/kirc_glm.csv&quot;)</code></pre>
 </div>
 <div id="further-analysis" class="section level2">
 <h2>Further analysis</h2>
