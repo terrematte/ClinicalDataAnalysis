@@ -387,7 +387,7 @@ Remove other variables not directly related to patient - check each one!
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{kirc_clean4 <-}\StringTok{ }\NormalTok{kirc_clean3  }\OperatorTok{%>%}
-\StringTok{     }\KeywordTok{select}\NormalTok{(}\OperatorTok{!}\KeywordTok{c}\NormalTok{(}\StringTok{'Form completion date'}\NormalTok{,}\StringTok{'International Classification of Diseases for Oncology, Third Edition ICD-O-3 Histology Code'}\NormalTok{,}\StringTok{'Vial number'}\NormalTok{))}
+\StringTok{     }\KeywordTok{select}\NormalTok{(}\OperatorTok{!}\KeywordTok{c}\NormalTok{(}\StringTok{'Form completion date'}\NormalTok{,}\StringTok{'International Classification of Diseases for Oncology, Third Edition ICD-O-3 Histology Code'}\NormalTok{,}\StringTok{'Primary Lymph Node Presentation Assessment Ind-3'}\NormalTok{, }\StringTok{'Tissue Prospective Collection Indicator'}\NormalTok{, }\StringTok{'Tissue Retrospective Collection Indicator'}\NormalTok{,}\StringTok{'Vial number'}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
@@ -401,7 +401,7 @@ Using snake\_style
 \StringTok{     }\KeywordTok{rename}\NormalTok{(}\DataTypeTok{patient_id =} \StringTok{'Patient ID'}\NormalTok{,}
             \DataTypeTok{age =} \StringTok{'Diagnosis Age'}\NormalTok{,}
             \DataTypeTok{metastasis_stg =} \StringTok{'American Joint Committee on Cancer Metastasis Stage Code'}\NormalTok{,}
-            \DataTypeTok{neoplasm_ln_stg =} \StringTok{'Neoplasm Disease Lymph Node Stage American Joint Committee on Cancer Code'}\NormalTok{,}
+            \DataTypeTok{lymph_stg =} \StringTok{'Neoplasm Disease Lymph Node Stage American Joint Committee on Cancer Code'}\NormalTok{,}
             \DataTypeTok{neoplasm_stg =} \StringTok{'Neoplasm Disease Stage American Joint Committee on Cancer Code'}\NormalTok{,}
             \DataTypeTok{tumor_stg =} \StringTok{'American Joint Committee on Cancer Tumor Stage Code'}\NormalTok{,}
             \DataTypeTok{disease_free_mth =} \StringTok{'Disease Free (Months)'}\NormalTok{,}
@@ -415,14 +415,11 @@ Using snake\_style
             \DataTypeTok{year_diagnose =} \StringTok{'Year Cancer Initial Diagnosis'}\NormalTok{,}
             \DataTypeTok{tumor_lateral =} \StringTok{'Primary Tumor Laterality'}\NormalTok{,}
             \DataTypeTok{long_dim =} \StringTok{'Longest Dimension'}\NormalTok{,}
-            \DataTypeTok{primer_ln_ind3 =} \StringTok{'Primary Lymph Node Presentation Assessment Ind-3'}\NormalTok{,}
             \DataTypeTok{mutation_cnt =} \StringTok{'Mutation Count'}\NormalTok{,}
             \DataTypeTok{over_surv_mth =} \StringTok{'Overall Survival (Months)'}\NormalTok{,}
             \DataTypeTok{over_surv_stt =} \StringTok{'Overall Survival Status'}\NormalTok{,}
             \DataTypeTok{platelet =} \StringTok{'Platelet count'}\NormalTok{,}
-            \DataTypeTok{tissue_prospect =} \StringTok{'Tissue Prospective Collection Indicator'}\NormalTok{,}
             \DataTypeTok{race =} \StringTok{'Race Category'}\NormalTok{,}
-            \DataTypeTok{tissue_retrospect =} \StringTok{'Tissue Retrospective Collection Indicator'}\NormalTok{,}
             \DataTypeTok{serum_ca =} \StringTok{'Serum calcium level'}\NormalTok{,}
             \DataTypeTok{gender =} \StringTok{'Sex'}\NormalTok{,}
             \DataTypeTok{short_dim =} \StringTok{'Shortest Dimension'}\NormalTok{,}
@@ -471,7 +468,7 @@ Check distincts types of NAs: MCAR, MAR, MNAR
 ## patient_id                   patient_id    <chr> 537         0             0.0
 ## age                                 age    <int> 537         0             0.0
 ## metastasis_stg           metastasis_stg    <fct> 535         2             0.4
-## neoplasm_ln_stg         neoplasm_ln_stg    <fct> 537         0             0.0
+## lymph_stg                     lymph_stg    <fct> 537         0             0.0
 ## neoplasm_stg               neoplasm_stg    <fct> 534         3             0.6
 ## tumor_stg                     tumor_stg    <fct> 537         0             0.0
 ## disease_free_mth       disease_free_mth    <dbl> 438        99            18.4
@@ -485,14 +482,11 @@ Check distincts types of NAs: MCAR, MAR, MNAR
 ## year_diagnose             year_diagnose    <int> 537         0             0.0
 ## tumor_lateral             tumor_lateral    <fct> 537         0             0.0
 ## long_dim                       long_dim    <dbl> 502        35             6.5
-## primer_ln_ind3           primer_ln_ind3    <fct> 530         7             1.3
 ## mutation_cnt               mutation_cnt    <dbl> 451        86            16.0
 ## over_surv_mth             over_surv_mth    <dbl> 537         0             0.0
 ## over_surv_stt             over_surv_stt    <fct> 537         0             0.0
 ## platelet                       platelet    <fct> 444        93            17.3
-## tissue_prospect         tissue_prospect    <fct> 517        20             3.7
 ## race                               race    <fct> 530         7             1.3
-## tissue_retrospect     tissue_retrospect    <fct> 519        18             3.4
 ## serum_ca                       serum_ca    <fct> 365       172            32.0
 ## gender                           gender    <fct> 537         0             0.0
 ## short_dim                     short_dim    <dbl> 502        35             6.5
@@ -844,14 +838,14 @@ Check frequency, lables and levels
 \end{Shaded}
 
 \begin{verbatim}
-##  metastasis_stg neoplasm_ln_stg    neoplasm_stg   tumor_stg  
-##  M0  :426       N0:240          Stage I  :269   T1a    :142  
-##  M1  : 79       N1: 17          Stage II : 57   T3a    :122  
-##  MX  : 30       NX:280          Stage III:125   T1b    :111  
-##  NA's:  2                       Stage IV : 83   T2     : 55  
-##                                 NA's     :  3   T3b    : 53  
-##                                                 T1     : 22  
-##                                                 (Other): 32  
+##  metastasis_stg lymph_stg    neoplasm_stg   tumor_stg  
+##  M0  :426       N0:240    Stage I  :269   T1a    :142  
+##  M1  : 79       N1: 17    Stage II : 57   T3a    :122  
+##  MX  : 30       NX:280    Stage III:125   T1b    :111  
+##  NA's:  2                 Stage IV : 83   T2     : 55  
+##                           NA's     :  3   T3b    : 53  
+##                                           T1     : 22  
+##                                           (Other): 32  
 ##             disease_free_stt                  ethnicity   histology_grd
 ##  DiseaseFree        :311     HISPANIC OR LATINO    : 26   G1  : 14     
 ##  Recurred/Progressed:127     NOT HISPANIC OR LATINO:359   G2  :230     
@@ -876,30 +870,22 @@ Check frequency, lables and levels
 ##                                                                        
 ##                                                                        
 ##                                                                        
-##  primer_ln_ind3  over_surv_stt     platelet   tissue_prospect
-##  NO  :395       DECEASED:177   Elevated: 38   NO  :465       
-##  YES :135       LIVING  :360   Low     : 46   YES : 52       
-##  NA's:  7                      Normal  :360   NA's: 20       
-##                                NA's    : 93                  
-##                                                              
-##                                                              
-##                                                              
-##                         race     tissue_retrospect     serum_ca      gender   
-##  ASIAN                    :  8   NO  : 53          Elevated: 10   Female:191  
-##  BLACK OR AFRICAN AMERICAN: 56   YES :466          Low     :204   Male  :345  
-##  WHITE                    :466   NA's: 18          Normal  :151   MALE  :  1  
-##  NA's                     :  7                     NA's    :172               
-##                                                                               
-##                                                                               
-##                                                                               
-##   tissue_site  person_neoplasm_stt       wbc     
-##  BP     :142   TUMOR FREE:361      Elevated:164  
-##  B0     :107   WITH TUMOR:141      Low     :  9  
-##  CJ     : 71   NA's      : 35      Normal  :268  
-##  A3     : 52                       NA's    : 96  
-##  CZ     : 40                                     
-##  B8     : 33                                     
-##  (Other): 92
+##   over_surv_stt     platelet                          race         serum_ca  
+##  DECEASED:177   Elevated: 38   ASIAN                    :  8   Elevated: 10  
+##  LIVING  :360   Low     : 46   BLACK OR AFRICAN AMERICAN: 56   Low     :204  
+##                 Normal  :360   WHITE                    :466   Normal  :151  
+##                 NA's    : 93   NA's                     :  7   NA's    :172  
+##                                                                              
+##                                                                              
+##                                                                              
+##     gender     tissue_site  person_neoplasm_stt       wbc     
+##  Female:191   BP     :142   TUMOR FREE:361      Elevated:164  
+##  Male  :345   B0     :107   WITH TUMOR:141      Low     :  9  
+##  MALE  :  1   CJ     : 71   NA's      : 35      Normal  :268  
+##               A3     : 52                       NA's    : 96  
+##               CZ     : 40                                     
+##               B8     : 33                                     
+##               (Other): 92
 \end{verbatim}
 
 \begin{Shaded}
@@ -940,47 +926,40 @@ Check frequency, lables and levels
 \end{Shaded}
 
 \begin{verbatim}
-##  metastasis_stg neoplasm_ln_stg    neoplasm_stg tumor_stg
-##  M0  :426       N0:240          Stage I  :269   T1:275   
-##  M1  : 79       N1: 17          Stage II : 57   T2: 69   
-##  MX  : 30       NX:280          Stage III:125   T3:182   
-##  NA's:  2                       Stage IV : 83   T4: 11   
-##                                 NA's     :  3            
-##                                                          
-##             disease_free_stt               ethnicity   histology_grd
-##  DiseaseFree        :311     hispanic/latino    : 26   G1  : 14     
-##  Recurred/Progressed:127     not hispanic/latino:359   G2  :230     
-##  NA's               : 99     NA's               :152   G3  :207     
-##                                                        G4  : 78     
-##                                                        GX  :  5     
-##                                                        NA's:  3     
-##     hemoglobin  neoadj_therapy prior_cancer   tumor_lateral primer_ln_ind3
-##  Elevated:  5   No :519        No :459      Bilateral:  1   NO  :395      
-##  Low     :263   Yes: 18        Yes: 78      Left     :253   YES :135      
-##  Normal  :186                               Right    :283   NA's:  7      
-##  NA's    : 83                                                             
-##                                                                           
-##                                                                           
-##   over_surv_stt     platelet   tissue_prospect                     race    
-##  DECEASED:177   Elevated: 38   NO  :465        Asian                 :  8  
-##  LIVING  :360   Low     : 46   YES : 52        Black/African.american: 56  
-##                 Normal  :360   NA's: 20        White                 :466  
-##                 NA's    : 93                   NA's                  :  7  
-##                                                                            
-##                                                                            
-##  tissue_retrospect     serum_ca      gender    tissue_site  person_neoplasm_stt
-##  NO  : 53          Elevated: 10   Female:191   OTHERS: 28   Tumor.Free:361     
-##  YES :466          Low     :204   Male  :346   A     : 79   With.Tumor:141     
-##  NA's: 18          Normal  :151                B     :303   NA's      : 35     
-##                    NA's    :172                C     :127                      
+##  metastasis_stg lymph_stg    neoplasm_stg tumor_stg            disease_free_stt
+##  M0  :426       N0:240    Stage I  :269   T1:275    DiseaseFree        :311    
+##  M1  : 79       N1: 17    Stage II : 57   T2: 69    Recurred/Progressed:127    
+##  MX  : 30       NX:280    Stage III:125   T3:182    NA's               : 99    
+##  NA's:  2                 Stage IV : 83   T4: 11                               
+##                           NA's     :  3                                        
 ##                                                                                
-##                                                                                
-##        wbc     
-##  Elevated:164  
-##  Low     :  9  
-##  Normal  :268  
-##  NA's    : 96  
-##                
+##                ethnicity   histology_grd    hemoglobin  neoadj_therapy
+##  hispanic/latino    : 26   G1  : 14      Elevated:  5   No :519       
+##  not hispanic/latino:359   G2  :230      Low     :263   Yes: 18       
+##  NA's               :152   G3  :207      Normal  :186                 
+##                            G4  : 78      NA's    : 83                 
+##                            GX  :  5                                   
+##                            NA's:  3                                   
+##  prior_cancer   tumor_lateral  over_surv_stt     platelet  
+##  No :459      Bilateral:  1   DECEASED:177   Elevated: 38  
+##  Yes: 78      Left     :253   LIVING  :360   Low     : 46  
+##               Right    :283                  Normal  :360  
+##                                              NA's    : 93  
+##                                                            
+##                                                            
+##                      race         serum_ca      gender    tissue_site 
+##  Asian                 :  8   Elevated: 10   Female:191   OTHERS: 28  
+##  Black/African.american: 56   Low     :204   Male  :346   A     : 79  
+##  White                 :466   Normal  :151                B     :303  
+##  NA's                  :  7   NA's    :172                C     :127  
+##                                                                       
+##                                                                       
+##  person_neoplasm_stt       wbc     
+##  Tumor.Free:361      Elevated:164  
+##  With.Tumor:141      Low     :  9  
+##  NA's      : 35      Normal  :268  
+##                      NA's    : 96  
+##                                    
 ## 
 \end{verbatim}
 
@@ -1002,11 +981,11 @@ again}\label{correcting-and-checking-again}
 \toprule
 Name & kirc\_clin\tabularnewline
 Number of rows & 537\tabularnewline
-Number of columns & 32\tabularnewline
+Number of columns & 29\tabularnewline
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
 Column type frequency: &\tabularnewline
 character & 1\tabularnewline
-factor & 22\tabularnewline
+factor & 19\tabularnewline
 numeric & 9\tabularnewline
 \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
 Group variables & None\tabularnewline
@@ -1035,7 +1014,7 @@ top\_counts\tabularnewline
 \endhead
 metastasis\_stg & 2 & 1.00 & FALSE & 3 & M0: 426, M1: 79, MX:
 30\tabularnewline
-neoplasm\_ln\_stg & 0 & 1.00 & FALSE & 3 & NX: 280, N0: 240, N1:
+lymph\_stg & 0 & 1.00 & FALSE & 3 & NX: 280, N0: 240, N1:
 17\tabularnewline
 neoplasm\_stg & 3 & 0.99 & FALSE & 4 & Sta: 269, Sta: 125, Sta: 83, Sta:
 57\tabularnewline
@@ -1052,17 +1031,11 @@ neoadj\_therapy & 0 & 1.00 & FALSE & 2 & No: 519, Yes: 18\tabularnewline
 prior\_cancer & 0 & 1.00 & FALSE & 2 & No: 459, Yes: 78\tabularnewline
 tumor\_lateral & 0 & 1.00 & FALSE & 3 & Rig: 283, Lef: 253, Bil:
 1\tabularnewline
-primer\_ln\_ind3 & 7 & 0.99 & FALSE & 2 & NO: 395, YES:
-135\tabularnewline
 over\_surv\_stt & 0 & 1.00 & FALSE & 2 & LIV: 360, DEC:
 177\tabularnewline
 platelet & 93 & 0.83 & FALSE & 3 & Nor: 360, Low: 46, Ele:
 38\tabularnewline
-tissue\_prospect & 20 & 0.96 & FALSE & 2 & NO: 465, YES:
-52\tabularnewline
 race & 7 & 0.99 & FALSE & 3 & Whi: 466, Bla: 56, Asi: 8\tabularnewline
-tissue\_retrospect & 18 & 0.97 & FALSE & 2 & YES: 466, NO:
-53\tabularnewline
 serum\_ca & 172 & 0.68 & FALSE & 3 & Low: 204, Nor: 151, Ele:
 10\tabularnewline
 gender & 0 & 1.00 & FALSE & 2 & Mal: 346, Fem: 191\tabularnewline

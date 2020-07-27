@@ -683,7 +683,7 @@ wbc & Elevated & 46 (26.0) & 118 (32.8) & 0.011\tabularnewline
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# Droping levels with narrow distributions -> check warnings ()}
-\CommentTok{# Group some levels or drop one (NULL = 'level') when grouping is not possible  }
+\CommentTok{# Group some levels or drop one (NULL = 'level') when grouping is not possible }
 
 \NormalTok{kirc_clin2 <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{neoplasm_stg =} \KeywordTok{fct_collapse}\NormalTok{(neoplasm_stg, }\StringTok{'Stage I-II'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Stage I'}\NormalTok{,}\StringTok{'Stage II'}\NormalTok{), }\StringTok{'Stage III-IV'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Stage III'}\NormalTok{,}\StringTok{'Stage IV'}\NormalTok{)),}
@@ -693,7 +693,7 @@ wbc & Elevated & 46 (26.0) & 118 (32.8) & 0.011\tabularnewline
             \DataTypeTok{serum_ca =} \KeywordTok{fct_collapse}\NormalTok{(serum_ca, }\StringTok{'Not.Low'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Normal'}\NormalTok{, }\StringTok{'Elevated'}\NormalTok{)),}
             \DataTypeTok{wbc =} \KeywordTok{fct_collapse}\NormalTok{(wbc, }\StringTok{'Not.Elevated'}\NormalTok{ =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'Low'}\NormalTok{, }\StringTok{'Normal'}\NormalTok{)))}
                                                        
-\NormalTok{kirc_clin2 <-}\StringTok{ }\NormalTok{kirc_clin }\OperatorTok{%>%}
+\NormalTok{kirc_clin2 <-}\StringTok{ }\NormalTok{kirc_clin2 }\OperatorTok{%>%}
 \StringTok{     }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{histology_grd =} \KeywordTok{fct_recode}\NormalTok{(histology_grd,  }\DataTypeTok{NULL =} \StringTok{'GX'}\NormalTok{),}
             \DataTypeTok{tumor_lateral =} \KeywordTok{fct_recode}\NormalTok{(tumor_lateral, }\DataTypeTok{NULL =} \StringTok{'Bilateral'}\NormalTok{),}
             \DataTypeTok{race =} \KeywordTok{fct_recode}\NormalTok{(race, }\DataTypeTok{NULL =} \StringTok{'Asian'}\NormalTok{))}
@@ -702,36 +702,7 @@ wbc & Elevated & 46 (26.0) & 118 (32.8) & 0.011\tabularnewline
 \NormalTok{table_char2 <-}\StringTok{ }\NormalTok{kirc_clin2 }\OperatorTok{%>%}
 \StringTok{  }\KeywordTok{summary_factorlist}\NormalTok{(dependent, explanatory_char, }\DataTypeTok{p=}\OtherTok{TRUE}\NormalTok{, }
                      \DataTypeTok{add_dependent_label=}\OtherTok{TRUE}\NormalTok{,  }\DataTypeTok{na_include =} \OtherTok{TRUE}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
 
-\begin{verbatim}
-## Warning in chisq.test(tumor_stg, over_surv_stt): Chi-squared approximation may
-## be incorrect
-\end{verbatim}
-
-\begin{verbatim}
-## Warning in chisq.test(histology_grd, over_surv_stt): Chi-squared approximation
-## may be incorrect
-\end{verbatim}
-
-\begin{verbatim}
-## Warning in chisq.test(hemoglobin, over_surv_stt): Chi-squared approximation may
-## be incorrect
-\end{verbatim}
-
-\begin{verbatim}
-## Warning in chisq.test(serum_ca, over_surv_stt): Chi-squared approximation may be
-## incorrect
-\end{verbatim}
-
-\begin{verbatim}
-## Warning in chisq.test(wbc, over_surv_stt): Chi-squared approximation may be
-## incorrect
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
 \NormalTok{knitr}\OperatorTok{::}\KeywordTok{kable}\NormalTok{(table_char2, }\DataTypeTok{row.names=}\OtherTok{FALSE}\NormalTok{, }\DataTypeTok{align=}\KeywordTok{c}\NormalTok{(}\StringTok{"l"}\NormalTok{, }\StringTok{"l"}\NormalTok{, }\StringTok{"r"}\NormalTok{, }\StringTok{"r"}\NormalTok{, }\StringTok{"r"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
@@ -749,17 +720,13 @@ metastasis\_stg & M0 & 110 (62.1) & 316 (87.8) &
 neoplasm\_ln\_stg & N0 & 85 (48.0) & 155 (43.1) & 0.001\tabularnewline
 & N1 & 12 (6.8) & 5 (1.4) &\tabularnewline
 & NX & 80 (45.2) & 200 (55.6) &\tabularnewline
-neoplasm\_stg & Stage I & 45 (25.4) & 224 (62.2) &
+neoplasm\_stg & Stage I-II & 58 (32.8) & 268 (74.4) &
 \textless{}0.001\tabularnewline
-& Stage II & 13 (7.3) & 44 (12.2) &\tabularnewline
-& Stage III & 51 (28.8) & 74 (20.6) &\tabularnewline
-& Stage IV & 67 (37.9) & 16 (4.4) &\tabularnewline
+& Stage III-IV & 118 (66.7) & 90 (25.0) &\tabularnewline
 & (Missing) & 1 (0.6) & 2 (0.6) &\tabularnewline
-tumor\_stg & T1 & 50 (28.2) & 225 (62.5) &
+tumor\_stg & T1-T2 & 71 (40.1) & 273 (75.8) &
 \textless{}0.001\tabularnewline
-& T2 & 21 (11.9) & 48 (13.3) &\tabularnewline
-& T3 & 96 (54.2) & 86 (23.9) &\tabularnewline
-& T4 & 10 (5.6) & 1 (0.3) &\tabularnewline
+& T3-T4 & 106 (59.9) & 87 (24.2) &\tabularnewline
 disease\_free\_stt & DiseaseFree & 0 (0.0) & 311 (86.4) &
 \textless{}0.001\tabularnewline
 & Recurred/Progressed & 78 (44.1) & 49 (13.6) &\tabularnewline
@@ -767,16 +734,13 @@ disease\_free\_stt & DiseaseFree & 0 (0.0) & 311 (86.4) &
 ethnicity & hispanic/latino & 3 (1.7) & 23 (6.4) & 0.017\tabularnewline
 & not hispanic/latino & 132 (74.6) & 227 (63.1) &\tabularnewline
 & (Missing) & 42 (23.7) & 110 (30.6) &\tabularnewline
-histology\_grd & G1 & 0 (0.0) & 14 (3.9) &
+histology\_grd & G1-G2 & 45 (25.4) & 199 (55.3) &
 \textless{}0.001\tabularnewline
-& G2 & 45 (25.4) & 185 (51.4) &\tabularnewline
-& G3 & 74 (41.8) & 133 (36.9) &\tabularnewline
-& G4 & 57 (32.2) & 21 (5.8) &\tabularnewline
+& G3-G4 & 131 (74.0) & 154 (42.8) &\tabularnewline
 & (Missing) & 1 (0.6) & 7 (1.9) &\tabularnewline
-hemoglobin & Elevated & 3 (1.7) & 2 (0.6) &
+hemoglobin & Not.Low & 46 (26.0) & 145 (40.3) &
 \textless{}0.001\tabularnewline
 & Low & 118 (66.7) & 145 (40.3) &\tabularnewline
-& Normal & 43 (24.3) & 143 (39.7) &\tabularnewline
 & (Missing) & 13 (7.3) & 70 (19.4) &\tabularnewline
 neoadj\_therapy & No & 167 (94.4) & 352 (97.8) & 0.069\tabularnewline
 & Yes & 10 (5.6) & 8 (2.2) &\tabularnewline
@@ -805,9 +769,8 @@ tissue\_retrospect & NO & 2 (1.1) & 51 (14.2) &
 \textless{}0.001\tabularnewline
 & YES & 169 (95.5) & 297 (82.5) &\tabularnewline
 & (Missing) & 6 (3.4) & 12 (3.3) &\tabularnewline
-serum\_ca & Elevated & 9 (5.1) & 1 (0.3) & 0.001\tabularnewline
+serum\_ca & Not.Low & 71 (40.1) & 90 (25.0) & 0.028\tabularnewline
 & Low & 66 (37.3) & 138 (38.3) &\tabularnewline
-& Normal & 62 (35.0) & 89 (24.7) &\tabularnewline
 & (Missing) & 40 (22.6) & 132 (36.7) &\tabularnewline
 gender & Female & 65 (36.7) & 126 (35.0) & 0.767\tabularnewline
 & Male & 112 (63.3) & 234 (65.0) &\tabularnewline
@@ -820,12 +783,21 @@ person\_neoplasm\_stt & Tumor.Free & 57 (32.2) & 304 (84.4) &
 \textless{}0.001\tabularnewline
 & With.Tumor & 105 (59.3) & 36 (10.0) &\tabularnewline
 & (Missing) & 15 (8.5) & 20 (5.6) &\tabularnewline
-wbc & Elevated & 46 (26.0) & 118 (32.8) & 0.011\tabularnewline
-& Low & 6 (3.4) & 3 (0.8) &\tabularnewline
-& Normal & 104 (58.8) & 164 (45.6) &\tabularnewline
+wbc & Elevated & 46 (26.0) & 118 (32.8) & 0.018\tabularnewline
+& Not.Elevated & 110 (62.1) & 167 (46.4) &\tabularnewline
 & (Missing) & 21 (11.9) & 75 (20.8) &\tabularnewline
 \bottomrule
 \end{longtable}
+
+\subsection{6. saving dataset for regression
+model}\label{saving-dataset-for-regression-model}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{kirc_glm <-}\StringTok{ }\NormalTok{kirc_clin2 }
+\KeywordTok{write_csv}\NormalTok{(kirc_glm, }\DataTypeTok{path =} \StringTok{"~/Google Drive/ClinicalDataAnalysis/kirc_glm.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 \subsection{Further analysis}\label{further-analysis}
 
