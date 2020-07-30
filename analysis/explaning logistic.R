@@ -1,4 +1,5 @@
 ########## TCGA Clinical Data Analysis ##########
+# based on 'Statistical Analysis with R for Public Health' on Coursera, by Alex Bottle
 # logistic regression model for "over_surv_stt" 
 # using Tidyverse whenever possible
 
