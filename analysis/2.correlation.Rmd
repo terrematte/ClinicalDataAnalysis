@@ -72,7 +72,7 @@ glimpse(kirc_clin)
 ## 3.The dependent variable
 
 ```{r}
-# Check the number of levels. If greater than 2, it thas to run a ordinal logistic regression presents only two levels (otherwise, it has to run a ordinal logistic regression)
+# Check the number of levels. If greater than 2, it thas to run a simple logistic regression presents only two levels (otherwise, it has to run a ordinal logistic regression)
 table(kirc_clin$over_surv_stt, exclude = NULL)
 ```
 
@@ -281,7 +281,7 @@ explanatory_char <- kirc_clin %>%
   select_if(is.factor) %>%
   names
 
-dependent <-  'over_surv_stt'
+dependent <- 'over_surv_stt'
 
 table_char <- kirc_clin %>%
   summary_factorlist(dependent, explanatory_char, p=TRUE, 
