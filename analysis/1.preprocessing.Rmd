@@ -22,12 +22,12 @@ In this section, the initial preprocessing is applied to clean the data and arra
 ## This chunk automatically generates a text .R version of this script when running within knitr.
 input  = knitr::current_input()  # filename of input document
 output = paste(tools::file_path_sans_ext(input), 'R', sep = '.')
-knitr::purl(input,output,documentation=2,quiet=T)
+try(knitr::purl(input,output,documentation=2,quiet=T), silent=T)
 # Avoid duplicate label error of knitr::purl
 options(knitr.duplicate.label = 'allow')
 # Code to browse the markdown file with renderized images.
 knitr::opts_chunk$set(
-  fig.path = "figs/render-"
+  fig.path = "figs/1-prep_"
 )
 ```
 
@@ -201,7 +201,7 @@ Check distincts types of NAs: MCAR, MAR, MNAR
 kirc_clean4  %>%
      missing_plot()
 
-missing_glimpse(kirc_clean4)
+missing_glimpse(kirc_clean4)  %>% knitr::kable(.)
 ```
 
 ## 6. Checking numeric variables

@@ -55,14 +55,14 @@ kirc_clin <- kirc_clin %>%
          year_diagnose = as.integer(year_diagnose))
 
 # check 
-glimpse(kirc_clin)
+glimpse(kirc_clin) 
 
 #' 
 #' ## 3.The dependent variable
 #' 
 ## -----------------------------------------------------------------------------
-# Check the number of levels. If greater than 2, it thas to run a ordinal logistic regression presents only two levels (otherwise, it has to run a ordinal logistic regression)
-table(kirc_clin$over_surv_stt, exclude = NULL)
+# Check the number of levels. If greater than 2, it thas to run a simple logistic regression presents only two levels (otherwise, it has to run a ordinal logistic regression)
+table(kirc_clin$over_surv_stt, exclude = NULL) 
 
 #' 
 #' ## 4. Numeric variables vs. over_surv_stt
@@ -110,7 +110,7 @@ kirc_clin_numeric.long$value.log <- log2(kirc_clin_numeric.long$value+1)
 #   gather(key = 'variables', value = 'value', -over_surv_stt, na.rm = TRUE) %>%
 #     mutate(value.log = log2(kirc_clin_numeric.long$value+1))
 
-kirc_clin_numeric.long %>% sample_n(6)
+kirc_clin_numeric.long %>% sample_n(6) %>% knitr::kable(.)
 
 #' 
 #' Group the data by variables and compare over_surv_stt groups
@@ -123,7 +123,7 @@ stat.test <- kirc_clin_numeric.long %>%
   t_test(value ~ over_surv_stt) %>%
   adjust_pvalue(method = "BH") %>%
   add_significance()
-stat.test
+stat.test %>% knitr::kable(.)
 
 #' 
 #' 
@@ -156,7 +156,7 @@ graphs <- kirc_clin_numeric.long %>%
       geom_jitter(width = 0.05, alpha = 0.2, color = "orange"), 
     result = "plots"
   )
-graphs
+graphs %>% knitr::kable(.)
 
 #' 
 #' 
@@ -247,7 +247,8 @@ corr_num <- kirc_clin %>%
 # Check the correlation between variables to exclude the higly correlated
 cor_matrix <- cor(corr_num, method = "spearman")
 cor_matrix <- round(cor_matrix, 2)
-cor_matrix
+
+cor_matrix 
 
 #' 
 #' ## 5. Categorical variables vs. over_surv_stt
@@ -270,7 +271,7 @@ explanatory_char <- kirc_clin %>%
   select_if(is.factor) %>%
   names
 
-dependent <-  'over_surv_stt'
+dependent <- 'over_surv_stt'
 
 table_char <- kirc_clin %>%
   summary_factorlist(dependent, explanatory_char, p=TRUE, 
@@ -307,7 +308,7 @@ knitr::kable(table_char2, row.names=FALSE, align=c("l", "l", "r", "r", "r"))
 #' 
 ## -----------------------------------------------------------------------------
 kirc_glm <- kirc_clin2 
-write_csv(kirc_glm, path = "~/Google Drive/ClinicalDataAnalysis/kirc_glm.csv")
+write_csv(kirc_glm, path = "data/kirc_glm.csv")
 
 #' 
 #' ## Further analysis

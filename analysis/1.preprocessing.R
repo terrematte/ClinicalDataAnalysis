@@ -190,7 +190,7 @@ kirc_clean4 <- kirc_clean4 %>%
 kirc_clean4  %>%
      missing_plot()
 
-missing_glimpse(kirc_clean4)
+missing_glimpse(kirc_clean4)  %>% knitr::kable(.)
 
 #' 
 #' ## 6. Checking numeric variables

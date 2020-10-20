@@ -23,12 +23,12 @@ In this final section, we present a logistic regression analysis of each clinica
 ## This chunk automatically generates a text .R version of this script when running within knitr.
 input  = knitr::current_input()  # filename of input document
 output = paste(tools::file_path_sans_ext(input), 'R', sep = '.')
-knitr::purl(input,output,documentation=2,quiet=T)
+try(knitr::purl(input,output,documentation=2,quiet=T), silent=T)
 # Avoid duplicate label error of knitr::purl
 options(knitr.duplicate.label = 'allow')
 # Code to browse the markdown file with renderized images.
 knitr::opts_chunk$set(
-  fig.path = "figs/render-"
+  fig.path = "figs/3-logi_"
 )
 ```
 
@@ -191,69 +191,68 @@ ggplot(df_roc, aes(d = Survival, m = Prob)) + geom_roc()
 ```
 
 
-# Regression plots with finalfit
+<!-- # Regression plots with finalfit -->
 
-```{r}
+<!-- ```{r} -->
 
-kirc_clin <- 
-explanatory = c(cols_numeric, cols_categorical)
-dependent = 'over_surv_stt'
+<!-- explanatory = c(cols_numeric, cols_categorical) -->
+<!-- dependent = 'over_surv_stt' -->
 
-kirc_clin %>%
-  or_plot(dependent, explanatory)
+<!-- kirc_clin %>% -->
+<!--   or_plot(dependent, explanatory) -->
 
-```
+<!-- ``` -->
 
-```{r}
-explanatory = c(cols_numeric, cols_categorical)
-dependent = 'over_surv_stt'
+<!-- ```{r} -->
+<!-- explanatory = c(cols_numeric, cols_categorical) -->
+<!-- dependent = 'over_surv_stt' -->
 
-kirc_clin.nona %>%
-  or_plot(dependent, explanatory)
-```
-
-
-```{r}
-
-                         
-                         
-mod <- stats::lm(formula = over_surv_stt ~ ., data = kirc_clin[ , c(cols_numeric, "over_surv_stt")])
-
-# plot
-ggstatsplot::ggcoefstats(mod)
-
-```
+<!-- kirc_clin.nona %>% -->
+<!--   or_plot(dependent, explanatory) -->
+<!-- ``` -->
 
 
-```{r}
+<!-- ```{r} -->
 
-fit<-glm(over_surv_stt ~.,
-        data = kirc_clin[ , c(cols_numeric, "over_surv_stt")],
-        family = "binomial")
 
-ggstatsplot::ggcoefstats(
-  x = fit,
-  #point.args = list(color = "red", size = 3, shape = 15),
-  #vline.args = list(size = 1, color = "#CC79A7", linetype = "dotdash"),
-  #stats.label.color = c("#0072B2", "#D55E00", "darkgreen"),
-  title = "Regression model",
-  #ggtheme = hrbrthemes::theme_ipsum_ps(),
-  #ggstatsplot.layer = FALSE
-) #+ # note the order in which the labels are entered
-  #ggplot2::scale_y_discrete(labels = c("DECEASED", "LIVING")) +
-  #ggplot2::labs(x = "regression coefficient", y = NULL)
 
-```
+<!-- mod <- stats::lm(formula = over_surv_stt ~ ., data = kirc_clin[ , c(cols_numeric, "over_surv_stt")]) -->
 
-```{r}
-dependent_os = "Surv(over_surv_mth, over_surv_stt)"
-explanatory = c("tumor_stg")
+<!-- # plot -->
+<!-- ggstatsplot::ggcoefstats(mod) -->
 
-kirc_clin %>% 
-    surv_plot(kirc_clin.nona, explanatory, pval = TRUE)
-#> Warning: Vectorized input to `element_text()` is not officially supported.
-#> Results may be unexpected or may change in future versions of ggplot2.
-```
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+
+<!-- fit<-glm(over_surv_stt ~., -->
+<!--         data = kirc_clin[ , c(cols_numeric, "over_surv_stt")], -->
+<!--         family = "binomial") -->
+
+<!-- ggstatsplot::ggcoefstats( -->
+<!--   x = fit, -->
+<!--   #point.args = list(color = "red", size = 3, shape = 15), -->
+<!--   #vline.args = list(size = 1, color = "#CC79A7", linetype = "dotdash"), -->
+<!--   #stats.label.color = c("#0072B2", "#D55E00", "darkgreen"), -->
+<!--   title = "Regression model", -->
+<!--   #ggtheme = hrbrthemes::theme_ipsum_ps(), -->
+<!--   #ggstatsplot.layer = FALSE -->
+<!-- ) #+ # note the order in which the labels are entered -->
+<!--   #ggplot2::scale_y_discrete(labels = c("DECEASED", "LIVING")) + -->
+<!--   #ggplot2::labs(x = "regression coefficient", y = NULL) -->
+
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- dependent_os = "Surv(over_surv_mth, over_surv_stt)" -->
+<!-- explanatory = c("tumor_stg") -->
+
+<!-- kirc_clin %>%  -->
+<!--     surv_plot(kirc_clin.nona, explanatory, pval = TRUE) -->
+<!-- #> Warning: Vectorized input to `element_text()` is not officially supported. -->
+<!-- #> Results may be unexpected or may change in future versions of ggplot2. -->
+<!-- ``` -->
 
 
 ```{r}

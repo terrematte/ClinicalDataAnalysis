@@ -24,7 +24,7 @@
 #' 
 ## ----message=FALSE, warning=FALSE, paged.print=FALSE--------------------------
 # Set the packages of interest
-packages = c("tidyverse","skimr","finalfit", "caret", "ggplot2", "plotROC")
+packages = c("tidyverse","skimr","finalfit", "caret", "ggplot2", "plotROC",  "gapminder", "ggstatsplot")
 
 # if a package is installed, it will be loaded
 # otherwise, the missing package(s) will be installed and loaded
@@ -45,7 +45,7 @@ setwd(".")
 #' 
 ## ----message=FALSE, warning=FALSE, paged.print=FALSE, echo = FALSE------------
 
-kirc_clinic <- read_csv("data/kirc_clinic.csv")
+kirc_clin <- read_csv("data/kirc_clin.csv")
 
 
 #' 
@@ -54,20 +54,25 @@ kirc_clinic <- read_csv("data/kirc_clinic.csv")
 #' ## 2. Taming data and selecting numeric and categorical columns
 #' 
 ## -----------------------------------------------------------------------------
-kirc_clinic <- kirc_clinic %>%
+kirc_clin <- kirc_clin %>%
   mutate_if(is.character, as.factor) %>%
-  mutate(patient_id = as.character(patient_id))
+  mutate(patient_id = as.character(patient_id),
+         age = as.integer(age),
+         year_diagnose = as.integer(year_diagnose))
 
-cols_numeric <- kirc_clinic %>% select_if(is.numeric) %>% names
+cols_numeric <- kirc_clin %>% select_if(is.numeric) %>% names
 
-cols_categorical <- kirc_clinic %>% select_if(is.factor) %>% names
+# Removing dependent variable with high correlation: over_surv_mth, disease_free_mth and year_diagnose
+cols_numeric <- setdiff(cols_numeric,  c("over_surv_mth", "disease_free_mth"))
+ 
+cols_categorical <- kirc_clin %>% select_if(is.factor) %>% names
 cols_categorical <- setdiff(cols_categorical,  "over_surv_stt") 
 
 #' 
 #' 
 #' 
 ## -----------------------------------------------------------------------------
-plot(kirc_clinic$over_surv_stt)
+plot(kirc_clin$over_surv_stt)
 
 #' 
 #' ## 3. Creating training and test data 70-30 split
@@ -75,7 +80,7 @@ plot(kirc_clinic$over_surv_stt)
 ## -----------------------------------------------------------------------------
 set.seed(123)
 
-df <- data.frame(kirc_clinic)
+df <- data.frame(kirc_clin)
 
 trainIndex <- createDataPartition(df$over_surv_stt, p = .7, 
                                   list = FALSE, 
@@ -118,14 +123,14 @@ confusionMatrix(lreg_pred,dtest$over_surv_stt)
 
 set.seed(123)
 
-df <- data.frame(kirc_clinic %>% drop_na() )
+kirc_clin.nona <- data.frame(kirc_clin %>% drop_na() )
 
 
 trainIndex <- createDataPartition(df$over_surv_stt, p = .7, 
                                   list = FALSE, 
                                   times = 1)
-dtrain<-df[trainIndex,]
-dtest<-df[-trainIndex,]
+dtrain<-kirc_clin.nona[trainIndex,]
+dtest<-kirc_clin.nona[-trainIndex,]
 
 #' 
 ## -----------------------------------------------------------------------------
@@ -136,8 +141,8 @@ fitControl <- trainControl(## 10-fold CV
 )
 
 ## Logistic regression
-lreg<-train(over_surv_stt ~.,
-        data = df[ , c(cols_numeric,  cols_categorical,  "over_surv_stt")],
+lreg <- train(over_surv_stt ~.,
+        data = kirc_clin.nona[ , c(cols_numeric,  cols_categorical,  "over_surv_stt")],
             method="glm",
             family=binomial(),
             trControl=fitControl)
@@ -148,6 +153,15 @@ lreg
 varImp(lreg)
 
 #' 
+## -----------------------------------------------------------------------------
+fit<-glm(over_surv_stt ~.,
+        data = kirc_clin[ , c(cols_numeric, cols_categorical, "over_surv_stt")],
+        family = "binomial")
+
+varImp(fit)
+
+
+#' 
 #' 
 ## -----------------------------------------------------------------------------
 lreg_pred<-predict(lreg,dtest)
@@ -155,15 +169,79 @@ confusionMatrix(lreg_pred,dtest$over_surv_stt)
 
 #' 
 ## -----------------------------------------------------------------------------
-df_no.na <- dtrain %>% drop_na()
+df.nona <- dtrain %>% drop_na()
 
 fit<-glm(over_surv_stt ~.,
-        data = df_no.na[ , c(cols_numeric, "over_surv_stt")],
+        data = df.nona[ , c(cols_numeric, "over_surv_stt")],
         family = "binomial")
 
-df_roc <- data.frame(Survival = df_no.na$over_surv_stt, Prob = fit$fitted.values)
+df_roc <- data.frame(Survival = df.nona$over_surv_stt, Prob = fit$fitted.values)
 ggplot(df_roc, aes(d = Survival, m = Prob)) + geom_roc()
 
+#' 
+#' 
+#' <!-- # Regression plots with finalfit -->
+#' 
+#' <!-- ```{r} -->
+#' 
+#' <!-- explanatory = c(cols_numeric, cols_categorical) -->
+#' <!-- dependent = 'over_surv_stt' -->
+#' 
+#' <!-- kirc_clin %>% -->
+#' <!--   or_plot(dependent, explanatory) -->
+#' 
+#' <!-- ``` -->
+#' 
+#' <!-- ```{r} -->
+#' <!-- explanatory = c(cols_numeric, cols_categorical) -->
+#' <!-- dependent = 'over_surv_stt' -->
+#' 
+#' <!-- kirc_clin.nona %>% -->
+#' <!--   or_plot(dependent, explanatory) -->
+#' <!-- ``` -->
+#' 
+#' 
+#' <!-- ```{r} -->
+#' 
+#' 
+#' 
+#' <!-- mod <- stats::lm(formula = over_surv_stt ~ ., data = kirc_clin[ , c(cols_numeric, "over_surv_stt")]) -->
+#' 
+#' <!-- # plot -->
+#' <!-- ggstatsplot::ggcoefstats(mod) -->
+#' 
+#' <!-- ``` -->
+#' 
+#' 
+#' <!-- ```{r} -->
+#' 
+#' <!-- fit<-glm(over_surv_stt ~., -->
+#' <!--         data = kirc_clin[ , c(cols_numeric, "over_surv_stt")], -->
+#' <!--         family = "binomial") -->
+#' 
+#' <!-- ggstatsplot::ggcoefstats( -->
+#' <!--   x = fit, -->
+#' <!--   #point.args = list(color = "red", size = 3, shape = 15), -->
+#' <!--   #vline.args = list(size = 1, color = "#CC79A7", linetype = "dotdash"), -->
+#' <!--   #stats.label.color = c("#0072B2", "#D55E00", "darkgreen"), -->
+#' <!--   title = "Regression model", -->
+#' <!--   #ggtheme = hrbrthemes::theme_ipsum_ps(), -->
+#' <!--   #ggstatsplot.layer = FALSE -->
+#' <!-- ) #+ # note the order in which the labels are entered -->
+#' <!--   #ggplot2::scale_y_discrete(labels = c("DECEASED", "LIVING")) + -->
+#' <!--   #ggplot2::labs(x = "regression coefficient", y = NULL) -->
+#' 
+#' <!-- ``` -->
+#' 
+#' <!-- ```{r} -->
+#' <!-- dependent_os = "Surv(over_surv_mth, over_surv_stt)" -->
+#' <!-- explanatory = c("tumor_stg") -->
+#' 
+#' <!-- kirc_clin %>%  -->
+#' <!--     surv_plot(kirc_clin.nona, explanatory, pval = TRUE) -->
+#' <!-- #> Warning: Vectorized input to `element_text()` is not officially supported. -->
+#' <!-- #> Results may be unexpected or may change in future versions of ggplot2. -->
+#' <!-- ``` -->
 #' 
 #' 
 ## -----------------------------------------------------------------------------
